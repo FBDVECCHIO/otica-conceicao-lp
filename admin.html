@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Ópticas Conceição x FILA</title>
+    
+    <!-- Fonte Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --fila-navy: #002C5B;
+            --fila-navy-dark: #001A36;
+            --fila-red: #E31B23;
+            --fila-red-hover: #b81218;
+            --fila-white: #FFFFFF;
+            --bg-light: #F4F6F9;
+            --text-dark: #0A0E1A;
+            --text-muted: #4A5568;
+            
+            --border-radius-sm: 6px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 20px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 24px rgba(0, 44, 91, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TELA DE LOGIN */
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--fila-navy-dark) 0%, var(--fila-navy) 100%);
+        }
+
+        .login-card {
+            background-color: var(--fila-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border-top: 6px solid var(--fila-red);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .login-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--fila-navy);
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid #CBD5E1;
+            font-size: 15px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--fila-navy);
+            box-shadow: 0 0 0 3px rgba(0, 44, 91, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--fila-red);
+            color: var(--fila-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--fila-red-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--fila-navy);
+            color: var(--fila-white);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--fila-navy-dark);
+        }
+
+        .btn-danger {
+            background-color: #EF4444;
+            color: var(--fila-white);
+        }
+
+        .btn-danger:hover {
+            background-color: #DC2626;
+        }
+
+        /* PAINEL DASHBOARD (OCULTO POR PADRÃO) */
+        .dashboard-wrapper {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        header {
+            background-color: var(--fila-white);
+            box-shadow: var(--shadow-sm);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-conceicao-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        .main-content {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* CARDS ESTATÍSTICAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: var(--fila-white);
+            border-radius: var(--border-radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border-left: 5px solid var(--fila-navy);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-card:nth-child(2) {
+            border-left-color: var(--fila-red);
+        }
+
+        .stat-card:nth-child(3) {
+            border-left-color: #10B981;
+        }
+
+        .stat-card:nth-child(4) {
+            border-left-color: #F59E0B;
+        }
+
+        .stat-info h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-info .stat-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            color: #CBD5E1;
+        }
+
+        /* TABELA DE LEADS */
+        .table-card {
+            background-color: var(--fila-white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .table-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--fila-navy);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .table-actions .btn {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--bg-light);
+            color: var(--text-muted);
+            padding: 12px 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #E2E8F0;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #E2E8F0;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        tr:hover td {
+            background-color: #F8FAFC;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-code {
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .btn-table-whatsapp {
+            background-color: #10B981;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-table-whatsapp:hover {
+            background-color: #059669;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #CBD5E1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 768px) {
+            header {
+                padding: 16px 20px;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .table-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .table-actions {
+                width: 100%;
+            }
+            .table-actions .btn {
+                flex-grow: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. TELA DE LOGIN -->
+    <div class="login-wrapper" id="login-screen">
+        <div class="login-card">
+            <h2>Acesso Restrito</h2>
+            <p>Faça login para acompanhar os leads da campanha Ópticas Conceição x FILA</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Digite sua senha" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar no Painel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. PAINEL DASHBOARD -->
+    <div class="dashboard-wrapper" id="dashboard-screen">
+        <header>
+            <div class="logo-group">
+                <img src="assets/images/logo_preto.png" alt="Ópticas Conceição" class="logo-conceicao-img">
+                <span style="font-weight: 700; font-size: 12px; background-color: var(--fila-navy); color: #fff; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;">ADMIN</span>
+            </div>
+            <button class="btn btn-secondary" id="logout-btn" style="width: auto; padding: 8px 16px; font-size: 13px;">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </header>
+
+        <main class="main-content">
+            <!-- Blocos de Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total de Leads</h3>
+                        <div class="stat-number" id="stat-total-leads">0</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Faturamento Estimado</h3>
+                        <div class="stat-number" id="stat-revenue">R$ 0,00</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Aro Favorito</h3>
+                        <div class="stat-number" id="stat-fav-frame" style="font-size: 16px; font-weight: 700; margin-top: 5px;">N/A</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-glasses"></i></div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Lente Favorita</h3>
+                        <div class="stat-number" id="stat-fav-lens" style="font-size: 16px; font-weight: 700; margin-top: 5px;">N/A</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                </div>
+            </div>
+
+            <!-- Tabela dos Leads -->
+            <div class="table-card">
+                <div class="table-header-row">
+                    <div class="table-title">Leads Cadastrados (Gravação Local)</div>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary" id="export-csv-btn">
+                            <i class="fas fa-file-csv"></i> Exportar CSV
+                        </button>
+                        <button class="btn btn-danger" id="clear-db-btn">
+                            <i class="fas fa-trash-alt"></i> Limpar Lista
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Cliente</th>
+                                <th>WhatsApp</th>
+                                <th>Cidade</th>
+                                <th>Armação Fila</th>
+                                <th>Lente Selecionada</th>
+                                <th>Preço Combo</th>
+                                <th>Voucher</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Estado Vazio -->
+                <div class="empty-state" id="table-empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Nenhum lead recebido até o momento. Cadastre-se na landing page para ver o funcionamento em tempo real!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const loginScreen = document.getElementById('login-screen');
+            const dashboardScreen = document.getElementById('dashboard-screen');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            // Verificar login ativo na sessão
+            if (sessionStorage.getItem('admin_logged') === 'true') {
+                showDashboard();
+            }
+
+            // Ação de Login
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const user = document.getElementById('username').value.trim();
+                const pass = document.getElementById('password').value.trim();
+                
+                if (user === 'admin' && pass === 'conceicao-admin') {
+                    sessionStorage.setItem('admin_logged', 'true');
+                    showDashboard();
+                } else {
+                    alert('Usuário ou senha incorretos!');
+                }
+            });
+
+            // Ação de Logout
+            logoutBtn.addEventListener('click', () => {
+                sessionStorage.setItem('admin_logged', 'false');
+                loginScreen.style.display = 'flex';
+                dashboardScreen.style.display = 'none';
+            });
+
+            function showDashboard() {
+                loginScreen.style.display = 'none';
+                dashboardScreen.style.display = 'flex';
+                renderDashboard();
+            }
+
+            // Renderizar Dados do Dashboard
+            function renderDashboard() {
+                const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+                const tableBody = document.getElementById('table-body');
+                const emptyState = document.getElementById('table-empty-state');
+                
+                // Limpa tabela
+                tableBody.innerHTML = '';
+                
+                if (leads.length === 0) {
+                    emptyState.style.display = 'block';
+                    updateStats([], 0);
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                
+                let totalRevenue = 0;
+                let frameCounts = {};
+                let lensCounts = {};
+
+                // Renderiza cada linha de lead
+                leads.forEach(lead => {
+                    totalRevenue += lead.price;
+                    
+                    // Contagem para ranking
+                    frameCounts[lead.frame] = (frameCounts[lead.frame] || 0) + 1;
+                    lensCounts[lead.lens] = (lensCounts[lead.lens] || 0) + 1;
+
+                    const row = document.createElement('tr');
+                    
+                    const cleanPhone = lead.phone.replace(/\D/g, '');
+                    
+                    row.innerHTML = `
+                        <td>${lead.date}</td>
+                        <td style="font-weight: 600;">${lead.name}</td>
+                        <td>${lead.phone}</td>
+                        <td>${lead.city}</td>
+                        <td>${lead.frame}</td>
+                        <td>${lead.lens}</td>
+                        <td style="font-weight: 700; color: var(--fila-red);">R$ ${lead.price},00</td>
+                        <td><span class="badge badge-code">${lead.code}</span></td>
+                        <td>
+                            <a href="https://api.whatsapp.com/send?phone=${cleanPhone}" target="_blank" class="btn-table-whatsapp">
+                                <i class="fab fa-whatsapp"></i> Chamar
+                            </a>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+
+                // Atualizar Stats
+                updateStats(leads, totalRevenue, frameCounts, lensCounts);
+            }
+
+            // Calcular e Exibir Estatísticas
+            function updateStats(leads, totalRevenue, frameCounts = {}, lensCounts = {}) {
+                document.getElementById('stat-total-leads').textContent = leads.length;
+                document.getElementById('stat-revenue').textContent = `R$ ${totalRevenue},00`;
+
+                // Acha o aro mais escolhido
+                let maxFrame = 'N/A';
+                let maxFCount = 0;
+                for (let key in frameCounts) {
+                    if (frameCounts[key] > maxFCount) {
+                        maxFCount = frameCounts[key];
+                        maxFrame = key;
+                    }
+                }
+                document.getElementById('stat-fav-frame').textContent = maxFrame;
+
+                // Acha a lente mais escolhida
+                let maxLens = 'N/A';
+                let maxLCount = 0;
+                for (let key in lensCounts) {
+                    if (lensCounts[key] > maxLCount) {
+                        maxLCount = lensCounts[key];
+                        maxLens = key;
+                    }
+                }
+                document.getElementById('stat-fav-lens').textContent = maxLens;
+            }
+
+            // Botão Limpar Banco
+            document.getElementById('clear-db-btn').addEventListener('click', () => {
+                if (confirm('Tem certeza absoluta que deseja apagar TODOS os leads cadastrados no seu navegador? Esta ação não pode ser desfeita.')) {
+                    localStorage.removeItem('leads_conceicao');
+                    renderDashboard();
+                }
+            });
+
+            // Exportar para CSV
+            document.getElementById('export-csv-btn').addEventListener('click', () => {
+                const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+                if (leads.length === 0) {
+                    alert('Não há leads para exportar.');
+                    return;
+                }
+
+                // Cria o conteúdo do CSV
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+                csvContent += "Data/Hora;Nome;WhatsApp;Email;Cidade;Armacao Fila;Lente;Preco;Voucher\r\n";
+
+                leads.forEach(lead => {
+                    const row = [
+                        lead.date,
+                        lead.name,
+                        lead.phone,
+                        lead.email,
+                        lead.city,
+                        lead.frame,
+                        lead.lens,
+                        `R$ ${lead.price}`,
+                        lead.code
+                    ].join(";");
+                    csvContent += row + "\r\n";
+                });
+
+                // Baixar arquivo no navegador
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `leads_campanha_fila_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '_')}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    </script>
+</body>
+</html>

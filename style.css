@@ -78,15 +78,16 @@ body {
     justify-content: center;
     padding: 14px 28px;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     border-radius: var(--border-radius-sm);
     border: none;
     cursor: pointer;
     transition: var(--transition);
     text-decoration: none;
     gap: 8px;
+    width: 100%;
 }
 
 .btn-primary {
@@ -124,7 +125,7 @@ body {
     color: var(--text-white);
 }
 
-/* 1. Header (Cabeçalho) */
+/* Header */
 header {
     background-color: var(--fila-white);
     box-shadow: var(--shadow-sm);
@@ -146,15 +147,15 @@ header .container {
     gap: 16px;
 }
 
-.logo-conceicao {
-    font-weight: 800;
-    font-size: 20px;
-    color: var(--fila-navy);
-    letter-spacing: -0.5px;
+.logo-conceicao-img {
+    height: 38px;
+    width: auto;
+    display: block;
+    transition: var(--transition);
 }
 
-.logo-conceicao span {
-    color: var(--fila-red);
+.logo-conceicao-img:hover {
+    transform: scale(1.03);
 }
 
 .divider-pipe {
@@ -167,117 +168,353 @@ header .container {
     height: 22px;
 }
 
-/* 2. Banner 1: Hero Section */
-.hero {
-    background: linear-gradient(135deg, var(--fila-navy-dark) 0%, var(--fila-navy) 100%);
+/* 1. Banner 1: Tradição Fila x Tradição Óticas Conceição */
+.tradicao-secao {
+    background-color: var(--fila-white);
+    padding: 70px 0;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.tradicao-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+}
+
+.tradicao-col {
+    padding: 40px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+
+.tradicao-col:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.tradicao-fila {
+    background-color: var(--fila-navy-dark);
     color: var(--text-white);
-    padding: 100px 0 80px 0;
-    position: relative;
+    border-top: 6px solid var(--fila-red);
+}
+
+.tradicao-conceicao {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    border-top: 6px solid var(--fila-navy);
+}
+
+.brand-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.fila-tag {
+    color: var(--fila-red);
+}
+
+.conceicao-tag {
+    color: var(--fila-navy);
+}
+
+.tradicao-col h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.tradicao-fila h2 span {
+    color: var(--fila-red);
+}
+
+.tradicao-conceicao h2 span {
+    color: var(--fila-navy);
+}
+
+.tradicao-col p {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.fila-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+}
+
+.fline {
+    height: 4px;
+    width: 60px;
+    border-radius: 2px;
+}
+
+.fline.navy { background-color: var(--fila-navy); }
+.fline.white { background-color: #ffffff; }
+.fline.red { background-color: var(--fila-red); }
+
+/* 2. Banner 2: Escolha seu Aro Ideal (Carrossel) */
+.vitrine-secao {
+    background-color: var(--bg-light);
     overflow: hidden;
 }
 
-/* Detalhes geométricos inspirados na FILA */
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 60%;
-    height: 200%;
-    background: linear-gradient(125deg, rgba(227, 27, 35, 0.15) 0%, rgba(227, 27, 35, 0) 70%);
-    transform: skewX(-20deg);
-    z-index: 1;
-}
-
-.hero .container {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    gap: 48px;
-    position: relative;
-    z-index: 2;
-}
-
 .hero-tagline {
-    background-color: rgba(227, 27, 35, 0.15);
+    background-color: rgba(227, 27, 35, 0.1);
     border-left: 4px solid var(--fila-red);
     color: var(--fila-red);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    padding: 8px 16px;
+    padding: 6px 14px;
     display: inline-block;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
-}
-
-.hero h1 {
-    font-size: 48px;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 20px;
-    letter-spacing: -1px;
-}
-
-.hero h1 span {
-    color: var(--fila-red);
-}
-
-.hero p {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 36px;
-    max-width: 540px;
-}
-
-.hero-image-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hero-image-wrapper::after {
-    content: '';
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    border: 8px solid rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius-lg);
-    transform: rotate(4deg);
-    z-index: 1;
-}
-
-.hero-img {
-    width: 100%;
-    max-width: 460px;
-    height: auto;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-lg);
-    position: relative;
-    z-index: 2;
-    border: 4px solid rgba(255, 255, 255, 0.1);
-}
-
-/* 3. Banner 2: Oferta Exclusiva */
-.exclusiva-oferta {
-    background-color: var(--bg-light);
 }
 
 .section-title {
     font-size: 36px;
     font-weight: 800;
     color: var(--fila-navy);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
 
 .section-subtitle {
-    font-size: 18px;
+    font-size: 17px;
     color: var(--text-muted);
     max-width: 600px;
     margin: 0 auto 50px auto;
+}
+
+.carousel-outer-wrapper {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.products-track-container {
+    overflow: hidden;
+    width: 100%;
+}
+
+.products-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    padding: 20px 0;
+}
+
+/* Card de Óculos */
+.product-card {
+    min-width: calc(33.333% - 16px);
+    background-color: var(--fila-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    border: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: var(--transition);
+    user-select: none;
+}
+
+/* Card Selecionado */
+.product-card.selected {
+    border-color: var(--fila-red);
+    box-shadow: 0 0 20px rgba(227, 27, 35, 0.15);
+}
+
+.product-card.selected .select-frame-btn {
+    background-color: var(--fila-red);
+    color: var(--text-white);
+    border-color: var(--fila-red);
+}
+
+/* Galeria Interna do Card */
+.card-gallery {
+    height: 180px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    background-color: #F8FAFC;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+}
+
+.card-gallery-img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    position: absolute;
+}
+
+.card-gallery-img.active {
+    opacity: 1;
+    position: relative;
+}
+
+.gallery-thumbs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.thumb-dot {
+    width: 36px;
+    height: 36px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #EDF2F7;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-dot img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.thumb-dot.active {
+    border-color: var(--fila-red);
+    background-color: var(--fila-white);
+}
+
+.product-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    z-index: 5;
+}
+
+.product-info h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 8px;
+}
+
+.product-ref {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.product-price-box {
+    margin-bottom: 16px;
+    border-top: 1px solid #EDF2F7;
+    padding-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.price-old {
+    font-size: 13px;
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.price-new {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--fila-red);
+}
+
+/* Setas do Carrossel */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--fila-white);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: var(--transition);
+    color: var(--fila-navy);
+    font-size: 20px;
+}
+
+.carousel-btn:hover:not(:disabled) {
+    background-color: var(--fila-red);
+    color: var(--text-white);
+}
+
+.carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.carousel-btn.prev { left: -24px; }
+.carousel-btn.next { right: -24px; }
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #CBD5E1;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.carousel-dot.active {
+    background-color: var(--fila-navy);
+    width: 24px;
+    border-radius: 5px;
+}
+
+/* 3. Banner 3: Escolha sua Oferta de Lente */
+.exclusiva-oferta {
+    background-color: var(--fila-white);
 }
 
 .offer-grid {
@@ -287,34 +524,45 @@ header .container {
 }
 
 .offer-card {
-    background-color: var(--fila-white);
+    background-color: var(--bg-light);
     border-radius: var(--border-radius-md);
     padding: 40px 32px;
-    box-shadow: var(--shadow-md);
-    border-top: 5px solid var(--fila-navy);
+    border: 3px solid transparent;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
 }
 
 .offer-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Lente Selecionada */
+.offer-card.selected {
+    border-color: var(--fila-navy);
+    background-color: var(--fila-white);
     box-shadow: var(--shadow-lg);
 }
 
+.offer-card.selected .select-lens-btn {
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+    border-color: var(--fila-navy);
+}
+
 .offer-card.highlight {
-    border-top-color: var(--fila-red);
     position: relative;
 }
 
 .offer-card.highlight::after {
-    content: 'CAMPEÃO DE VENDAS';
+    content: 'MAIS RECOMENDADO';
     position: absolute;
     top: -14px;
     right: 24px;
     background-color: var(--fila-red);
     color: var(--text-white);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     padding: 4px 12px;
     border-radius: 20px;
@@ -349,8 +597,7 @@ header .container {
     font-size: 32px;
     font-weight: 800;
     color: var(--fila-navy);
-    margin-top: auto;
-    margin-bottom: 8px;
+    margin-bottom: 20px;
 }
 
 .offer-price span {
@@ -359,63 +606,94 @@ header .container {
     font-weight: 400;
 }
 
-/* 4. Banner 3: Resgate de Voucher */
+/* 4. Banner 4: Resumo das Escolhas & Formulário (Voucher) */
 .voucher-section {
     background: linear-gradient(rgba(0, 44, 91, 0.95), rgba(0, 26, 54, 0.98)), url('https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1200') center/cover no-repeat;
     color: var(--text-white);
-    position: relative;
 }
 
 .voucher-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items: start;
 }
 
-.voucher-text h2 {
-    font-size: 40px;
-    font-weight: 800;
+/* Painel de Resumo Dinâmico */
+.summary-panel {
+    background-color: var(--fila-white);
+    color: var(--text-dark);
+    border-radius: var(--border-radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+}
+
+.summary-item {
     margin-bottom: 20px;
-    color: var(--text-white);
 }
 
-.voucher-text p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 16px;
-    margin-bottom: 24px;
-}
-
-.voucher-steps {
-    list-style: none;
-}
-
-.voucher-steps li {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    font-size: 16px;
-}
-
-.step-num {
-    background-color: var(--fila-red);
-    color: var(--text-white);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.summary-label {
+    display: block;
+    font-size: 13px;
     font-weight: 700;
-    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.summary-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fila-navy);
+    background-color: var(--bg-light);
+    padding: 12px 16px;
+    border-radius: var(--border-radius-sm);
+    border-left: 4px solid var(--fila-navy);
+}
+
+/* Destaca o valor quando ativo */
+.summary-value.active {
+    border-left-color: var(--fila-red);
+    background-color: rgba(227, 27, 35, 0.03);
+    color: var(--text-dark);
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #E2E8F0;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.summary-total .price-val {
+    font-size: 26px;
+    color: var(--fila-red);
+    font-weight: 800;
+}
+
+.summary-warning {
+    margin-top: 24px;
+    background-color: #FFFBEB;
+    border: 1px solid #FCD34D;
+    color: #92400E;
+    padding: 12px 16px;
+    border-radius: var(--border-radius-sm);
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
 }
 
 .voucher-form-box {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-lg);
     padding: 40px;
     box-shadow: var(--shadow-lg);
@@ -437,8 +715,8 @@ header .container {
     width: 100%;
     padding: 12px 16px;
     border-radius: var(--border-radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.06);
     color: var(--text-white);
     font-size: 16px;
     outline: none;
@@ -446,12 +724,12 @@ header .container {
 }
 
 .form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .form-group input:focus {
     border-color: var(--fila-red);
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.12);
     box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.25);
 }
 
@@ -466,8 +744,8 @@ header .container {
     background-color: var(--fila-white);
     color: var(--text-dark);
     border-radius: var(--border-radius-md);
-    padding: 30px;
-    margin: 24px 0;
+    padding: 24px;
+    margin: 20px 0;
     border-left: 6px dashed var(--fila-red);
     border-right: 6px dashed var(--fila-red);
     position: relative;
@@ -475,301 +753,37 @@ header .container {
 }
 
 .ticket-header {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .ticket-discount {
-    font-size: 38px;
+    font-size: 26px;
     font-weight: 800;
     color: var(--fila-red);
-    line-height: 1;
-    margin-bottom: 8px;
+    line-height: 1.1;
+    margin-bottom: 6px;
 }
 
 .ticket-code {
     font-family: monospace;
-    font-size: 24px;
+    font-size: 22px;
     background-color: var(--bg-light);
-    padding: 8px 16px;
+    padding: 6px 14px;
     border-radius: var(--border-radius-sm);
     display: inline-block;
     font-weight: 700;
     letter-spacing: 3px;
     border: 1px dashed var(--fila-navy);
     color: var(--fila-navy);
-    margin: 12px 0;
+    margin: 8px 0;
 }
 
-/* 5. Banner 4: Lentes Corretivas */
-.lentes-secao {
-    background-color: var(--fila-white);
-}
-
-.lentes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-}
-
-.lente-card {
-    background-color: var(--bg-light);
-    border-radius: var(--border-radius-md);
-    padding: 32px;
-    text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: var(--transition);
-}
-
-.lente-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-    border-color: rgba(0, 44, 91, 0.15);
-}
-
-.lente-card h4 {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--fila-navy);
-    margin-bottom: 12px;
-}
-
-.lente-brand {
-    font-size: 11px;
-    background-color: var(--fila-navy);
-    color: var(--text-white);
-    padding: 2px 10px;
-    border-radius: 12px;
-    display: inline-block;
-    margin-bottom: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.lente-card p {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 20px;
-}
-
-/* 6. Banner 6: Carrossel de Produtos */
-.vitrine-secao {
-    background-color: var(--bg-light);
-    overflow: hidden;
-}
-
-.carousel-outer-wrapper {
-    position: relative;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.products-track-container {
-    overflow: hidden;
-    width: 100%;
-}
-
-.products-track {
-    display: flex;
-    gap: 24px;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-    padding: 20px 0;
-}
-
-/* Cada Card do Óculos */
-.product-card {
-    min-width: calc(33.333% - 16px);
-    background-color: var(--fila-white);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
-    padding: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: var(--transition);
-    user-select: none;
-}
-
-.product-card:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-/* Galeria de Fotos dentro do Card */
-.card-gallery {
-    height: 180px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    background-color: #F8FAFC;
-    border-radius: var(--border-radius-sm);
-    overflow: hidden;
-}
-
-.card-gallery-img {
-    max-width: 85%;
-    max-height: 85%;
-    object-fit: contain;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    position: absolute;
-}
-
-.card-gallery-img.active {
-    opacity: 1;
-    position: relative;
-}
-
-/* Miniaturas para Giro de Fotos (3 Opções) */
-.gallery-thumbs {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.thumb-dot {
-    width: 36px;
-    height: 36px;
-    border: 2px solid transparent;
-    border-radius: var(--border-radius-sm);
-    overflow: hidden;
-    cursor: pointer;
-    background-color: #EDF2F7;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.thumb-dot img {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
-}
-
-.thumb-dot.active {
-    border-color: var(--fila-red);
-    background-color: var(--fila-white);
-    box-shadow: var(--shadow-sm);
-}
-
-.product-badge {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background-color: var(--fila-navy);
-    color: var(--text-white);
-    font-size: 10px;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-}
-
-.product-info h4 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--fila-navy);
-    margin-bottom: 8px;
-}
-
-.product-ref {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-}
-
-.product-price-box {
-    margin-top: auto;
-    border-top: 1px solid #EDF2F7;
-    padding-top: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.price-old {
-    font-size: 13px;
-    text-decoration: line-through;
-    color: var(--text-muted);
-}
-
-.price-new {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--fila-red);
-}
-
-/* Setas do Carrossel Geral */
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: var(--fila-white);
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: var(--transition);
-    color: var(--fila-navy);
-    font-size: 20px;
-}
-
-.carousel-btn:hover {
-    background-color: var(--fila-red);
-    color: var(--text-white);
-}
-
-.carousel-btn.prev {
-    left: -24px;
-}
-
-.carousel-btn.next {
-    right: -24px;
-}
-
-/* Indicadores de bolinhas do Carrossel */
-.carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 30px;
-}
-
-.carousel-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #CBD5E1;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.carousel-dot.active {
-    background-color: var(--fila-navy);
-    width: 24px;
-    border-radius: 5px;
-}
-
-/* 7. Banner 5: Contato, Horário e Como Chegar */
+/* 5. Banner 5: Contato, Horário e Rota */
 .location-section {
     background-color: var(--fila-white);
 }
@@ -839,6 +853,57 @@ header .container {
     border: none;
 }
 
+/* 6. Banner 6: Esclarecimentos de Lentes */
+.lentes-secao {
+    background-color: var(--bg-light);
+}
+
+.lentes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.lente-card {
+    background-color: var(--fila-white);
+    border-radius: var(--border-radius-md);
+    padding: 32px;
+    text-align: left;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.lente-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 44, 91, 0.1);
+}
+
+.lente-card h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 12px;
+}
+
+.lente-brand {
+    font-size: 10px;
+    color: var(--text-white);
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.lente-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
 /* Rodapé (Footer) */
 footer {
     background-color: var(--fila-navy-dark);
@@ -858,6 +923,8 @@ footer .container {
 .footer-nav {
     display: flex;
     gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .footer-nav a {
@@ -880,69 +947,91 @@ footer .container {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsividade */
+/* ==========================================
+   📱 RESPONSIVIDADE MOBILE (Smartphone Friendly)
+   ========================================== */
 @media (max-width: 992px) {
-    .hero .container {
+    .section {
+        padding: 60px 0;
+    }
+    
+    .tradicao-grid {
         grid-template-columns: 1fr;
-        text-align: center;
-        padding-top: 40px;
+        gap: 24px;
     }
     
-    .hero h1 {
-        font-size: 38px;
+    .tradicao-col {
+        padding: 30px;
     }
-    
-    .hero p {
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .hero-image-wrapper {
-        order: -1;
-    }
-    
-    .voucher-layout {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .location-layout {
-        grid-template-columns: 1fr;
+
+    .tradicao-col h2 {
+        font-size: 26px;
     }
     
     .product-card {
         min-width: calc(50% - 12px);
     }
+    
+    .voucher-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    
+    .location-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 640px) {
     .section {
-        padding: 50px 0;
+        padding: 40px 0;
     }
     
-    .hero h1 {
-        font-size: 30px;
+    .section-title {
+        font-size: 28px;
     }
     
     .product-card {
         min-width: 100%;
+        padding: 16px;
     }
     
-    .voucher-form-box {
+    .card-gallery {
+        height: 150px;
+    }
+    
+    .offer-card {
         padding: 24px;
     }
     
+    .summary-panel, .voucher-form-box {
+        padding: 24px;
+    }
+    
+    .summary-total {
+        font-size: 16px;
+    }
+    
+    .summary-total .price-val {
+        font-size: 22px;
+    }
+
     .carousel-btn {
         width: 40px;
         height: 40px;
         font-size: 16px;
     }
     
-    .carousel-btn.prev {
-        left: -8px;
+    .carousel-btn.prev { left: -8px; }
+    .carousel-btn.next { right: -8px; }
+    
+    /* Toques e botões amigáveis no smartphone */
+    .btn {
+        padding: 16px 20px; /* Aumenta a área de clique */
+        font-size: 16px;
     }
     
-    .carousel-btn.next {
-        right: -8px;
+    .select-frame-btn, .select-lens-btn {
+        padding: 12px 16px;
     }
 }
