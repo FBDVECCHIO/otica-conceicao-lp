@@ -249,8 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('email').value.trim();
             const city = document.getElementById('city').value.trim();
             
-            if (name.length < 3 || phone.length < 14 || city.length < 2 || !comboState.frame || !comboState.lens) {
-                alert('Por favor, preencha todos os campos e selecione os itens.');
+            const cleanPhone = phone.replace(/\D/g, '');
+            if (name.length < 3 || cleanPhone.length < 10 || cleanPhone.length > 11 || city.length < 2 || !comboState.frame || !comboState.lens) {
+                alert('Por favor, preencha todos os campos corretamente (o telefone deve ter de 10 a 11 dígitos com DDD) e garanta que escolheu o aro e a lente.');
                 return;
             }
             
@@ -262,10 +263,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const randomHex = Math.random().toString(16).substring(2, 6).toUpperCase();
                 const voucherCode = `FILA-${randomHex}`;
                 
+                // Formata o telefone sem traços adicionais para o envio
+                const cleanPhoneNum = phone.replace(/\D/g, '');
+                
                 const leadData = {
                     date: new Date().toLocaleString('pt-BR'),
                     name: name,
-                    phone: phone,
+                    phone: phone, // Salva formatado para exibição bonita
                     email: email,
                     city: city,
                     frame: comboState.frame.name,
@@ -302,6 +306,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 1200);
+        });
+    }
+
+    // Máscara dinâmica para o campo de telefone brasileiro
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, ''); // Apenas dígitos
+            if (val.length > 11) val = val.substring(0, 11); // Limite de 11 caracteres (celular)
+            
+            let formatted = '';
+            if (val.length > 0) {
+                formatted = '(' + val.substring(0, 2);
+                if (val.length > 2) {
+                    formatted += ') ' + val.substring(2, 7);
+                    if (val.length > 7) {
+                        formatted += '-' + val.substring(7, 11);
+                    }
+                }
+            }
+            e.target.value = formatted;
         });
     }
 
@@ -353,6 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentIndex > maxIndex) {
                 currentIndex = maxIndex;
             }
+            
+            if (cards.length === 0) return; // Evita falha se não houver armações ativas
             
             const cardWidth = cards[0].getBoundingClientRect().width;
             const gap = 24; 
