@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Queima de estoque exclusiva de armações de receituário FILA nas Ópticas Conceição. Garanta seu voucher de desconto online e venha fazer seu exame de vista gratuito!">
+    <title>Ópticas Conceição x FILA - Queima de Receituário Exclusiva</title>
+    
+    <!-- Link para Folha de Estilos -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 1. CABEÇALHO (Header) -->
+    <header>
+        <div class="container">
+            <div class="logo-group">
+                <div class="logo-conceicao" id="logo-conceicao-id">ÓPTICAS <span>CONCEIÇÃO</span></div>
+                <div class="divider-pipe"></div>
+                <!-- Logotipo FILA em SVG vetorizado para máxima nitidez -->
+                <svg class="logo-fila-svg" viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0H62V12H0V0ZM0 18H62V30H0V18ZM0 36H16V48H0V36Z" fill="#002C5B"/>
+                    <path d="M46 36H62V48H46V36Z" fill="#E31B23"/>
+                    <path d="M84 0H146V12H84V0ZM114 18H146V48H114V18ZM84 18H100V48H84V18Z" fill="#002C5B"/>
+                    <path d="M168 0H184V48H168V0ZM184 36H200V48H184V36Z" fill="#002C5B"/>
+                </svg>
+            </div>
+            <a href="https://api.whatsapp.com/send?phone=5511999999999&text=Ol%C3%A1!%20Vi%20a%20promo%C3%A7%C3%A3o%20da%20Fila%20e%20gostaria%20de%20tirar%20algumas%20d%C3%BAvidas." target="_blank" class="btn btn-outline" id="header-cta-whatsapp">
+                <i class="fab fa-whatsapp"></i> Falar com Óptica
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. BANNER 1: HERO SECTION (Força das Marcas) -->
+    <section class="hero" id="hero-banner-1">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-tagline">Ação Especial de Queima</span>
+                <h1>Estilo Italiano <span>FILA</span> com Precisão Visual</h1>
+                <p>As Ópticas Conceição unem forças com a FILA para trazer uma queima de estoque exclusiva de armações de receituário. Garanta o design esportivo e confortável da FILA com condições imperdíveis.</p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="#voucher-banner-3" class="btn btn-primary" id="hero-cta-voucher">
+                        <i class="fas fa-ticket-alt"></i> Resgatar Voucher de Desconto
+                    </a>
+                    <a href="#carousel-banner-6" class="btn btn-secondary" id="hero-cta-models">
+                        Ver Modelos
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="assets/images/hero_fila.png" alt="Modelo usando óculos Fila nas Ópticas Conceição" class="hero-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. BANNER 2: OFERTA EXCLUSIVA -->
+    <section class="exclusiva-oferta section" id="offer-banner-2">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Oportunidade Única de Renovação</h2>
+                <p class="section-subtitle">Confira as condições exclusivas que preparamos para você sair de óculos FILA novo nas Ópticas Conceição.</p>
+            </div>
+            
+            <div class="offer-grid">
+                <div class="offer-card" id="card-discount-1">
+                    <div class="offer-icon"><i class="fas fa-percent"></i></div>
+                    <h3>Queima de Estoque</h3>
+                    <p>Armações selecionadas de receituário FILA com descontos imperdíveis de até 60% para pagamento facilitado.</p>
+                    <div class="offer-price">Até 60% <span>de desc.</span></div>
+                </div>
+                
+                <div class="offer-card highlight" id="card-discount-2">
+                    <div class="offer-icon"><i class="fas fa-file-medical-alt"></i></div>
+                    <h3>Combo Especial Lentes</h3>
+                    <p>Feche seu óculos completo (armação Fila + lente corretiva) e ganhe bônus exclusivo no valor das lentes de marcas parceiras.</p>
+                    <div class="offer-price">Aro + Lente <span>com bônus</span></div>
+                </div>
+                
+                <div class="offer-card" id="card-discount-3">
+                    <div class="offer-icon"><i class="fas fa-glasses"></i></div>
+                    <h3>Exame de Vista</h3>
+                    <p>Agende sua consulta computadorizada conosco. Realize o exame de vista sem custos adicionais ao adquirir seu óculos completo.</p>
+                    <div class="offer-price">Grátis <span>na compra</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. BANNER 3: RESGATE DE VOUCHER PROMOCIONAL (Dados do Lead) -->
+    <section class="voucher-section section" id="voucher-banner-3">
+        <div class="container">
+            <div class="voucher-layout">
+                <div class="voucher-text">
+                    <h2>Garanta seu Desconto Especial em Loja</h2>
+                    <p>Preencha os dados abaixo de forma rápida para gerar seu voucher de desconto. Apresente o código gerado em qualquer uma de nossas lojas físicas para resgatar sua oferta.</p>
+                    
+                    <ul class="voucher-steps">
+                        <li>
+                            <div class="step-num">1</div>
+                            <span>Preencha seu Nome, WhatsApp e E-mail</span>
+                        </li>
+                        <li>
+                            <div class="step-num">2</div>
+                            <span>Gere seu código promocional exclusivo na hora</span>
+                        </li>
+                        <li>
+                            <div class="step-num">3</div>
+                            <span>Vá até a loja física mais próxima e faça seu exame</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="voucher-form-box">
+                    <div id="form-box">
+                        <h3 style="margin-bottom: 24px; font-size: 22px; font-weight: 700; color: #fff;">Resgatar Meu Voucher</h3>
+                        <form id="resgate-form">
+                            <div class="form-group">
+                                <label for="name">Nome Completo</label>
+                                <input type="text" id="name" placeholder="Digite seu nome" required minlength="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">WhatsApp / Celular</label>
+                                <input type="tel" id="phone" placeholder="(11) 99999-9999" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" placeholder="nome@exemplo.com" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="submit-form-btn">
+                                <i class="fas fa-gift"></i> Gerar Meu Cupom Agora
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Box de Sucesso Pós Cadastro (ocultado inicialmente no CSS) -->
+                    <div id="success-box" class="voucher-success">
+                        <i class="fas fa-check-circle" style="font-size: 56px; color: #10B981; margin-bottom: 16px;"></i>
+                        <h3 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">Voucher Gerado!</h3>
+                        <p style="font-size: 15px; color: rgba(255,255,255,0.8);">Parabéns, <span id="display-name">Cliente</span>! Seu desconto exclusivo está garantido.</p>
+                        
+                        <div class="ticket">
+                            <div class="ticket-header">ÓPTICAS CONCEIÇÃO X FILA</div>
+                            <div class="ticket-discount">DESCONTO ATIVADO</div>
+                            <div class="ticket-code" id="voucher-code-text">FILA-XXXX</div>
+                            <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Apresente este código em nossa loja física</div>
+                        </div>
+                        
+                        <a href="#" id="whatsapp-share-btn" target="_blank" class="btn btn-primary" style="width: 100%; background-color: #10B981; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                            <i class="fab fa-whatsapp"></i> Confirmar no WhatsApp da Loja
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. BANNER 4: LENTES CORRETIVAS (Aro + Lente) -->
+    <section class="lentes-secao section" id="lenses-banner-4">
+        <div class="container">
+            <div class="text-center">
+                <span class="hero-tagline" style="background-color: rgba(0, 44, 91, 0.1); color: var(--fila-navy); border-left-color: var(--fila-navy);">Casamento Perfeito</span>
+                <h2 class="section-title">Encontre a Lente Ideal para o seu Aro FILA</h2>
+                <p class="section-subtitle">Temos laboratório especializado para montar seus óculos com máxima precisão usando as melhores lentes do mercado.</p>
+            </div>
+            
+            <div class="lentes-grid">
+                <div class="lente-card" id="lente-zeiss">
+                    <span class="lente-brand">ZEISS</span>
+                    <h4>Lentes Zeiss Single Vision</h4>
+                    <p>Tecnologia antirreflexo e nitidez excepcional de borda a borda. Ideal para quem busca leveza e resistência no dia a dia.</p>
+                </div>
+                
+                <div class="lente-card" id="lente-crizal">
+                    <span class="lente-brand">ESSILOR</span>
+                    <h4>Lentes Crizal Sapphire</h4>
+                    <p>Máxima transparência com proteção superior contra reflexos, arranhões, poeira, água e raios UV nocivos.</p>
+                </div>
+                
+                <div class="lente-card" id="lente-bluecut">
+                    <span class="lente-brand">PROTEÇÃO AZUL</span>
+                    <h4>Lentes Blue Cut (Filtro Azul)</h4>
+                    <p>Essenciais para quem passa muitas horas em frente a telas (computador, celular). Bloqueiam a luz azul nociva trazendo descanso visual.</p>
+                </div>
+                
+                <div class="lente-card" id="lente-multifocal">
+                    <span class="lente-brand">MULTIFOCAL</span>
+                    <h4>Varilux Premium</h4>
+                    <p>Lentes progressivas que oferecem transições de grau suaves para visão de perto, intermediária e de longe.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. BANNER 5: LOCALIZAÇÃO E CONTATO (Dados da Loja e Como Chegar) -->
+    <section class="location-section section" id="location-banner-5">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Venha Nos Visitar</h2>
+                <p class="section-subtitle">Nossa equipe de consultores óticos está pronta para te atender com o padrão Ópticas Conceição.</p>
+            </div>
+            
+            <div class="location-layout">
+                <div class="location-info">
+                    <div class="contact-card">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h5>Endereço Principal</h5>
+                                <p>Av. Paulista, 1000 - Bela Vista, São Paulo - SP, 01310-100</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <h5>Horário de Atendimento</h5>
+                                <p>Segunda a Sexta: 09:00 às 19:00<br>Sábado: 09:00 às 14:00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div>
+                                <h5>WhatsApp e Agendamentos</h5>
+                                <p>(11) 99999-9999</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://maps.google.com/?q=Av.+Paulista,+1000+-+Bela+Vista,+S%C3%A3o+Paulo+-+SP" target="_blank" class="btn btn-secondary" style="align-self: flex-start;" id="maps-route-btn">
+                        <i class="fas fa-directions"></i> Traçar Rota de Como Chegar
+                    </a>
+                </div>
+                
+                <div class="map-container">
+                    <!-- Mapa Mockup em alta fidelidade representando a localização -->
+                    <iframe class="map-mockup" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197587000858!2d-46.65219038502224!3d-23.561349684682056!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd6b857c6561727a!2sAv.%20Paulista%2C%201000%20-%20Bela%20Vista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2001311-100!5e0!3m2!1spt-BR!2sbr!4v1629471948301!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. BANNER 6: GIRO DE FOTOS DOS MODELOS (Carrossel Interativo) -->
+    <section class="vitrine-secao section" id="carousel-banner-6">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Giro de Modelos FILA Disponíveis</h2>
+                <p class="section-subtitle">Passe o mouse ou clique nas miniaturas de cada card para ver o óculos de outros ângulos (Giro 360°).</p>
+            </div>
+            
+            <div class="carousel-outer-wrapper">
+                <!-- Botão de Anterior -->
+                <button class="carousel-btn prev" id="carousel-prev" aria-label="Modelo anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <!-- Container Principal com os Cards -->
+                <div class="products-track-container">
+                    <div class="products-track" id="products-track">
+                        
+                        <!-- CARD MODELO 1 -->
+                        <div class="product-card" id="card-product-1">
+                            <span class="product-badge">MAIS VENDIDO</span>
+                            <!-- Galeria interna para rotação de fotos -->
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Azul Marinho Frente" class="card-gallery-img active" data-index="0">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Azul Marinho Lado" class="card-gallery-img" data-index="1" style="filter: hue-rotate(180deg);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Azul Marinho no Rosto" class="card-gallery-img" data-index="2">
+                            </div>
+                            <!-- Miniaturas das fotos internas -->
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_navy_front.png" alt="Frente">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_red_side.png" alt="Lado" style="filter: hue-rotate(180deg);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Active Navy</h4>
+                                <p class="product-ref">REF: F8142-N50</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 589,00</span>
+                                    <span class="price-new">R$ 299,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD MODELO 2 -->
+                        <div class="product-card" id="card-product-2">
+                            <span class="product-badge" style="background-color: var(--fila-red);">ESPORTIVO</span>
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Vermelho Frente" class="card-gallery-img active" data-index="0">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Vermelho Lado" class="card-gallery-img" data-index="1" style="filter: hue-rotate(140deg);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Vermelho no Rosto" class="card-gallery-img" data-index="2" style="filter: hue-rotate(140deg);">
+                            </div>
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_red_side.png" alt="Frente">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_navy_front.png" alt="Lado" style="filter: hue-rotate(140deg);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo" style="filter: hue-rotate(140deg);">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Sport Red</h4>
+                                <p class="product-ref">REF: F8145-R52</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 629,00</span>
+                                    <span class="price-new">R$ 319,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD MODELO 3 -->
+                        <div class="product-card" id="card-product-3">
+                            <span class="product-badge">CLÁSSICO</span>
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Preto Frente" class="card-gallery-img active" data-index="0" style="filter: grayscale(1) brightness(0.2);">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Preto Lado" class="card-gallery-img" data-index="1" style="filter: grayscale(1) brightness(0.2);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Preto no Rosto" class="card-gallery-img" data-index="2" style="filter: grayscale(1) contrast(1.1);">
+                            </div>
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_navy_front.png" alt="Frente" style="filter: grayscale(1) brightness(0.2);">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_red_side.png" alt="Lado" style="filter: grayscale(1) brightness(0.2);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo" style="filter: grayscale(1) contrast(1.1);">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Classic Black</h4>
+                                <p class="product-ref">REF: F8140-B53</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 599,00</span>
+                                    <span class="price-new">R$ 299,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD MODELO 4 -->
+                        <div class="product-card" id="card-product-4">
+                            <span class="product-badge" style="background-color: #F97316;">DESTAQUE</span>
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Laranja Frente" class="card-gallery-img active" data-index="0" style="filter: hue-rotate(30deg) saturate(1.5);">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Laranja Lado" class="card-gallery-img" data-index="1" style="filter: hue-rotate(30deg) saturate(1.5);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Laranja no Rosto" class="card-gallery-img" data-index="2" style="filter: hue-rotate(30deg);">
+                            </div>
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_navy_front.png" alt="Frente" style="filter: hue-rotate(30deg) saturate(1.5);">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_red_side.png" alt="Lado" style="filter: hue-rotate(30deg) saturate(1.5);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo" style="filter: hue-rotate(30deg);">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Bold Orange</h4>
+                                <p class="product-ref">REF: F8148-O51</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 649,00</span>
+                                    <span class="price-new">R$ 329,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD MODELO 5 -->
+                        <div class="product-card" id="card-product-5">
+                            <span class="product-badge" style="background-color: #22C55E;">ACTIVE</span>
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Verde Frente" class="card-gallery-img active" data-index="0" style="filter: hue-rotate(85deg) saturate(1.3);">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Verde Lado" class="card-gallery-img" data-index="1" style="filter: hue-rotate(85deg) saturate(1.3);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Verde no Rosto" class="card-gallery-img" data-index="2" style="filter: hue-rotate(85deg);">
+                            </div>
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_navy_front.png" alt="Frente" style="filter: hue-rotate(85deg) saturate(1.3);">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_red_side.png" alt="Lado" style="filter: hue-rotate(85deg) saturate(1.3);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo" style="filter: hue-rotate(85deg);">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Volt Green</h4>
+                                <p class="product-ref">REF: F8150-G50</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 579,00</span>
+                                    <span class="price-new">R$ 289,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD MODELO 6 -->
+                        <div class="product-card" id="card-product-6">
+                            <span class="product-badge">TRANSLÚCIDO</span>
+                            <div class="card-gallery">
+                                <img src="assets/images/frame_navy_front.png" alt="Óculos Fila Cristal Frente" class="card-gallery-img active" data-index="0" style="filter: invert(0.9) brightness(1.2) contrast(0.8);">
+                                <img src="assets/images/frame_red_side.png" alt="Óculos Fila Cristal Lado" class="card-gallery-img" data-index="1" style="filter: invert(0.9) brightness(1.2) contrast(0.8);">
+                                <img src="assets/images/hero_fila.png" alt="Óculos Fila Cristal no Rosto" class="card-gallery-img" data-index="2" style="filter: sepia(0.2) brightness(1.1);">
+                            </div>
+                            <div class="gallery-thumbs">
+                                <div class="thumb-dot active" data-index="0">
+                                    <img src="assets/images/frame_navy_front.png" alt="Frente" style="filter: invert(0.9) brightness(1.2) contrast(0.8);">
+                                </div>
+                                <div class="thumb-dot" data-index="1">
+                                    <img src="assets/images/frame_red_side.png" alt="Lado" style="filter: invert(0.9) brightness(1.2) contrast(0.8);">
+                                </div>
+                                <div class="thumb-dot" data-index="2">
+                                    <img src="assets/images/hero_fila.png" alt="Modelo" style="filter: sepia(0.2) brightness(1.1);">
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>FILA Crystal White</h4>
+                                <p class="product-ref">REF: F8139-C52</p>
+                                <div class="product-price-box">
+                                    <span class="price-old">R$ 689,00</span>
+                                    <span class="price-new">R$ 349,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- Botão de Próximo -->
+                <button class="carousel-btn next" id="carousel-next" aria-label="Próximo modelo">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <!-- Bolinhas do Carrossel Geral -->
+            <div class="carousel-dots" id="carousel-dots"></div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ (Footer) -->
+    <footer>
+        <div class="container">
+            <div class="logo-group">
+                <div class="logo-conceicao" style="color: #fff;">ÓPTICAS <span style="color: var(--fila-red);">CONCEIÇÃO</span></div>
+                <div class="divider-pipe" style="background-color: rgba(255,255,255,0.2);"></div>
+                <svg class="logo-fila-svg" viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0H62V12H0V0ZM0 18H62V30H0V18ZM0 36H16V48H0V36Z" fill="#FFFFFF"/>
+                    <path d="M46 36H62V48H46V36Z" fill="#E31B23"/>
+                    <path d="M84 0H146V12H84V0ZM114 18H146V48H114V18ZM84 18H100V48H84V18Z" fill="#FFFFFF"/>
+                    <path d="M168 0H184V48H168V0ZM184 36H200V48H184V36Z" fill="#FFFFFF"/>
+                </svg>
+            </div>
+            
+            <div class="footer-nav">
+                <a href="#hero-banner-1">Início</a>
+                <a href="#offer-banner-2">Ofertas</a>
+                <a href="#voucher-banner-3">Garantir Voucher</a>
+                <a href="#location-banner-5">Como Chegar</a>
+                <a href="#carousel-banner-6">Produtos</a>
+            </div>
+            
+            <div class="footer-copy">
+                <p>&copy; 2026 Ópticas Conceição. Todos os direitos reservados. Fotos meramente ilustrativas. Campanha válida por tempo limitado ou enquanto durar o estoque de peças de receituário da marca FILA.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de Comportamento -->
+    <script src="app.js"></script>
+</body>
+</html>

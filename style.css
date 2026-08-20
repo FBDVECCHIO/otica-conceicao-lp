@@ -1,0 +1,948 @@
+/* Importação de fontes modernas */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* Variáveis de Design - Identidade FILA & Ópticas Conceição */
+:root {
+    --fila-navy: #002C5B;
+    --fila-navy-dark: #001A36;
+    --fila-navy-light: #0d3d75;
+    --fila-red: #E31B23;
+    --fila-red-hover: #b81218;
+    --fila-white: #FFFFFF;
+    --bg-light: #F4F6F9;
+    --text-dark: #0A0E1A;
+    --text-muted: #4A5568;
+    --text-white: #FFFFFF;
+    
+    /* Layout */
+    --border-radius-sm: 6px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 24px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 44, 91, 0.08);
+    --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset e Configurações Básicas */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--fila-white);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Scrollbar Customizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--fila-navy);
+    border-radius: var(--border-radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--fila-red);
+}
+
+/* Utilidades de Layout */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--fila-red);
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(227, 27, 35, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: var(--fila-red-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(227, 27, 35, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+    box-shadow: 0 4px 15px rgba(0, 44, 91, 0.2);
+}
+
+.btn-secondary:hover {
+    background-color: var(--fila-navy-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 44, 91, 0.3);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--fila-navy);
+    border: 2px solid var(--fila-navy);
+}
+
+.btn-outline:hover {
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+}
+
+/* 1. Header (Cabeçalho) */
+header {
+    background-color: var(--fila-white);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 0;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo-conceicao {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--fila-navy);
+    letter-spacing: -0.5px;
+}
+
+.logo-conceicao span {
+    color: var(--fila-red);
+}
+
+.divider-pipe {
+    width: 1px;
+    height: 24px;
+    background-color: #E2E8F0;
+}
+
+.logo-fila-svg {
+    height: 22px;
+}
+
+/* 2. Banner 1: Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--fila-navy-dark) 0%, var(--fila-navy) 100%);
+    color: var(--text-white);
+    padding: 100px 0 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Detalhes geométricos inspirados na FILA */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(125deg, rgba(227, 27, 35, 0.15) 0%, rgba(227, 27, 35, 0) 70%);
+    transform: skewX(-20deg);
+    z-index: 1;
+}
+
+.hero .container {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 48px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-tagline {
+    background-color: rgba(227, 27, 35, 0.15);
+    border-left: 4px solid var(--fila-red);
+    color: var(--fila-red);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    display: inline-block;
+    margin-bottom: 24px;
+    border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.hero h1 span {
+    color: var(--fila-red);
+}
+
+.hero p {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 36px;
+    max-width: 540px;
+}
+
+.hero-image-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border: 8px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-lg);
+    transform: rotate(4deg);
+    z-index: 1;
+}
+
+.hero-img {
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 2;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 3. Banner 2: Oferta Exclusiva */
+.exclusiva-oferta {
+    background-color: var(--bg-light);
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--fila-navy);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+}
+
+.offer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+}
+
+.offer-card {
+    background-color: var(--fila-white);
+    border-radius: var(--border-radius-md);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-md);
+    border-top: 5px solid var(--fila-navy);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.offer-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.offer-card.highlight {
+    border-top-color: var(--fila-red);
+    position: relative;
+}
+
+.offer-card.highlight::after {
+    content: 'CAMPEÃO DE VENDAS';
+    position: absolute;
+    top: -14px;
+    right: 24px;
+    background-color: var(--fila-red);
+    color: var(--text-white);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}
+
+.offer-icon {
+    font-size: 40px;
+    margin-bottom: 24px;
+    color: var(--fila-navy);
+}
+
+.offer-card.highlight .offer-icon {
+    color: var(--fila-red);
+}
+
+.offer-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 12px;
+}
+
+.offer-card p {
+    color: var(--text-muted);
+    font-size: 15px;
+    flex-grow: 1;
+    margin-bottom: 24px;
+}
+
+.offer-price {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--fila-navy);
+    margin-top: auto;
+    margin-bottom: 8px;
+}
+
+.offer-price span {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* 4. Banner 3: Resgate de Voucher */
+.voucher-section {
+    background: linear-gradient(rgba(0, 44, 91, 0.95), rgba(0, 26, 54, 0.98)), url('https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1200') center/cover no-repeat;
+    color: var(--text-white);
+    position: relative;
+}
+
+.voucher-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.voucher-text h2 {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--text-white);
+}
+
+.voucher-text p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.voucher-steps {
+    list-style: none;
+}
+
+.voucher-steps li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.step-num {
+    background-color: var(--fila-red);
+    color: var(--text-white);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.voucher-form-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-white);
+    font-size: 16px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group input:focus {
+    border-color: var(--fila-red);
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.25);
+}
+
+/* Sucesso do Voucher */
+.voucher-success {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.ticket {
+    background-color: var(--fila-white);
+    color: var(--text-dark);
+    border-radius: var(--border-radius-md);
+    padding: 30px;
+    margin: 24px 0;
+    border-left: 6px dashed var(--fila-red);
+    border-right: 6px dashed var(--fila-red);
+    position: relative;
+    box-shadow: var(--shadow-md);
+}
+
+.ticket-header {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.ticket-discount {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--fila-red);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.ticket-code {
+    font-family: monospace;
+    font-size: 24px;
+    background-color: var(--bg-light);
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: 3px;
+    border: 1px dashed var(--fila-navy);
+    color: var(--fila-navy);
+    margin: 12px 0;
+}
+
+/* 5. Banner 4: Lentes Corretivas */
+.lentes-secao {
+    background-color: var(--fila-white);
+}
+
+.lentes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.lente-card {
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-md);
+    padding: 32px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.lente-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 44, 91, 0.15);
+}
+
+.lente-card h4 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 12px;
+}
+
+.lente-brand {
+    font-size: 11px;
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+    padding: 2px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.lente-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+/* 6. Banner 6: Carrossel de Produtos */
+.vitrine-secao {
+    background-color: var(--bg-light);
+    overflow: hidden;
+}
+
+.carousel-outer-wrapper {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.products-track-container {
+    overflow: hidden;
+    width: 100%;
+}
+
+.products-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    padding: 20px 0;
+}
+
+/* Cada Card do Óculos */
+.product-card {
+    min-width: calc(33.333% - 16px);
+    background-color: var(--fila-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.product-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Galeria de Fotos dentro do Card */
+.card-gallery {
+    height: 180px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    background-color: #F8FAFC;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+}
+
+.card-gallery-img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    position: absolute;
+}
+
+.card-gallery-img.active {
+    opacity: 1;
+    position: relative;
+}
+
+/* Miniaturas para Giro de Fotos (3 Opções) */
+.gallery-thumbs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.thumb-dot {
+    width: 36px;
+    height: 36px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #EDF2F7;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-dot img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.thumb-dot.active {
+    border-color: var(--fila-red);
+    background-color: var(--fila-white);
+    box-shadow: var(--shadow-sm);
+}
+
+.product-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background-color: var(--fila-navy);
+    color: var(--text-white);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.product-info h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 8px;
+}
+
+.product-ref {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.product-price-box {
+    margin-top: auto;
+    border-top: 1px solid #EDF2F7;
+    padding-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.price-old {
+    font-size: 13px;
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.price-new {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--fila-red);
+}
+
+/* Setas do Carrossel Geral */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--fila-white);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: var(--transition);
+    color: var(--fila-navy);
+    font-size: 20px;
+}
+
+.carousel-btn:hover {
+    background-color: var(--fila-red);
+    color: var(--text-white);
+}
+
+.carousel-btn.prev {
+    left: -24px;
+}
+
+.carousel-btn.next {
+    right: -24px;
+}
+
+/* Indicadores de bolinhas do Carrossel */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #CBD5E1;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.carousel-dot.active {
+    background-color: var(--fila-navy);
+    width: 24px;
+    border-radius: 5px;
+}
+
+/* 7. Banner 5: Contato, Horário e Como Chegar */
+.location-section {
+    background-color: var(--fila-white);
+}
+
+.location-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+}
+
+.location-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-card {
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius-md);
+    padding: 30px;
+    margin-bottom: 24px;
+    border-left: 5px solid var(--fila-navy);
+}
+
+.contact-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-icon {
+    font-size: 20px;
+    color: var(--fila-red);
+    margin-top: 3px;
+}
+
+.contact-item h5 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fila-navy);
+    margin-bottom: 4px;
+}
+
+.contact-item p {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.map-container {
+    background-color: #EDF2F7;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-md);
+    min-height: 380px;
+}
+
+.map-mockup {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    border: none;
+}
+
+/* Rodapé (Footer) */
+footer {
+    background-color: var(--fila-navy-dark);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 40px 0;
+    font-size: 14px;
+    border-top: 4px solid var(--fila-red);
+}
+
+footer .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-nav {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-nav a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-nav a:hover {
+    color: var(--text-white);
+}
+
+.footer-copy {
+    text-align: center;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .hero .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 40px;
+    }
+    
+    .hero h1 {
+        font-size: 38px;
+    }
+    
+    .hero p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .hero-image-wrapper {
+        order: -1;
+    }
+    
+    .voucher-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .location-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-card {
+        min-width: calc(50% - 12px);
+    }
+}
+
+@media (max-width: 640px) {
+    .section {
+        padding: 50px 0;
+    }
+    
+    .hero h1 {
+        font-size: 30px;
+    }
+    
+    .product-card {
+        min-width: 100%;
+    }
+    
+    .voucher-form-box {
+        padding: 24px;
+    }
+    
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .carousel-btn.prev {
+        left: -8px;
+    }
+    
+    .carousel-btn.next {
+        right: -8px;
+    }
+}
