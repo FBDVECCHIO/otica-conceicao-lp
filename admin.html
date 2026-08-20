@@ -92,7 +92,7 @@
             color: var(--text-dark);
         }
 
-        .form-group input {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 12px 16px;
             border-radius: var(--border-radius-sm);
@@ -100,9 +100,10 @@
             font-size: 15px;
             outline: none;
             transition: var(--transition);
+            background-color: #fff;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--fila-navy);
             box-shadow: 0 0 0 3px rgba(0, 44, 91, 0.15);
         }
@@ -113,7 +114,7 @@
             justify-content: center;
             padding: 12px 24px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-radius: var(--border-radius-sm);
@@ -127,7 +128,7 @@
 
         .btn-primary {
             background-color: var(--fila-red);
-            color: var(--fila-white);
+            color: var(--text-white);
         }
 
         .btn-primary:hover {
@@ -136,7 +137,7 @@
 
         .btn-secondary {
             background-color: var(--fila-navy);
-            color: var(--fila-white);
+            color: var(--text-white);
         }
 
         .btn-secondary:hover {
@@ -145,14 +146,23 @@
 
         .btn-danger {
             background-color: #EF4444;
-            color: var(--fila-white);
+            color: var(--text-white);
         }
 
         .btn-danger:hover {
             background-color: #DC2626;
         }
 
-        /* PAINEL DASHBOARD (OCULTO POR PADRÃO) */
+        .btn-success {
+            background-color: #10B981;
+            color: var(--text-white);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        /* PAINEL DASHBOARD */
         .dashboard-wrapper {
             display: none;
             flex-direction: column;
@@ -187,6 +197,53 @@
             width: 100%;
         }
 
+        /* NAVEGAÇÃO POR ABAS (TABS) */
+        .admin-nav-tabs {
+            display: flex;
+            background-color: var(--fila-white);
+            border-radius: var(--border-radius-md);
+            padding: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            background-color: transparent;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tab-btn.active {
+            background-color: var(--fila-navy);
+            color: var(--text-white);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background-color: rgba(0, 44, 91, 0.05);
+            color: var(--fila-navy);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         /* CARDS ESTATÍSTICAS */
         .stats-grid {
             display: grid;
@@ -206,17 +263,9 @@
             justify-content: space-between;
         }
 
-        .stat-card:nth-child(2) {
-            border-left-color: var(--fila-red);
-        }
-
-        .stat-card:nth-child(3) {
-            border-left-color: #10B981;
-        }
-
-        .stat-card:nth-child(4) {
-            border-left-color: #F59E0B;
-        }
+        .stat-card:nth-child(2) { border-left-color: var(--fila-red); }
+        .stat-card:nth-child(3) { border-left-color: #10B981; }
+        .stat-card:nth-child(4) { border-left-color: #F59E0B; }
 
         .stat-info h3 {
             font-size: 13px;
@@ -244,7 +293,7 @@
             border-radius: var(--border-radius-md);
             box-shadow: var(--shadow-sm);
             padding: 30px;
-            overflow: hidden;
+            margin-bottom: 24px;
         }
 
         .table-header-row {
@@ -344,6 +393,7 @@
             text-align: center;
             padding: 60px 20px;
             color: var(--text-muted);
+            display: none;
         }
 
         .empty-state i {
@@ -352,28 +402,65 @@
             color: #CBD5E1;
         }
 
+        /* LAYOUT DE FORMULÁRIO CMS (GERENCIAR ITENS) */
+        .cms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .cms-card {
+            background-color: var(--fila-white);
+            border-radius: var(--border-radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid var(--fila-navy);
+        }
+
+        .cms-card h4 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--fila-navy);
+            margin-bottom: 16px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cms-card-index {
+            background-color: var(--bg-light);
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @media(max-width: 768px) {
-            header {
-                padding: 16px 20px;
-            }
-            .main-content {
-                padding: 20px;
-            }
-            .table-header-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .table-actions {
-                width: 100%;
-            }
-            .table-actions .btn {
-                flex-grow: 1;
-            }
+            header { padding: 16px 20px; }
+            .main-content { padding: 20px; }
+            .admin-nav-tabs { flex-direction: column; }
+            .table-header-row { flex-direction: column; align-items: flex-start; }
+            .table-actions { width: 100%; }
+            .table-actions .btn { flex-grow: 1; }
         }
     </style>
 </head>
@@ -416,98 +503,187 @@
         </header>
 
         <main class="main-content">
-            <!-- Blocos de Estatísticas -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Total de Leads</h3>
-                        <div class="stat-number" id="stat-total-leads">0</div>
+            
+            <!-- Menu de Abas (Navegação interna do Admin) -->
+            <div class="admin-nav-tabs">
+                <button class="tab-btn active" data-tab="leads-tab">
+                    <i class="fas fa-users"></i> Leads Recebidos
+                </button>
+                <button class="tab-btn" data-tab="frames-tab">
+                    <i class="fas fa-glasses"></i> Administrar Armações
+                </button>
+                <button class="tab-btn" data-tab="lenses-tab">
+                    <i class="fas fa-eye"></i> Administrar Lentes
+                </button>
+            </div>
+
+            <!-- ==========================================
+                 ABA 1: LEADS (TAB CONTENT)
+                 ========================================== -->
+            <div class="tab-content active" id="leads-tab">
+                <!-- Blocos de Estatísticas -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total de Leads</h3>
+                            <div class="stat-number" id="stat-total-leads">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Faturamento Estimado</h3>
+                            <div class="stat-number" id="stat-revenue">R$ 0,00</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Aro Favorito</h3>
+                            <div class="stat-number" id="stat-fav-frame" style="font-size: 15px; font-weight: 700; margin-top: 5px;">N/A</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-glasses"></i></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Lente Favorita</h3>
+                            <div class="stat-number" id="stat-fav-lens" style="font-size: 15px; font-weight: 700; margin-top: 5px;">N/A</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    </div>
                 </div>
-                
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Faturamento Estimado</h3>
-                        <div class="stat-number" id="stat-revenue">R$ 0,00</div>
+
+                <!-- Tabela dos Leads -->
+                <div class="table-card">
+                    <div class="table-header-row">
+                        <div class="table-title">Leads Cadastrados (Gravação Local)</div>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary" id="export-csv-btn">
+                                <i class="fas fa-file-csv"></i> Exportar CSV
+                            </button>
+                            <button class="btn btn-danger" id="clear-db-btn">
+                                <i class="fas fa-trash-alt"></i> Limpar Lista
+                            </button>
+                        </div>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Aro Favorito</h3>
-                        <div class="stat-number" id="stat-fav-frame" style="font-size: 16px; font-weight: 700; margin-top: 5px;">N/A</div>
+
+                    <div class="table-responsive">
+                        <table id="leads-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Cliente</th>
+                                    <th>WhatsApp</th>
+                                    <th>Cidade</th>
+                                    <th>Armação Fila</th>
+                                    <th>Lente Selecionada</th>
+                                    <th>Preço Combo</th>
+                                    <th>Voucher</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Inserido via JS -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-glasses"></i></div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Lente Favorita</h3>
-                        <div class="stat-number" id="stat-fav-lens" style="font-size: 16px; font-weight: 700; margin-top: 5px;">N/A</div>
+
+                    <!-- Estado Vazio -->
+                    <div class="empty-state" id="table-empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>Nenhum lead recebido até o momento. Cadastre-se na landing page para ver o funcionamento em tempo real!</p>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
                 </div>
             </div>
 
-            <!-- Tabela dos Leads -->
-            <div class="table-card">
+            <!-- ==========================================
+                 ABA 2: GERENCIAR ARMAÇÕES (TAB CONTENT)
+                 ========================================== -->
+            <div class="tab-content" id="frames-tab">
                 <div class="table-header-row">
-                    <div class="table-title">Leads Cadastrados (Gravação Local)</div>
+                    <div class="table-title">Gerenciar Vitrine de Armações Fila</div>
                     <div class="table-actions">
-                        <button class="btn btn-secondary" id="export-csv-btn">
-                            <i class="fas fa-file-csv"></i> Exportar CSV
-                        </button>
-                        <button class="btn btn-danger" id="clear-db-btn">
-                            <i class="fas fa-trash-alt"></i> Limpar Lista
+                        <button class="btn btn-success" id="save-frames-btn">
+                            <i class="fas fa-save"></i> Salvar Alterações
                         </button>
                     </div>
                 </div>
-
-                <div class="table-responsive">
-                    <table id="leads-table">
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Cliente</th>
-                                <th>WhatsApp</th>
-                                <th>Cidade</th>
-                                <th>Armação Fila</th>
-                                <th>Lente Selecionada</th>
-                                <th>Preço Combo</th>
-                                <th>Voucher</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            <!-- Inserido dinamicamente via JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Estado Vazio -->
-                <div class="empty-state" id="table-empty-state">
-                    <i class="fas fa-folder-open"></i>
-                    <p>Nenhum lead recebido até o momento. Cadastre-se na landing page para ver o funcionamento em tempo real!</p>
-                </div>
+                
+                <form id="frames-cms-form">
+                    <div class="cms-grid" id="frames-editor-container">
+                        <!-- Injetado dinamicamente via JS -->
+                    </div>
+                </form>
             </div>
+
+            <!-- ==========================================
+                 ABA 3: GERENCIAR LENTES (TAB CONTENT)
+                 ========================================== -->
+            <div class="tab-content" id="lenses-tab">
+                <div class="table-header-row">
+                    <div class="table-title">Gerenciar Ofertas de Lentes Corretivas</div>
+                    <div class="table-actions">
+                        <button class="btn btn-success" id="save-lenses-btn">
+                            <i class="fas fa-save"></i> Salvar Lentes
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="lenses-cms-form">
+                    <div class="cms-grid" id="lenses-editor-container">
+                        <!-- Injetado dinamicamente via JS -->
+                    </div>
+                </form>
+            </div>
+
         </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // ==========================================
+            // LOGICA DE CONTROLE DE TABS
+            // ==========================================
+            const tabsButtons = document.querySelectorAll('.tab-btn');
+            const tabsContents = document.querySelectorAll('.tab-content');
+
+            tabsButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTabId = btn.getAttribute('data-tab');
+                    
+                    tabsButtons.forEach(b => b.classList.remove('active'));
+                    tabsContents.forEach(c => c.classList.remove('active'));
+                    
+                    btn.classList.add('active');
+                    document.getElementById(targetTabId).classList.add('active');
+                    
+                    // Recarregar dados específicos ao entrar na aba
+                    if (targetTabId === 'frames-tab') {
+                        loadFramesCMS();
+                    } else if (targetTabId === 'lenses-tab') {
+                        loadLensesCMS();
+                    } else if (targetTabId === 'leads-tab') {
+                        renderDashboard();
+                    }
+                });
+            });
+
+            // ==========================================
+            // CONTROLE DE LOGIN E SESSÃO
+            // ==========================================
             const loginForm = document.getElementById('login-form');
             const loginScreen = document.getElementById('login-screen');
             const dashboardScreen = document.getElementById('dashboard-screen');
             const logoutBtn = document.getElementById('logout-btn');
             
-            // Verificar login ativo na sessão
             if (sessionStorage.getItem('admin_logged') === 'true') {
                 showDashboard();
             }
 
-            // Ação de Login
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const user = document.getElementById('username').value.trim();
@@ -521,7 +697,6 @@
                 }
             });
 
-            // Ação de Logout
             logoutBtn.addEventListener('click', () => {
                 sessionStorage.setItem('admin_logged', 'false');
                 loginScreen.style.display = 'flex';
@@ -534,13 +709,14 @@
                 renderDashboard();
             }
 
-            // Renderizar Dados do Dashboard
+            // ==========================================
+            // ABA 1: RENDER DE LEADS & STATS
+            // ==========================================
             function renderDashboard() {
                 const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
                 const tableBody = document.getElementById('table-body');
                 const emptyState = document.getElementById('table-empty-state');
                 
-                // Limpa tabela
                 tableBody.innerHTML = '';
                 
                 if (leads.length === 0) {
@@ -555,16 +731,12 @@
                 let frameCounts = {};
                 let lensCounts = {};
 
-                // Renderiza cada linha de lead
                 leads.forEach(lead => {
                     totalRevenue += lead.price;
-                    
-                    // Contagem para ranking
                     frameCounts[lead.frame] = (frameCounts[lead.frame] || 0) + 1;
                     lensCounts[lead.lens] = (lensCounts[lead.lens] || 0) + 1;
 
                     const row = document.createElement('tr');
-                    
                     const cleanPhone = lead.phone.replace(/\D/g, '');
                     
                     row.innerHTML = `
@@ -582,20 +754,16 @@
                             </a>
                         </td>
                     `;
-                    
                     tableBody.appendChild(row);
                 });
 
-                // Atualizar Stats
                 updateStats(leads, totalRevenue, frameCounts, lensCounts);
             }
 
-            // Calcular e Exibir Estatísticas
             function updateStats(leads, totalRevenue, frameCounts = {}, lensCounts = {}) {
                 document.getElementById('stat-total-leads').textContent = leads.length;
                 document.getElementById('stat-revenue').textContent = `R$ ${totalRevenue},00`;
 
-                // Acha o aro mais escolhido
                 let maxFrame = 'N/A';
                 let maxFCount = 0;
                 for (let key in frameCounts) {
@@ -606,7 +774,6 @@
                 }
                 document.getElementById('stat-fav-frame').textContent = maxFrame;
 
-                // Acha a lente mais escolhida
                 let maxLens = 'N/A';
                 let maxLCount = 0;
                 for (let key in lensCounts) {
@@ -618,7 +785,139 @@
                 document.getElementById('stat-fav-lens').textContent = maxLens;
             }
 
-            // Botão Limpar Banco
+            // ==========================================
+            // ABA 2: CMS DE ARMAÇÕES
+            // ==========================================
+            function loadFramesCMS() {
+                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                const container = document.getElementById('frames-editor-container');
+                container.innerHTML = '';
+                
+                frames.forEach((f, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'cms-card';
+                    card.innerHTML = `
+                        <h4>
+                            <span>Armação ${f.id}</span>
+                            <span class="cms-card-index">${idx + 1}</span>
+                        </h4>
+                        <input type="hidden" name="frame-id-${idx}" value="${f.id}">
+                        
+                        <div class="form-group">
+                            <label>Nome do Modelo</label>
+                            <input type="text" name="frame-name-${idx}" value="${f.name}" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código REF</label>
+                                <input type="text" name="frame-ref-${idx}" value="${f.ref}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Selo / Tag</label>
+                                <input type="text" name="frame-badge-${idx}" value="${f.badge || ''}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Preço "De" (R$)</label>
+                                <input type="number" name="frame-old-${idx}" value="${f.oldPrice}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Preço "Por" (R$)</label>
+                                <input type="number" name="frame-new-${idx}" value="${f.newPrice}" required>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // Salvar Armações CMS
+            document.getElementById('save-frames-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                
+                frames.forEach((f, idx) => {
+                    f.name = document.querySelector(`[name="frame-name-${idx}"]`).value;
+                    f.ref = document.querySelector(`[name="frame-ref-${idx}"]`).value;
+                    f.badge = document.querySelector(`[name="frame-badge-${idx}"]`).value;
+                    f.oldPrice = parseFloat(document.querySelector(`[name="frame-old-${idx}"]`).value);
+                    f.newPrice = parseFloat(document.querySelector(`[name="frame-new-${idx}"]`).value);
+                });
+                
+                localStorage.setItem('campanha_frames', JSON.stringify(frames));
+                alert('Armações atualizadas com sucesso! Elas já estão refletidas na Landing Page.');
+            });
+
+            // ==========================================
+            // ABA 3: CMS DE LENTES
+            // ==========================================
+            function loadLensesCMS() {
+                const lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                const container = document.getElementById('lenses-editor-container');
+                container.innerHTML = '';
+                
+                lenses.forEach((l, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'cms-card';
+                    card.innerHTML = `
+                        <h4>
+                            <span>Lente ${l.id}</span>
+                            <span class="cms-card-index">${idx + 1}</span>
+                        </h4>
+                        <input type="hidden" name="lens-id-${idx}" value="${l.id}">
+                        
+                        <div class="form-group">
+                            <label>Nome da Lente</label>
+                            <input type="text" name="lens-name-${idx}" value="${l.name}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Preço Adicional (R$)</label>
+                            <input type="number" name="lens-price-${idx}" value="${l.price}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Texto descritivo do preço</label>
+                            <input type="text" name="lens-priceLabel-${idx}" value="${l.priceLabel}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Descrição do Tratamento</label>
+                            <textarea name="lens-desc-${idx}" rows="3" required style="resize: vertical;">${l.desc}</textarea>
+                        </div>
+                        
+                        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" name="lens-highlight-${idx}" id="lens-highlight-${idx}" ${l.highlight ? 'checked' : ''} style="width: auto;">
+                            <label for="lens-highlight-${idx}" style="margin-bottom: 0; cursor: pointer;">Destacar como Recomendada</label>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // Salvar Lentes CMS
+            document.getElementById('save-lenses-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                
+                lenses.forEach((l, idx) => {
+                    l.name = document.querySelector(`[name="lens-name-${idx}"]`).value;
+                    l.price = parseFloat(document.querySelector(`[name="lens-price-${idx}"]`).value);
+                    l.priceLabel = document.querySelector(`[name="lens-priceLabel-${idx}"]`).value;
+                    l.desc = document.querySelector(`[name="lens-desc-${idx}"]`).value;
+                    l.highlight = document.querySelector(`[name="lens-highlight-${idx}"]`).checked;
+                });
+                
+                localStorage.setItem('campanha_lenses', JSON.stringify(lenses));
+                alert('Lentes atualizadas com sucesso! Elas já estão refletidas na Landing Page.');
+            });
+
+            // ==========================================
+            // EXPORTAÇÃO E LIMPEZA DE LEADS
+            // ==========================================
             document.getElementById('clear-db-btn').addEventListener('click', () => {
                 if (confirm('Tem certeza absoluta que deseja apagar TODOS os leads cadastrados no seu navegador? Esta ação não pode ser desfeita.')) {
                     localStorage.removeItem('leads_conceicao');
@@ -626,7 +925,6 @@
                 }
             });
 
-            // Exportar para CSV
             document.getElementById('export-csv-btn').addEventListener('click', () => {
                 const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
                 if (leads.length === 0) {
@@ -634,7 +932,6 @@
                     return;
                 }
 
-                // Cria o conteúdo do CSV
                 let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
                 csvContent += "Data/Hora;Nome;WhatsApp;Email;Cidade;Armacao Fila;Lente;Preco;Voucher\r\n";
 
@@ -653,7 +950,6 @@
                     csvContent += row + "\r\n";
                 });
 
-                // Baixar arquivo no navegador
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);

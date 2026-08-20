@@ -317,6 +317,7 @@ header .container {
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
     padding: 20px 0;
+    min-height: 440px; /* Evita quebra se imagens demorarem a carregar */
 }
 
 /* Card de Óculos */
@@ -324,7 +325,7 @@ header .container {
     min-width: calc(33.333% - 16px);
     background-color: var(--fila-white);
     border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     padding: 24px;
     border: 3px solid transparent;
     display: flex;
@@ -332,6 +333,10 @@ header .container {
     position: relative;
     transition: var(--transition);
     user-select: none;
+}
+
+.product-card:hover {
+    box-shadow: var(--shadow-md);
 }
 
 /* Card Selecionado */
@@ -453,6 +458,10 @@ header .container {
     font-size: 20px;
     font-weight: 800;
     color: var(--fila-red);
+}
+
+.select-frame-btn .check-icon, .select-lens-btn .check-icon {
+    font-size: 16px;
 }
 
 /* Setas do Carrossel */
@@ -941,6 +950,67 @@ footer .container {
     text-align: center;
 }
 
+/* ==========================================
+   🤖 BOTÕES FLUTUANTES (Voltar ao Topo & Admin)
+   ========================================== */
+.floating-controls {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 999;
+}
+
+.floating-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 18px;
+}
+
+/* Botão Voltar ao Topo (Inicia invisível) */
+.btn-scroll {
+    background-color: var(--fila-navy);
+    color: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+}
+
+.btn-scroll.visible {
+    opacity: 0.9;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.btn-scroll:hover {
+    opacity: 1;
+    background-color: var(--fila-red);
+    transform: scale(1.08);
+}
+
+/* Botão de Cadeado (Admin) */
+.btn-admin {
+    background-color: #ffffff;
+    color: var(--fila-navy);
+    border: 2px solid var(--fila-navy);
+}
+
+.btn-admin:hover {
+    background-color: var(--fila-navy);
+    color: #ffffff;
+    transform: scale(1.08) rotate(-15deg);
+}
+
 /* Animações */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -948,7 +1018,7 @@ footer .container {
 }
 
 /* ==========================================
-   📱 RESPONSIVIDADE MOBILE (Smartphone Friendly)
+   📱 RESPONSIVIDADE MOBILE
    ========================================== */
 @media (max-width: 992px) {
     .section {
@@ -1025,13 +1095,24 @@ footer .container {
     .carousel-btn.prev { left: -8px; }
     .carousel-btn.next { right: -8px; }
     
-    /* Toques e botões amigáveis no smartphone */
     .btn {
-        padding: 16px 20px; /* Aumenta a área de clique */
+        padding: 16px 20px;
         font-size: 16px;
     }
     
     .select-frame-btn, .select-lens-btn {
         padding: 12px 16px;
+    }
+    
+    .floating-controls {
+        bottom: 16px;
+        right: 16px;
+        gap: 8px;
+    }
+    
+    .floating-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
     }
 }
