@@ -164,8 +164,10 @@ header .container {
     background-color: #E2E8F0;
 }
 
-.logo-fila-svg {
+.logo-fila-svg, .logo-fila-img {
     height: 22px;
+    width: auto;
+    display: block;
 }
 
 /* 1. Banner 1: Tradição Fila x Tradição Óticas Conceição */
