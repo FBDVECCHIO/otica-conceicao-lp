@@ -1,10 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
+// ==========================================
+// CONFIGURAÇÃO DO SUPABASE (Opcional)
+// Substitua pelos dados do seu projeto Supabase para ativar o banco em nuvem
+// ==========================================
+const SUPABASE_URL = "SUA_SUPABASE_URL_AQUI";
+const SUPABASE_KEY = "SUA_SUPABASE_KEY_AQUI";
+
+const isSupabaseConfigured = () => {
+    return SUPABASE_URL && SUPABASE_URL !== "SUA_SUPABASE_URL_AQUI" && 
+           SUPABASE_KEY && SUPABASE_KEY !== "SUA_SUPABASE_KEY_AQUI";
+};
+
+// Instância global do Supabase (se configurado)
+let supabaseClient = null;
+if (isSupabaseConfigured()) {
+    try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch (e) {
+        console.error("Erro ao inicializar cliente do Supabase:", e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     
     // ==========================================
-    // 1. BANCO DE DADOS LOCAL (localStorage)
+    // 1. BANCO DE DADOS LOCAL (localStorage - FALLBACK)
     // ==========================================
-    
-    // Dados de Armações Padrão
     const defaultFrames = [
         { id: 1, name: "FILA Active Navy", ref: "F8142-N50", oldPrice: 589, newPrice: 299, badge: "MAIS PROCURADO", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(180deg)", filter2: "" },
         { id: 2, name: "FILA Sport Red", ref: "F8145-R52", oldPrice: 629, newPrice: 319, badge: "ESPORTIVO", image0: "assets/images/frame_red_side.png", image1: "assets/images/frame_navy_front.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(140deg)", filter2: "hue-rotate(140deg)" },
@@ -14,43 +34,98 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 6, name: "FILA Crystal White", ref: "F8139-C52", oldPrice: 689, newPrice: 349, badge: "TENDÊNCIA", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "invert(0.9) brightness(1.2) contrast(0.8)", filter1: "invert(0.9) brightness(1.2) contrast(0.8)", filter2: "sepia(0.2) brightness(1.1)" }
     ];
 
-    // Dados de Lentes Padrão
     const defaultLenses = [
         { id: 1, name: "Lente Zeiss Single Vision", desc: "Antirreflexo e nitidez excepcional. Excelente custo-benefício para quem busca conforto diário nas atividades gerais.", priceLabel: "Inclusa no Combo", price: 0, highlight: false },
         { id: 2, name: "Lentes Blue Cut (Filtro Azul)", desc: "Desenvolvida para proteger a sua visão contra a luz azul de telas (celular e notebook), aliviando o cansaço dos olhos.", priceLabel: "+ R$ 79,00 adicional", price: 79, highlight: true },
         { id: 3, name: "Essilor Crizal Sapphire", desc: "Camada premium antirreflexo que protege contra arranhões, reflexo, poeira e raios UV nocivos.", priceLabel: "+ R$ 149,00 adicional", price: 149, highlight: false }
     ];
 
-    // Inicialização segura no localStorage
-    if (!localStorage.getItem('campanha_frames')) {
-        localStorage.setItem('campanha_frames', JSON.stringify(defaultFrames));
-    }
-    if (!localStorage.getItem('campanha_lenses')) {
-        localStorage.setItem('campanha_lenses', JSON.stringify(defaultLenses));
-    }
+    // Inicialização local padrão
+    const getLocalFrames = () => {
+        if (!localStorage.getItem('campanha_frames')) {
+            localStorage.setItem('campanha_frames', JSON.stringify(defaultFrames));
+        }
+        return JSON.parse(localStorage.getItem('campanha_frames'));
+    };
 
-    // Carregar dados ativos para a renderização
-    const framesData = JSON.parse(localStorage.getItem('campanha_frames'));
-    const lensesData = JSON.parse(localStorage.getItem('campanha_lenses'));
-
-    // ==========================================
-    // ESTADO DA SELEÇÃO DO COMBO
-    // ==========================================
-    let comboState = {
-        frame: null, // { id: X, name: 'FILA...', price: Y }
-        lens: null   // { id: X, name: 'Zeiss...', price: Y }
+    const getLocalLenses = () => {
+        if (!localStorage.getItem('campanha_lenses')) {
+            localStorage.setItem('campanha_lenses', JSON.stringify(defaultLenses));
+        }
+        return JSON.parse(localStorage.getItem('campanha_lenses'));
     };
 
     // ==========================================
-    // 2. RENDERIZAÇÃO DINÂMICA
+    // CARREGAR DADOS DOS PRODUTOS E LENTES
     // ==========================================
+    let framesData = [];
+    let lensesData = [];
+
+    if (supabaseClient) {
+        try {
+            // Tenta buscar as armações do Supabase
+            const { data: fData, error: fErr } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+            if (!fErr && fData && fData.length > 0) {
+                framesData = fData.map(f => ({
+                    id: f.id,
+                    name: f.name,
+                    ref: f.ref,
+                    badge: f.badge,
+                    oldPrice: f.old_price,
+                    newPrice: f.new_price,
+                    image0: f.image0,
+                    image1: f.image1,
+                    image2: f.image2,
+                    filter0: f.filter0 || "",
+                    filter1: f.filter1 || "",
+                    filter2: f.filter2 || ""
+                }));
+            } else {
+                console.warn("Vitrine Supabase vazia ou com erro, usando dados locais:", fErr);
+                framesData = getLocalFrames();
+            }
+
+            // Tenta buscar as lentes do Supabase
+            const { data: lData, error: lErr } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+            if (!lErr && lData && lData.length > 0) {
+                lensesData = lData.map(l => ({
+                    id: l.id,
+                    name: l.name,
+                    desc: l.desc,
+                    priceLabel: l.price_label,
+                    price: l.price,
+                    highlight: l.highlight
+                }));
+            } else {
+                lensesData = getLocalLenses();
+            }
+        } catch (e) {
+            console.error("Falha de conexão com o Supabase. Utilizando LocalStorage como plano B:", e);
+            framesData = getLocalFrames();
+            lensesData = getLocalLenses();
+        }
+    } else {
+        // Fallback direto se o Supabase não estiver configurado
+        framesData = getLocalFrames();
+        lensesData = getLocalLenses();
+    }
+
+    // Estado da Seleção
+    let comboState = {
+        frame: null,
+        lens: null
+    };
+
+    // Renderiza a vitrine
     renderFrames(framesData);
     renderLenses(lensesData);
 
-    // Renderizar Armações (Banner 2)
+    // ==========================================
+    // 2. COMPORTAMENTO DOS COMPONENTES (Renders)
+    // ==========================================
     function renderFrames(frames) {
         const track = document.getElementById('products-track');
-        if (!track) return;
+        if (!track || !frames) return;
         track.innerHTML = '';
         
         frames.forEach(f => {
@@ -92,10 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Renderizar Lentes (Banner 3)
     function renderLenses(lenses) {
         const grid = document.getElementById('lenses-grid');
-        if (!grid) return;
+        if (!grid || !lenses) return;
         grid.innerHTML = '';
         
         lenses.forEach(l => {
@@ -103,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = `offer-card ${l.highlight ? 'highlight' : ''}`;
             card.id = `card-lens-${l.id}`;
             
-            // Escolhe um ícone genérico baseado na lente
             let icon = 'fa-eye';
             if (l.name.toLowerCase().includes('azul') || l.name.toLowerCase().includes('blue')) {
                 icon = 'fa-desktop';
@@ -125,10 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. LOGICA DE INTERAÇÕES E CLIQUE (APÓS RENDERS)
+    // 3. LISTENERS DE SELEÇÃO E AÇÕES
     // ==========================================
-    
-    // Ação do Botão Selecionar Aro
     const frameButtons = document.querySelectorAll('.select-frame-btn');
     frameButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -162,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Ação do Botão Selecionar Lente
     const lensButtons = document.querySelectorAll('.select-lens-btn');
     lensButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -196,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Atualizar Resumo Dinâmico
     function updateSummary() {
         const frameVal = document.getElementById('summary-frame-val');
         const lensVal = document.getElementById('summary-lens-val');
@@ -235,13 +304,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Envio do formulário de resgate de voucher
+    // Envio do formulário de resgate
     const voucherForm = document.getElementById('resgate-form');
     const formBox = document.getElementById('form-box');
     const successBox = document.getElementById('success-box');
     
     if (voucherForm && formBox && successBox) {
-        voucherForm.addEventListener('submit', (e) => {
+        voucherForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const name = document.getElementById('name').value.trim();
@@ -259,36 +328,61 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando Combo...';
             
-            setTimeout(() => {
+            setTimeout(async () => {
                 const randomHex = Math.random().toString(16).substring(2, 6).toUpperCase();
                 const voucherCode = `FILA-${randomHex}`;
-                
-                // Formata o telefone sem traços adicionais para o envio
-                const cleanPhoneNum = phone.replace(/\D/g, '');
+                const totalCalculado = comboState.frame.price + comboState.lens.price;
                 
                 const leadData = {
                     date: new Date().toLocaleString('pt-BR'),
                     name: name,
-                    phone: phone, // Salva formatado para exibição bonita
+                    phone: phone, 
                     email: email,
                     city: city,
                     frame: comboState.frame.name,
                     lens: comboState.lens.name,
-                    price: comboState.frame.price + comboState.lens.price,
+                    price: totalCalculado,
                     code: voucherCode
                 };
                 
-                let leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
-                leads.push(leadData);
-                localStorage.setItem('leads_conceicao', JSON.stringify(leads));
+                // Gravar lead no Supabase ou LocalStorage
+                let savedOnCloud = false;
+                if (supabaseClient) {
+                    try {
+                        const { error } = await supabaseClient.from('leads').insert([{
+                            name: name,
+                            phone: phone,
+                            email: email,
+                            city: city,
+                            frame: comboState.frame.name,
+                            lens: comboState.lens.name,
+                            price: totalCalculado,
+                            code: voucherCode
+                        }]);
+                        if (!error) {
+                            savedOnCloud = true;
+                        } else {
+                            console.error("Falha no banco Supabase:", error);
+                        }
+                    } catch (err) {
+                        console.error("Erro crítico ao gravar no Supabase:", err);
+                    }
+                }
                 
+                // Se falhar ou não estiver configurado, salva no localStorage como fallback
+                if (!savedOnCloud) {
+                    let leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+                    leads.push(leadData);
+                    localStorage.setItem('leads_conceicao', JSON.stringify(leads));
+                }
+                
+                // Transição da Tela
                 document.getElementById('display-name').textContent = name.split(' ')[0];
                 document.getElementById('voucher-code-text').textContent = voucherCode;
                 
                 const whatsappBtn = document.getElementById('whatsapp-share-btn');
                 const storePhone = '5511999999999';
                 
-                const totalCalculado = comboState.frame.price + comboState.lens.price;
                 const messageText = `Olá Ópticas Conceição! Acabei de gerar meu cupom no site.\n\n` + 
                                     `🎫 *Código:* ${voucherCode}\n` +
                                     `👤 *Nome:* ${name}\n` +
@@ -309,12 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Máscara dinâmica para o campo de telefone brasileiro
+    // Máscara dinâmica para telefone
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
         phoneInput.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/\D/g, ''); // Apenas dígitos
-            if (val.length > 11) val = val.substring(0, 11); // Limite de 11 caracteres (celular)
+            let val = e.target.value.replace(/\D/g, ''); 
+            if (val.length > 11) val = val.substring(0, 11);
             
             let formatted = '';
             if (val.length > 0) {
@@ -354,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 4. CARROSSEL GERAL DE PRODUTOS (DESLIZAMENTO)
+    // 4. CARROSSEL GERAL DE PRODUTOS
     // ==========================================
     const track = document.getElementById('products-track');
     const prevBtn = document.getElementById('carousel-prev');
@@ -379,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentIndex = maxIndex;
             }
             
-            if (cards.length === 0) return; // Evita falha se não houver armações ativas
+            if (cards.length === 0) return;
             
             const cardWidth = cards[0].getBoundingClientRect().width;
             const gap = 24; 
@@ -444,11 +538,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. BOTÃO VOLTAR AO TOPO (SCROLL MONITOR)
     // ==========================================
     const backToTopBtn = document.getElementById('back-to-top');
-    const headerSection = document.getElementById('header-main');
-    
     if (backToTopBtn) {
         window.addEventListener('scroll', () => {
-            // Mostra o botão ao rolar mais de 450px (após o primeiro banner)
             if (window.scrollY > 450) {
                 backToTopBtn.classList.add('visible');
             } else {

@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -659,7 +662,29 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // ==========================================
+        // CONFIGURAÇÃO DO SUPABASE (Opcional)
+        // Substitua pelos dados do seu projeto Supabase para ativar o banco em nuvem
+        // ==========================================
+        const SUPABASE_URL = "SUA_SUPABASE_URL_AQUI";
+        const SUPABASE_KEY = "SUA_SUPABASE_KEY_AQUI";
+
+        const isSupabaseConfigured = () => {
+            return SUPABASE_URL && SUPABASE_URL !== "SUA_SUPABASE_URL_AQUI" && 
+                   SUPABASE_KEY && SUPABASE_KEY !== "SUA_SUPABASE_KEY_AQUI";
+        };
+
+        // Instância global do Supabase
+        let supabaseClient = null;
+        if (isSupabaseConfigured()) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (e) {
+                console.error("Erro ao inicializar cliente do Supabase no Admin:", e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             
             // Função para comprimir e converter imagens em Base64
             function compressImage(file, callback) {
@@ -690,7 +715,6 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Salva como JPEG 75% de qualidade para ficar leve no localStorage
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
                         callback(dataUrl);
                     };
@@ -715,7 +739,6 @@
                     btn.classList.add('active');
                     document.getElementById(targetTabId).classList.add('active');
                     
-                    // Recarregar dados específicos ao entrar na aba
                     if (targetTabId === 'frames-tab') {
                         loadFramesCMS();
                     } else if (targetTabId === 'lenses-tab') {
@@ -766,10 +789,41 @@
             // ==========================================
             // ABA 1: RENDER DE LEADS & STATS
             // ==========================================
-            function renderDashboard() {
-                const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+            async function renderDashboard() {
                 const tableBody = document.getElementById('table-body');
                 const emptyState = document.getElementById('table-empty-state');
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Carregando dados...</td></tr>';
+                
+                let leads = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+                        if (!error && data) {
+                            leads = data.map(l => ({
+                                date: new Date(l.created_at).toLocaleString('pt-BR'),
+                                name: l.name,
+                                phone: l.phone,
+                                email: l.email,
+                                city: l.city,
+                                frame: l.frame,
+                                lens: l.lens,
+                                price: parseFloat(l.price),
+                                code: l.code
+                            }));
+                            loadedFromCloud = true;
+                        } else {
+                            console.warn("Erro ao buscar leads no Supabase, usando local:", error);
+                        }
+                    } catch (err) {
+                        console.error("Falha ao se conectar ao Supabase para buscar leads:", err);
+                    }
+                }
+
+                if (!loadedFromCloud) {
+                    leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+                }
                 
                 tableBody.innerHTML = '';
                 
@@ -842,9 +896,42 @@
             // ==========================================
             // ABA 2: CMS DE ARMAÇÕES
             // ==========================================
-            function loadFramesCMS() {
-                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+            async function loadFramesCMS() {
                 const container = document.getElementById('frames-editor-container');
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Carregando armações...</div>';
+                
+                let frames = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        if (!error && data && data.length > 0) {
+                            frames = data.map(f => ({
+                                id: f.id,
+                                name: f.name,
+                                ref: f.ref,
+                                badge: f.badge,
+                                oldPrice: f.old_price,
+                                newPrice: f.new_price,
+                                image0: f.image0,
+                                image1: f.image1,
+                                image2: f.image2,
+                                filter0: f.filter0 || "",
+                                filter1: f.filter1 || "",
+                                filter2: f.filter2 || ""
+                            }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {
+                        console.error("Falha ao ler armações do Supabase:", err);
+                    }
+                }
+
+                if (!loadedFromCloud) {
+                    frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                }
+
                 container.innerHTML = '';
                 
                 frames.forEach((f, idx) => {
@@ -920,7 +1007,7 @@
                     container.appendChild(card);
                 });
 
-                // Vincula listeners para escutar uploads de arquivos locais e processá-los
+                // Vincula listeners para uploads
                 const fileInputs = container.querySelectorAll('.frame-file-input');
                 fileInputs.forEach(input => {
                     input.addEventListener('change', (e) => {
@@ -930,7 +1017,6 @@
                             const imgKey = e.target.getAttribute('data-img-key');
                             const previewImg = document.getElementById(`preview-frame-${frameIdx}-${imgKey}`);
                             
-                            // Comprimir a imagem e gerar o Data URL comprimido
                             compressImage(file, (compressedUrl) => {
                                 previewImg.src = compressedUrl;
                                 e.target.setAttribute('data-base64', compressedUrl);
@@ -942,14 +1028,26 @@
                 // Vincula listeners para botões de exclusão
                 const deleteButtons = container.querySelectorAll('.btn-delete-frame');
                 deleteButtons.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
+                    btn.addEventListener('click', async (e) => {
                         e.preventDefault();
                         const frameId = parseInt(btn.getAttribute('data-id'));
                         
                         if (confirm('Tem certeza que deseja remover esta armação?')) {
+                            let deletedOnCloud = false;
+                            if (supabaseClient) {
+                                try {
+                                    const { error } = await supabaseClient.from('frames').delete().eq('id', frameId);
+                                    if (!error) deletedOnCloud = true;
+                                } catch (err) {
+                                    console.error("Falha ao deletar no Supabase:", err);
+                                }
+                            }
+                            
+                            // Remove localmente também (sincronização/fallback)
                             let frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
                             frames = frames.filter(f => f.id !== frameId);
                             localStorage.setItem('campanha_frames', JSON.stringify(frames));
+                            
                             loadFramesCMS();
                         }
                     });
@@ -957,9 +1055,41 @@
             }
 
             // Salvar Armações CMS
-            document.getElementById('save-frames-btn').addEventListener('click', (e) => {
+            document.getElementById('save-frames-btn').addEventListener('click', async (e) => {
                 e.preventDefault();
-                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                const saveBtn = document.getElementById('save-frames-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+                
+                let frames = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        if (data) {
+                            frames = data.map(f => ({
+                                id: f.id,
+                                name: f.name,
+                                ref: f.ref,
+                                badge: f.badge,
+                                oldPrice: f.old_price,
+                                newPrice: f.new_price,
+                                image0: f.image0,
+                                image1: f.image1,
+                                image2: f.image2,
+                                filter0: f.filter0 || "",
+                                filter1: f.filter1 || "",
+                                filter2: f.filter2 || ""
+                            }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                }
                 
                 frames.forEach((f, idx) => {
                     f.name = document.querySelector(`[name="frame-name-${idx}"]`).value;
@@ -968,7 +1098,6 @@
                     f.oldPrice = parseFloat(document.querySelector(`[name="frame-old-${idx}"]`).value);
                     f.newPrice = parseFloat(document.querySelector(`[name="frame-new-${idx}"]`).value);
 
-                    // Pega o base64 se houver um arquivo novo selecionado, senão preserva
                     const img0Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image0"]`);
                     const img1Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image1"]`);
                     const img2Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image2"]`);
@@ -984,16 +1113,59 @@
                     }
                 });
                 
+                // Grava localmente
                 localStorage.setItem('campanha_frames', JSON.stringify(frames));
-                alert('Armações atualizadas com sucesso! Elas já estão refletidas na Landing Page.');
+
+                // Grava no Supabase se ativo
+                if (supabaseClient) {
+                    try {
+                        for (let f of frames) {
+                            await supabaseClient.from('frames').upsert({
+                                id: f.id,
+                                name: f.name,
+                                ref: f.ref,
+                                badge: f.badge,
+                                old_price: f.oldPrice,
+                                new_price: f.newPrice,
+                                image0: f.image0,
+                                image1: f.image1,
+                                image2: f.image2,
+                                filter0: f.filter0 || "",
+                                filter1: f.filter1 || "",
+                                filter2: f.filter2 || ""
+                            });
+                        }
+                    } catch (err) {
+                        console.error("Falha ao salvar catálogo no Supabase:", err);
+                    }
+                }
+                
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
+                alert('Armações salvas com sucesso!');
+                loadFramesCMS();
             });
 
-            // Adicionar Nova Armação no CMS
-            document.getElementById('add-frame-btn').addEventListener('click', (e) => {
+            // Adicionar Nova Armação
+            document.getElementById('add-frame-btn').addEventListener('click', async (e) => {
                 e.preventDefault();
-                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                let frames = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        if (data) {
+                            frames = data.map(f => ({ id: f.id }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                }
                 
-                // Cria uma nova estrutura de armação vazia
                 const newId = frames.length > 0 ? Math.max(...frames.map(f => f.id)) + 1 : 1;
                 const newFrame = {
                     id: newId,
@@ -1002,21 +1174,43 @@
                     oldPrice: 599,
                     newPrice: 299,
                     badge: "NOVO",
-                    image0: "assets/images/frame_navy_front.png", // placeholder padrão
+                    image0: "assets/images/frame_navy_front.png",
                     image1: "assets/images/frame_red_side.png",
                     image2: "assets/images/hero_fila.png",
                     filter0: "",
                     filter1: "",
                     filter2: ""
                 };
+
+                // Adiciona localmente
+                const localFrames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                localFrames.push(newFrame);
+                localStorage.setItem('campanha_frames', JSON.stringify(localFrames));
+
+                // Adiciona no Supabase se ativo
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('frames').insert([{
+                            id: newFrame.id,
+                            name: newFrame.name,
+                            ref: newFrame.ref,
+                            badge: newFrame.badge,
+                            old_price: newFrame.oldPrice,
+                            new_price: newFrame.newPrice,
+                            image0: newFrame.image0,
+                            image1: newFrame.image1,
+                            image2: newFrame.image2,
+                            filter0: "",
+                            filter1: "",
+                            filter2: ""
+                        }]);
+                    } catch (err) {
+                        console.error("Falha ao inserir armação no Supabase:", err);
+                    }
+                }
                 
-                frames.push(newFrame);
-                localStorage.setItem('campanha_frames', JSON.stringify(frames));
-                
-                // Recarregar os cards no CMS
                 loadFramesCMS();
                 
-                // Rola a tela até o final dos cards
                 setTimeout(() => {
                     const cards = document.querySelectorAll('#frames-editor-container .cms-card');
                     if (cards.length > 0) {
@@ -1028,9 +1222,34 @@
             // ==========================================
             // ABA 3: CMS DE LENTES
             // ==========================================
-            function loadLensesCMS() {
-                const lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+            async function loadLensesCMS() {
                 const container = document.getElementById('lenses-editor-container');
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Carregando lentes...</div>';
+                
+                let lenses = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+                        if (!error && data && data.length > 0) {
+                            lenses = data.map(l => ({
+                                id: l.id,
+                                name: l.name,
+                                desc: l.desc,
+                                priceLabel: l.price_label,
+                                price: parseFloat(l.price),
+                                highlight: l.highlight
+                            }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                }
+
                 container.innerHTML = '';
                 
                 lenses.forEach((l, idx) => {
@@ -1073,9 +1292,28 @@
             }
 
             // Salvar Lentes CMS
-            document.getElementById('save-lenses-btn').addEventListener('click', (e) => {
+            document.getElementById('save-lenses-btn').addEventListener('click', async (e) => {
                 e.preventDefault();
-                const lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                const saveBtn = document.getElementById('save-lenses-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+                let lenses = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+                        if (data) {
+                            lenses = data.map(l => ({ id: l.id }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                }
                 
                 lenses.forEach((l, idx) => {
                     l.name = document.querySelector(`[name="lens-name-${idx}"]`).value;
@@ -1085,22 +1323,80 @@
                     l.highlight = document.querySelector(`[name="lens-highlight-${idx}"]`).checked;
                 });
                 
+                // Salva localmente
                 localStorage.setItem('campanha_lenses', JSON.stringify(lenses));
-                alert('Lentes atualizadas com sucesso! Elas já estão refletidas na Landing Page.');
+
+                // Salva no Supabase se ativo
+                if (supabaseClient) {
+                    try {
+                        for (let l of lenses) {
+                            await supabaseClient.from('lenses').upsert({
+                                id: l.id,
+                                name: l.name,
+                                price: l.price,
+                                price_label: l.priceLabel,
+                                desc: l.desc,
+                                highlight: l.highlight
+                            });
+                        }
+                    } catch (err) {
+                        console.error("Falha ao salvar lentes no Supabase:", err);
+                    }
+                }
+                
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Lentes';
+                alert('Lentes salvas com sucesso!');
+                loadLensesCMS();
             });
 
             // ==========================================
             // EXPORTAÇÃO E LIMPEZA DE LEADS
             // ==========================================
-            document.getElementById('clear-db-btn').addEventListener('click', () => {
-                if (confirm('Tem certeza absoluta que deseja apagar TODOS os leads cadastrados no seu navegador? Esta ação não pode ser desfeita.')) {
+            document.getElementById('clear-db-btn').addEventListener('click', async () => {
+                if (confirm('Tem certeza absoluta que deseja apagar TODOS os leads? Esta ação limpará o banco de dados e não pode ser desfeita.')) {
+                    if (supabaseClient) {
+                        try {
+                            const { error } = await supabaseClient.from('leads').delete().neq('id', 0);
+                            if (error) console.error("Falha ao deletar leads no Supabase:", error);
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                    
                     localStorage.removeItem('leads_conceicao');
                     renderDashboard();
                 }
             });
 
-            document.getElementById('export-csv-btn').addEventListener('click', () => {
-                const leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+            document.getElementById('export-csv-btn').addEventListener('click', async () => {
+                let leads = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+                        if (!error && data) {
+                            leads = data.map(l => ({
+                                date: new Date(l.created_at).toLocaleString('pt-BR'),
+                                name: l.name,
+                                phone: l.phone,
+                                email: l.email,
+                                city: l.city,
+                                frame: l.frame,
+                                lens: l.lens,
+                                price: parseFloat(l.price),
+                                code: l.code
+                            }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
+                }
+
                 if (leads.length === 0) {
                     alert('Não há leads para exportar.');
                     return;
