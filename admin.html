@@ -17,6 +17,7 @@
             --fila-red: #E31B23;
             --fila-red-hover: #b81218;
             --fila-white: #FFFFFF;
+            --text-white: #FFFFFF;
             --bg-light: #F4F6F9;
             --text-dark: #0A0E1A;
             --text-muted: #4A5568;
@@ -128,7 +129,9 @@
 
         .btn-primary {
             background-color: var(--fila-red);
-            color: var(--text-white);
+        }
+        .btn-primary, .btn-primary i {
+            color: var(--text-white) !important;
         }
 
         .btn-primary:hover {
@@ -137,7 +140,9 @@
 
         .btn-secondary {
             background-color: var(--fila-navy);
-            color: var(--text-white);
+        }
+        .btn-secondary, .btn-secondary i {
+            color: var(--text-white) !important;
         }
 
         .btn-secondary:hover {
@@ -146,7 +151,9 @@
 
         .btn-danger {
             background-color: #EF4444;
-            color: var(--text-white);
+        }
+        .btn-danger, .btn-danger i {
+            color: var(--text-white) !important;
         }
 
         .btn-danger:hover {
@@ -155,7 +162,9 @@
 
         .btn-success {
             background-color: #10B981;
-            color: var(--text-white);
+        }
+        .btn-success, .btn-success i {
+            color: var(--text-white) !important;
         }
 
         .btn-success:hover {
@@ -227,7 +236,11 @@
 
         .tab-btn.active {
             background-color: var(--fila-navy);
-            color: var(--text-white);
+            color: var(--text-white) !important;
+        }
+
+        .tab-btn.active i {
+            color: var(--text-white) !important;
         }
 
         .tab-btn:hover:not(.active) {
@@ -829,6 +842,22 @@
                                 <input type="number" name="frame-new-${idx}" value="${f.newPrice}" required>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label>Foto 1 - Frente (Caminho/URL)</label>
+                            <input type="text" name="frame-img0-${idx}" value="${f.image0}" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Foto 2 - Lateral</label>
+                                <input type="text" name="frame-img1-${idx}" value="${f.image1}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Foto 3 - No Rosto</label>
+                                <input type="text" name="frame-img2-${idx}" value="${f.image2}" required>
+                            </div>
+                        </div>
                     `;
                     container.appendChild(card);
                 });
@@ -845,6 +874,9 @@
                     f.badge = document.querySelector(`[name="frame-badge-${idx}"]`).value;
                     f.oldPrice = parseFloat(document.querySelector(`[name="frame-old-${idx}"]`).value);
                     f.newPrice = parseFloat(document.querySelector(`[name="frame-new-${idx}"]`).value);
+                    f.image0 = document.querySelector(`[name="frame-img0-${idx}"]`).value;
+                    f.image1 = document.querySelector(`[name="frame-img1-${idx}"]`).value;
+                    f.image2 = document.querySelector(`[name="frame-img2-${idx}"]`).value;
                 });
                 
                 localStorage.setItem('campanha_frames', JSON.stringify(frames));
