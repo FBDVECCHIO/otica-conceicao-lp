@@ -2,8 +2,8 @@
 // CONFIGURAÇÃO DO SUPABASE (Opcional)
 // Substitua pelos dados do seu projeto Supabase para ativar o banco em nuvem
 // ==========================================
-const SUPABASE_URL = "SUA_SUPABASE_URL_AQUI";
-const SUPABASE_KEY = "SUA_SUPABASE_KEY_AQUI";
+const SUPABASE_URL = "https://mngwfearwjkpisararbe.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZ3dmZWFyd2prcGlzYXJhcmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTc5MzksImV4cCI6MjA5NjE3MzkzOX0.vk9Ol41NU2RI72-ZZKIcm7hzccYBjzPPptb6rZv_mKs";
 
 const isSupabaseConfigured = () => {
     return SUPABASE_URL && SUPABASE_URL !== "SUA_SUPABASE_URL_AQUI" && 
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         { id: 3, name: "Essilor Crizal Sapphire", desc: "Camada premium antirreflexo que protege contra arranhões, reflexo, poeira e raios UV nocivos.", priceLabel: "+ R$ 149,00 adicional", price: 149, highlight: false }
     ];
 
-    // Inicialização local padrão
     const getLocalFrames = () => {
         if (!localStorage.getItem('campanha_frames')) {
             localStorage.setItem('campanha_frames', JSON.stringify(defaultFrames));
@@ -63,8 +62,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (supabaseClient) {
         try {
-            // Tenta buscar as armações do Supabase
-            const { data: fData, error: fErr } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+            // Tenta buscar as armações do Supabase (Tabela fila_frames)
+            const { data: fData, error: fErr } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
             if (!fErr && fData && fData.length > 0) {
                 framesData = fData.map(f => ({
                     id: f.id,
@@ -85,8 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 framesData = getLocalFrames();
             }
 
-            // Tenta buscar as lentes do Supabase
-            const { data: lData, error: lErr } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+            // Tenta buscar as lentes do Supabase (Tabela fila_lenses)
+            const { data: lData, error: lErr } = await supabaseClient.from('fila_lenses').select('*').order('id', { ascending: true });
             if (!lErr && lData && lData.length > 0) {
                 lensesData = lData.map(l => ({
                     id: l.id,
@@ -105,7 +104,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             lensesData = getLocalLenses();
         }
     } else {
-        // Fallback direto se o Supabase não estiver configurado
         framesData = getLocalFrames();
         lensesData = getLocalLenses();
     }
@@ -116,7 +114,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         lens: null
     };
 
-    // Renderiza a vitrine
     renderFrames(framesData);
     renderLenses(lensesData);
 
@@ -345,11 +342,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     code: voucherCode
                 };
                 
-                // Gravar lead no Supabase ou LocalStorage
+                // Gravar lead no Supabase (Tabela fila_leads)
                 let savedOnCloud = false;
                 if (supabaseClient) {
                     try {
-                        const { error } = await supabaseClient.from('leads').insert([{
+                        const { error } = await supabaseClient.from('fila_leads').insert([{
                             name: name,
                             phone: phone,
                             email: email,
@@ -369,7 +366,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
                 
-                // Se falhar ou não estiver configurado, salva no localStorage como fallback
                 if (!savedOnCloud) {
                     let leads = JSON.parse(localStorage.getItem('leads_conceicao')) || [];
                     leads.push(leadData);

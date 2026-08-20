@@ -666,8 +666,8 @@
         // CONFIGURAÇÃO DO SUPABASE (Opcional)
         // Substitua pelos dados do seu projeto Supabase para ativar o banco em nuvem
         // ==========================================
-        const SUPABASE_URL = "SUA_SUPABASE_URL_AQUI";
-        const SUPABASE_KEY = "SUA_SUPABASE_KEY_AQUI";
+        const SUPABASE_URL = "https://mngwfearwjkpisararbe.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZ3dmZWFyd2prcGlzYXJhcmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTc5MzksImV4cCI6MjA5NjE3MzkzOX0.vk9Ol41NU2RI72-ZZKIcm7hzccYBjzPPptb6rZv_mKs";
 
         const isSupabaseConfigured = () => {
             return SUPABASE_URL && SUPABASE_URL !== "SUA_SUPABASE_URL_AQUI" && 
@@ -799,7 +799,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data, error } = await supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+                        const { data, error } = await supabaseClient.from('fila_leads').select('*').order('created_at', { ascending: false });
                         if (!error && data) {
                             leads = data.map(l => ({
                                 date: new Date(l.created_at).toLocaleString('pt-BR'),
@@ -905,7 +905,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data, error } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        const { data, error } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
                         if (!error && data && data.length > 0) {
                             frames = data.map(f => ({
                                 id: f.id,
@@ -1036,7 +1036,7 @@
                             let deletedOnCloud = false;
                             if (supabaseClient) {
                                 try {
-                                    const { error } = await supabaseClient.from('frames').delete().eq('id', frameId);
+                                    const { error } = await supabaseClient.from('fila_frames').delete().eq('id', frameId);
                                     if (!error) deletedOnCloud = true;
                                 } catch (err) {
                                     console.error("Falha ao deletar no Supabase:", err);
@@ -1066,7 +1066,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        const { data } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
                         if (data) {
                             frames = data.map(f => ({
                                 id: f.id,
@@ -1120,7 +1120,7 @@
                 if (supabaseClient) {
                     try {
                         for (let f of frames) {
-                            await supabaseClient.from('frames').upsert({
+                            await supabaseClient.from('fila_frames').upsert({
                                 id: f.id,
                                 name: f.name,
                                 ref: f.ref,
@@ -1154,7 +1154,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data } = await supabaseClient.from('frames').select('*').order('id', { ascending: true });
+                        const { data } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
                         if (data) {
                             frames = data.map(f => ({ id: f.id }));
                             loadedFromCloud = true;
@@ -1190,7 +1190,7 @@
                 // Adiciona no Supabase se ativo
                 if (supabaseClient) {
                     try {
-                        await supabaseClient.from('frames').insert([{
+                        await supabaseClient.from('fila_frames').insert([{
                             id: newFrame.id,
                             name: newFrame.name,
                             ref: newFrame.ref,
@@ -1231,7 +1231,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data, error } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+                        const { data, error } = await supabaseClient.from('fila_lenses').select('*').order('id', { ascending: true });
                         if (!error && data && data.length > 0) {
                             lenses = data.map(l => ({
                                 id: l.id,
@@ -1303,7 +1303,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data } = await supabaseClient.from('lenses').select('*').order('id', { ascending: true });
+                        const { data } = await supabaseClient.from('fila_lenses').select('*').order('id', { ascending: true });
                         if (data) {
                             lenses = data.map(l => ({ id: l.id }));
                             loadedFromCloud = true;
@@ -1330,7 +1330,7 @@
                 if (supabaseClient) {
                     try {
                         for (let l of lenses) {
-                            await supabaseClient.from('lenses').upsert({
+                            await supabaseClient.from('fila_lenses').upsert({
                                 id: l.id,
                                 name: l.name,
                                 price: l.price,
@@ -1357,7 +1357,7 @@
                 if (confirm('Tem certeza absoluta que deseja apagar TODOS os leads? Esta ação limpará o banco de dados e não pode ser desfeita.')) {
                     if (supabaseClient) {
                         try {
-                            const { error } = await supabaseClient.from('leads').delete().neq('id', 0);
+                            const { error } = await supabaseClient.from('fila_leads').delete().neq('id', 0);
                             if (error) console.error("Falha ao deletar leads no Supabase:", error);
                         } catch (err) {
                             console.error(err);
@@ -1375,7 +1375,7 @@
 
                 if (supabaseClient) {
                     try {
-                        const { data, error } = await supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+                        const { data, error } = await supabaseClient.from('fila_leads').select('*').order('created_at', { ascending: false });
                         if (!error && data) {
                             leads = data.map(l => ({
                                 date: new Date(l.created_at).toLocaleString('pt-BR'),
