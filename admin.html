@@ -658,6 +658,44 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            // Função para comprimir e converter imagens em Base64
+            function compressImage(file, callback) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const maxDimension = 600;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > height) {
+                            if (width > maxDimension) {
+                                height *= maxDimension / width;
+                                width = maxDimension;
+                            }
+                        } else {
+                            if (height > maxDimension) {
+                                width *= maxDimension / height;
+                                height = maxDimension;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Salva como JPEG 75% de qualidade para ficar leve no localStorage
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+                        callback(dataUrl);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
             // ==========================================
             // LOGICA DE CONTROLE DE TABS
             // ==========================================
@@ -843,23 +881,54 @@
                             </div>
                         </div>
 
+                        <!-- Upload de Imagens do PC (Frente, Lateral, Rosto) -->
                         <div class="form-group">
-                            <label>Foto 1 - Frente (Caminho/URL)</label>
-                            <input type="text" name="frame-img0-${idx}" value="${f.image0}" required>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Foto 2 - Lateral</label>
-                                <input type="text" name="frame-img1-${idx}" value="${f.image1}" required>
+                            <label><i class="fas fa-upload"></i> Foto 1 - Frente</label>
+                            <input type="file" accept="image/*" class="frame-file-input" data-frame-idx="${idx}" data-img-key="image0" style="padding: 8px;">
+                            <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
+                                <img src="${f.image0}" id="preview-frame-${idx}-image0" style="height: 45px; border-radius: 4px; border: 1px solid #CBD5E1; object-fit: contain;">
+                                <span style="font-size: 11px; color: var(--text-muted);">Miniatura Frente</span>
                             </div>
-                            <div class="form-group">
-                                <label>Foto 3 - No Rosto</label>
-                                <input type="text" name="frame-img2-${idx}" value="${f.image2}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-upload"></i> Foto 2 - Lateral</label>
+                            <input type="file" accept="image/*" class="frame-file-input" data-frame-idx="${idx}" data-img-key="image1" style="padding: 8px;">
+                            <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
+                                <img src="${f.image1}" id="preview-frame-${idx}-image1" style="height: 45px; border-radius: 4px; border: 1px solid #CBD5E1; object-fit: contain;">
+                                <span style="font-size: 11px; color: var(--text-muted);">Miniatura Lateral</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-upload"></i> Foto 3 - No Rosto</label>
+                            <input type="file" accept="image/*" class="frame-file-input" data-frame-idx="${idx}" data-img-key="image2" style="padding: 8px;">
+                            <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px;">
+                                <img src="${f.image2}" id="preview-frame-${idx}-image2" style="height: 45px; border-radius: 4px; border: 1px solid #CBD5E1; object-fit: contain;">
+                                <span style="font-size: 11px; color: var(--text-muted);">Miniatura Rosto</span>
                             </div>
                         </div>
                     `;
                     container.appendChild(card);
+                });
+
+                // Vincula listeners para escutar uploads de arquivos locais e processá-los
+                const fileInputs = container.querySelectorAll('.frame-file-input');
+                fileInputs.forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const frameIdx = e.target.getAttribute('data-frame-idx');
+                            const imgKey = e.target.getAttribute('data-img-key');
+                            const previewImg = document.getElementById(`preview-frame-${frameIdx}-${imgKey}`);
+                            
+                            // Comprimir a imagem e gerar o Data URL comprimido
+                            compressImage(file, (compressedUrl) => {
+                                previewImg.src = compressedUrl;
+                                e.target.setAttribute('data-base64', compressedUrl);
+                            });
+                        }
+                    });
                 });
             }
 
@@ -874,9 +943,21 @@
                     f.badge = document.querySelector(`[name="frame-badge-${idx}"]`).value;
                     f.oldPrice = parseFloat(document.querySelector(`[name="frame-old-${idx}"]`).value);
                     f.newPrice = parseFloat(document.querySelector(`[name="frame-new-${idx}"]`).value);
-                    f.image0 = document.querySelector(`[name="frame-img0-${idx}"]`).value;
-                    f.image1 = document.querySelector(`[name="frame-img1-${idx}"]`).value;
-                    f.image2 = document.querySelector(`[name="frame-img2-${idx}"]`).value;
+
+                    // Pega o base64 se houver um arquivo novo selecionado, senão preserva
+                    const img0Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image0"]`);
+                    const img1Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image1"]`);
+                    const img2Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image2"]`);
+                    
+                    if (img0Input && img0Input.getAttribute('data-base64')) {
+                        f.image0 = img0Input.getAttribute('data-base64');
+                    }
+                    if (img1Input && img1Input.getAttribute('data-base64')) {
+                        f.image1 = img1Input.getAttribute('data-base64');
+                    }
+                    if (img2Input && img2Input.getAttribute('data-base64')) {
+                        f.image2 = img2Input.getAttribute('data-base64');
+                    }
                 });
                 
                 localStorage.setItem('campanha_frames', JSON.stringify(frames));
