@@ -619,7 +619,10 @@
                 <div class="table-header-row">
                     <div class="table-title">Gerenciar Vitrine de Armações Fila</div>
                     <div class="table-actions">
-                        <button class="btn btn-success" id="save-frames-btn">
+                        <button class="btn btn-secondary" id="add-frame-btn" style="width: auto;">
+                            <i class="fas fa-plus"></i> Adicionar Armação
+                        </button>
+                        <button class="btn btn-success" id="save-frames-btn" style="width: auto;">
                             <i class="fas fa-save"></i> Salvar Alterações
                         </button>
                     </div>
@@ -850,7 +853,12 @@
                     card.innerHTML = `
                         <h4>
                             <span>Armação ${f.id}</span>
-                            <span class="cms-card-index">${idx + 1}</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button class="btn-delete-frame" data-id="${f.id}" style="background: none; border: none; color: #EF4444; cursor: pointer; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Excluir Armação">
+                                    <i class="fas fa-trash-alt"></i> Excluir
+                                </button>
+                                <span class="cms-card-index" style="margin-left: 8px;">${idx + 1}</span>
+                            </div>
                         </h4>
                         <input type="hidden" name="frame-id-${idx}" value="${f.id}">
                         
@@ -930,6 +938,22 @@
                         }
                     });
                 });
+
+                // Vincula listeners para botões de exclusão
+                const deleteButtons = container.querySelectorAll('.btn-delete-frame');
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const frameId = parseInt(btn.getAttribute('data-id'));
+                        
+                        if (confirm('Tem certeza que deseja remover esta armação?')) {
+                            let frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                            frames = frames.filter(f => f.id !== frameId);
+                            localStorage.setItem('campanha_frames', JSON.stringify(frames));
+                            loadFramesCMS();
+                        }
+                    });
+                });
             }
 
             // Salvar Armações CMS
@@ -962,6 +986,43 @@
                 
                 localStorage.setItem('campanha_frames', JSON.stringify(frames));
                 alert('Armações atualizadas com sucesso! Elas já estão refletidas na Landing Page.');
+            });
+
+            // Adicionar Nova Armação no CMS
+            document.getElementById('add-frame-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                
+                // Cria uma nova estrutura de armação vazia
+                const newId = frames.length > 0 ? Math.max(...frames.map(f => f.id)) + 1 : 1;
+                const newFrame = {
+                    id: newId,
+                    name: "FILA Novo Modelo",
+                    ref: "F81XX-XXX",
+                    oldPrice: 599,
+                    newPrice: 299,
+                    badge: "NOVO",
+                    image0: "assets/images/frame_navy_front.png", // placeholder padrão
+                    image1: "assets/images/frame_red_side.png",
+                    image2: "assets/images/hero_fila.png",
+                    filter0: "",
+                    filter1: "",
+                    filter2: ""
+                };
+                
+                frames.push(newFrame);
+                localStorage.setItem('campanha_frames', JSON.stringify(frames));
+                
+                // Recarregar os cards no CMS
+                loadFramesCMS();
+                
+                // Rola a tela até o final dos cards
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('#frames-editor-container .cms-card');
+                    if (cards.length > 0) {
+                        cards[cards.length - 1].scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
             });
 
             // ==========================================
