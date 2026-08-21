@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('voucher-code-text').textContent = voucherCode;
                 
                 const whatsappBtn = document.getElementById('whatsapp-share-btn');
-                const storePhone = '5511999999999';
+                const storePhone = '5519992868439';
                 
                 const messageText = `Olá Ópticas Conceição! Acabei de gerar meu cupom no site.\n\n` + 
                                     `🎫 *Código:* ${voucherCode}\n` +
