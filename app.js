@@ -116,6 +116,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderFrames(framesData);
     renderLenses(lensesData);
+    
+    // Inicia Efeitos de Zoom nas Fotos Principais
+    applyZoomEffects();
+    
+    // Inicia Carrossel de Lentes se estiver em tela mobile
+    initLensesCarousel();
 
     // ==========================================
     // 2. COMPORTAMENTO DOS COMPONENTES (Renders)
@@ -216,10 +222,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.innerHTML = '<i class="fas fa-check-circle check-icon"></i> Armação Selecionada';
             btn.classList.remove('btn-outline');
             
+            // Pega a foto principal do óculos selecionado
+            const activeImage = currentCard.querySelector('.card-gallery-img.active').src;
+            
             comboState.frame = {
                 id: frameId,
                 name: frameName.split(' (')[0],
-                price: framePrice
+                price: framePrice,
+                image: activeImage
             };
             
             updateSummary();
@@ -276,9 +286,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             frameVal.textContent = comboState.frame.name + ` (R$ ${comboState.frame.price},00)`;
             frameVal.classList.add('active');
             totalPrice += comboState.frame.price;
+            
+            // Exibir a foto miniatura do aro no Passo 3
+            const imgBox = document.getElementById('summary-frame-img-box');
+            const imgPreview = document.getElementById('summary-frame-img-preview');
+            if (imgBox && imgPreview) {
+                imgPreview.src = comboState.frame.image;
+                imgBox.style.display = 'block';
+            }
         } else {
             frameVal.textContent = 'Nenhuma armação selecionada nas opções acima';
             frameVal.classList.remove('active');
+            
+            const imgBox = document.getElementById('summary-frame-img-box');
+            if (imgBox) imgBox.style.display = 'none';
         }
         
         if (comboState.lens) {
@@ -444,7 +465,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // 4. CARROSSEL GERAL DE PRODUTOS
+    // 4. CARROSSEL GERAL DE PRODUTOS (ARMAÇÕES)
     // ==========================================
     const track = document.getElementById('products-track');
     const prevBtn = document.getElementById('carousel-prev');
@@ -531,7 +552,116 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ==========================================
-    // 5. BOTÃO VOLTAR AO TOPO (SCROLL MONITOR)
+    // 5. CARROSSEL DE LENTES (MOBILE)
+    // ==========================================
+    function initLensesCarousel() {
+        const lensesTrack = document.getElementById('lenses-grid');
+        const lPrevBtn = document.getElementById('lenses-carousel-prev');
+        const lNextBtn = document.getElementById('lenses-carousel-next');
+        const lDotsContainer = document.getElementById('lenses-carousel-dots');
+        
+        if (!lensesTrack || !lPrevBtn || !lNextBtn || !lDotsContainer) return;
+        
+        let lCards = Array.from(lensesTrack.children);
+        let lCurrentIndex = 0;
+        
+        const updateLensesCarousel = () => {
+            if (window.innerWidth > 768) {
+                lensesTrack.style.transform = 'none';
+                return;
+            }
+            lCards = Array.from(lensesTrack.children);
+            if (lCards.length === 0) return;
+            
+            const cardWidth = lCards[0].getBoundingClientRect().width;
+            const gap = 24;
+            const offset = lCurrentIndex * (cardWidth + gap);
+            lensesTrack.style.transform = `translateX(-${offset}px)`;
+            
+            lPrevBtn.disabled = lCurrentIndex === 0;
+            lNextBtn.disabled = lCurrentIndex === lCards.length - 1;
+            
+            const dots = lDotsContainer.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === lCurrentIndex) {
+                    dot.classList.add('active');
+                }
+            });
+        };
+        
+        const setupLensesDots = () => {
+            if (window.innerWidth > 768) {
+                lDotsContainer.innerHTML = '';
+                return;
+            }
+            lCards = Array.from(lensesTrack.children);
+            lDotsContainer.innerHTML = '';
+            for (let i = 0; i < lCards.length; i++) {
+                const dot = document.createElement('button');
+                dot.classList.add('carousel-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    lCurrentIndex = i;
+                    updateLensesCarousel();
+                });
+                lDotsContainer.appendChild(dot);
+            }
+        };
+
+        lNextBtn.addEventListener('click', () => {
+            lCards = Array.from(lensesTrack.children);
+            if (lCurrentIndex < lCards.length - 1) {
+                lCurrentIndex++;
+                updateLensesCarousel();
+            }
+        });
+        
+        lPrevBtn.addEventListener('click', () => {
+            if (lCurrentIndex > 0) {
+                lCurrentIndex--;
+                updateLensesCarousel();
+            }
+        });
+        
+        window.addEventListener('resize', () => {
+            setupLensesDots();
+            updateLensesCarousel();
+        });
+        
+        setupLensesDots();
+        updateLensesCarousel();
+    }
+
+    // ==========================================
+    // 6. EFEITO DE ZOOM MAGNIFICADOR
+    // ==========================================
+    function applyZoomEffects() {
+        const galleries = document.querySelectorAll('.card-gallery');
+        galleries.forEach(gallery => {
+            gallery.addEventListener('mousemove', (e) => {
+                const activeImg = gallery.querySelector('.card-gallery-img.active');
+                if (!activeImg) return;
+                
+                const rect = gallery.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                activeImg.style.transformOrigin = `${x}% ${y}%`;
+                activeImg.style.transform = 'scale(1.8)';
+            });
+            
+            gallery.addEventListener('mouseleave', () => {
+                const activeImg = gallery.querySelector('.card-gallery-img.active');
+                if (!activeImg) return;
+                activeImg.style.transform = 'scale(1)';
+                activeImg.style.transformOrigin = 'center center';
+            });
+        });
+    }
+
+    // ==========================================
+    // 7. BOTÃO VOLTAR AO TOPO (SCROLL MONITOR)
     // ==========================================
     const backToTopBtn = document.getElementById('back-to-top');
     if (backToTopBtn) {

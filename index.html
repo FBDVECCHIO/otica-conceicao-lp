@@ -98,9 +98,19 @@
                 <h2 class="section-title">Escolha sua lente ideal</h2>
             </div>
             
-            <!-- Grid Carregado dinamicamente -->
-            <div class="offer-grid" id="lenses-grid">
-                <!-- Inserido dinamicamente via JS (app.js) -->
+            <!-- Grid Carregado dinamicamente com suporte a Carrossel Mobile -->
+            <div class="carousel-outer-wrapper">
+                <div class="carousel-track-container" style="overflow: hidden; width: 100%;">
+                    <div class="offer-grid" id="lenses-grid" style="transition: transform 0.4s ease;">
+                        <!-- Inserido dinamicamente via JS (app.js) -->
+                    </div>
+                </div>
+                <!-- Controles do Carrossel de Lentes (Apenas Mobile) -->
+                <div class="carousel-controls lenses-controls" style="display: none; justify-content: center; gap: 15px; margin-top: 20px;">
+                    <button class="carousel-nav-btn" id="lenses-carousel-prev" aria-label="Voltar" disabled><i class="fas fa-chevron-left"></i></button>
+                    <div class="carousel-dots-container" id="lenses-carousel-dots"></div>
+                    <button class="carousel-nav-btn" id="lenses-carousel-next" aria-label="Avançar"><i class="fas fa-chevron-right"></i></button>
+                </div>
             </div>
         </div>
     </section>
@@ -121,6 +131,10 @@
                     <div class="summary-item" id="summary-frame-item">
                         <span class="summary-label"><i class="fas fa-glasses"></i> Armação Selecionada:</span>
                         <div class="summary-value" id="summary-frame-val">Nenhuma armação selecionada nas opções acima</div>
+                        <!-- Miniatura visual da armação selecionada -->
+                        <div id="summary-frame-img-box" style="margin-top: 10px; display: none;">
+                            <img id="summary-frame-img-preview" src="" alt="Miniatura do Aro" style="height: 50px; border-radius: 4px; background-color: var(--bg-light); padding: 4px; border: 1px solid rgba(0, 44, 91, 0.1); object-fit: contain;">
+                        </div>
                     </div>
                     
                     <div class="summary-item" id="summary-lens-item">

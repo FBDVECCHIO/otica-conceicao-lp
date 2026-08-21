@@ -1118,3 +1118,40 @@ footer .container {
         font-size: 16px;
     }
 }
+
+/* ==========================================
+   EFEITO DE ZOOM NA FOTO PRINCIPAL (CONSUMIDOR)
+   ========================================== */
+.card-gallery {
+    position: relative;
+    overflow: hidden !important;
+    cursor: zoom-in;
+}
+
+.card-gallery-img {
+    transition: transform 0.1s ease-out;
+    transform-origin: center center;
+}
+
+/* ==========================================
+   CARROSSEL DE LENTES NO MOBILE
+   ========================================== */
+@media (max-width: 768px) {
+    .lenses-controls {
+        display: flex !important;
+    }
+    
+    .offer-grid {
+        display: flex !important;
+        gap: 24px;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        width: max-content;
+        padding: 10px 0;
+    }
+    
+    .offer-card {
+        min-width: 290px;
+        max-width: 290px;
+        flex-shrink: 0;
+    }
+}

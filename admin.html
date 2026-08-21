@@ -645,7 +645,10 @@
                 <div class="table-header-row">
                     <div class="table-title">Gerenciar Ofertas de Lentes Corretivas</div>
                     <div class="table-actions">
-                        <button class="btn btn-success" id="save-lenses-btn">
+                        <button class="btn btn-secondary" id="add-lens-btn" style="width: auto;">
+                            <i class="fas fa-plus"></i> Adicionar Lente
+                        </button>
+                        <button class="btn btn-success" id="save-lenses-btn" style="width: auto;">
                             <i class="fas fa-save"></i> Salvar Lentes
                         </button>
                     </div>
@@ -1258,7 +1261,12 @@
                     card.innerHTML = `
                         <h4>
                             <span>Lente ${l.id}</span>
-                            <span class="cms-card-index">${idx + 1}</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button class="btn-delete-lens" data-id="${l.id}" style="background: none; border: none; color: #EF4444; cursor: pointer; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Excluir Lente">
+                                    <i class="fas fa-trash-alt"></i> Excluir
+                                </button>
+                                <span class="cms-card-index" style="margin-left: 8px;">${idx + 1}</span>
+                            </div>
                         </h4>
                         <input type="hidden" name="lens-id-${idx}" value="${l.id}">
                         
@@ -1288,6 +1296,34 @@
                         </div>
                     `;
                     container.appendChild(card);
+                });
+
+                // Vincula listeners para botões de exclusão de lentes
+                const deleteButtons = container.querySelectorAll('.btn-delete-lens');
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const lensId = parseInt(btn.getAttribute('data-id'));
+                        
+                        if (confirm('Tem certeza que deseja remover esta lente?')) {
+                            let deletedOnCloud = false;
+                            if (supabaseClient) {
+                                try {
+                                    const { error } = await supabaseClient.from('fila_lenses').delete().eq('id', lensId);
+                                    if (!error) deletedOnCloud = true;
+                                } catch (err) {
+                                    console.error("Falha ao deletar lente no Supabase:", err);
+                                }
+                            }
+                            
+                            // Remove localmente também (sincronização/fallback)
+                            let lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                            lenses = lenses.filter(l => l.id !== lensId);
+                            localStorage.setItem('campanha_lenses', JSON.stringify(lenses));
+                            
+                            loadLensesCMS();
+                        }
+                    });
                 });
             }
 
@@ -1348,6 +1384,67 @@
                 saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Lentes';
                 alert('Lentes salvas com sucesso!');
                 loadLensesCMS();
+            });
+
+            // Adicionar Nova Lente no CMS
+            document.getElementById('add-lens-btn').addEventListener('click', async (e) => {
+                e.preventDefault();
+                let lenses = [];
+                let loadedFromCloud = false;
+
+                if (supabaseClient) {
+                    try {
+                        const { data } = await supabaseClient.from('fila_lenses').select('*').order('id', { ascending: true });
+                        if (data) {
+                            lenses = data.map(l => ({ id: l.id }));
+                            loadedFromCloud = true;
+                        }
+                    } catch (err) {}
+                }
+
+                if (!loadedFromCloud) {
+                    lenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                }
+                
+                const newId = lenses.length > 0 ? Math.max(...lenses.map(l => l.id)) + 1 : 1;
+                const newLens = {
+                    id: newId,
+                    name: "Lente Nova Opção",
+                    desc: "Descrição do tratamento ou proteção oferecida por esta lente.",
+                    priceLabel: "+ R$ 199,00 adicional",
+                    price: 199,
+                    highlight: false
+                };
+
+                // Adiciona localmente
+                const localLenses = JSON.parse(localStorage.getItem('campanha_lenses')) || [];
+                localLenses.push(newLens);
+                localStorage.setItem('campanha_lenses', JSON.stringify(localLenses));
+
+                // Adiciona no Supabase se ativo
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('fila_lenses').insert([{
+                            id: newLens.id,
+                            name: newLens.name,
+                            desc: newLens.desc,
+                            price_label: newLens.priceLabel,
+                            price: newLens.price,
+                            highlight: newLens.highlight
+                        }]);
+                    } catch (err) {
+                        console.error("Falha ao inserir lente no Supabase:", err);
+                    }
+                }
+                
+                loadLensesCMS();
+                
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('#lenses-editor-container .cms-card');
+                    if (cards.length > 0) {
+                        cards[cards.length - 1].scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
             });
 
             // ==========================================
