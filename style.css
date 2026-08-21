@@ -1156,7 +1156,6 @@ footer .container {
         display: flex !important;
         gap: 24px;
         transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: max-content;
         padding: 10px 0;
     }
     
