@@ -1136,9 +1136,20 @@ footer .container {
 /* ==========================================
    CARROSSEL DE LENTES NO MOBILE
    ========================================== */
+.lenses-carousel-btn, .lenses-carousel-dots-container {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
-    .lenses-controls {
+    .lenses-carousel-btn {
         display: flex !important;
+    }
+    
+    .lenses-carousel-dots-container {
+        display: flex !important;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 30px;
     }
     
     .offer-grid {
@@ -1150,8 +1161,8 @@ footer .container {
     }
     
     .offer-card {
-        min-width: 290px;
-        max-width: 290px;
+        min-width: 100% !important; /* Exibe 1 por slide no celular igual às armações */
+        max-width: 100% !important;
         flex-shrink: 0;
     }
 }

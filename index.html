@@ -152,18 +152,25 @@
             
             <!-- Grid Carregado dinamicamente com suporte a Carrossel Mobile -->
             <div class="carousel-outer-wrapper">
+                <!-- Botão de Anterior de Lentes (Visível apenas em Mobile) -->
+                <button class="carousel-btn prev lenses-carousel-btn" id="lenses-carousel-prev" aria-label="Lente anterior" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
                 <div class="carousel-track-container" style="overflow: hidden; width: 100%;">
                     <div class="offer-grid" id="lenses-grid" style="transition: transform 0.4s ease;">
                         <!-- Inserido dinamicamente via JS (app.js) -->
                     </div>
                 </div>
-                <!-- Controles do Carrossel de Lentes (Apenas Mobile) -->
-                <div class="carousel-controls lenses-controls" style="display: none; justify-content: center; gap: 15px; margin-top: 20px;">
-                    <button class="carousel-nav-btn" id="lenses-carousel-prev" aria-label="Voltar" disabled><i class="fas fa-chevron-left"></i></button>
-                    <div class="carousel-dots-container" id="lenses-carousel-dots"></div>
-                    <button class="carousel-nav-btn" id="lenses-carousel-next" aria-label="Avançar"><i class="fas fa-chevron-right"></i></button>
-                </div>
+                
+                <!-- Botão de Próximo de Lentes (Visível apenas em Mobile) -->
+                <button class="carousel-btn next lenses-carousel-btn" id="lenses-carousel-next" aria-label="Próxima lente">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
+            
+            <!-- Bolinhas do Carrossel de Lentes (Visível apenas em Mobile) -->
+            <div class="carousel-dots lenses-carousel-dots-container" id="lenses-carousel-dots"></div>
         </div>
     </section>
 

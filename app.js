@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const defaultLenses = [
         { id: 1, name: "Lente Zeiss Single Vision", desc: "Antirreflexo e nitidez excepcional. Excelente custo-benefício para quem busca conforto diário nas atividades gerais.", priceLabel: "Inclusa no Combo", price: 0, highlight: false },
-        { id: 2, name: "Lentes Blue Cut (Filtro Azul)", desc: "Desenvolvida para proteger a sua visão contra a luz azul de telas (celular e notebook), aliviando o cansaço dos olhos.", priceLabel: "+ R$ 79,00 adicional", price: 79, highlight: true },
-        { id: 3, name: "Essilor Crizal Sapphire", desc: "Camada premium antirreflexo que protege contra arranhões, reflexo, poeira e raios UV nocivos.", priceLabel: "+ R$ 149,00 adicional", price: 149, highlight: false }
+        { id: 2, name: "Lentes Blue Cut (Filtro Azul)", desc: "Desenvolvida para proteger a sua visão contra a luz azul de telas (celular e notebook), aliviando o cansaço dos olhos.", priceLabel: "+ R$ 79,00", price: 79, highlight: true },
+        { id: 3, name: "Essilor Crizal Sapphire", desc: "Camada premium antirreflexo que protege contra arranhões, reflexo, poeira e raios UV nocivos.", priceLabel: "+ R$ 149,00", price: 149, highlight: false }
     ];
 
     const getLocalFrames = () => {
@@ -187,11 +187,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 icon = 'fa-shield-alt';
             }
             
+            // Remove a palavra "adicional" se estiver presente no rótulo de preço
+            const displayPriceLabel = l.priceLabel ? l.priceLabel.replace(/\badicional\b/gi, '').trim() : '';
+            
             card.innerHTML = `
                 <div class="offer-icon"><i class="fas ${icon}"></i></div>
                 <h3>${l.name}</h3>
                 <p>${l.desc}</p>
-                <div class="offer-price">${l.priceLabel}</div>
+                <div class="offer-price">${displayPriceLabel}</div>
                 <button class="btn btn-outline select-lens-btn" data-name="${l.name}" data-price="${l.price}" data-id="${l.id}">
                     <i class="far fa-circle check-icon"></i> Selecionar Lente
                 </button>
