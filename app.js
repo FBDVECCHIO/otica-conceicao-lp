@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. BANCO DE DADOS LOCAL (localStorage - FALLBACK)
     // ==========================================
     const defaultFrames = [
-        { id: 1, name: "FILA Active Navy", ref: "F8142-N50", oldPrice: 589, newPrice: 299, badge: "MAIS PROCURADO", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(180deg)", filter2: "" },
-        { id: 2, name: "FILA Sport Red", ref: "F8145-R52", oldPrice: 629, newPrice: 319, badge: "ESPORTIVO", image0: "assets/images/frame_red_side.png", image1: "assets/images/frame_navy_front.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(140deg)", filter2: "hue-rotate(140deg)" },
-        { id: 3, name: "FILA Classic Black", ref: "F8140-B53", oldPrice: 599, newPrice: 299, badge: "CLÁSSICO", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "grayscale(1) brightness(0.2)", filter1: "grayscale(1) brightness(0.2)", filter2: "grayscale(1) contrast(1.1)" },
-        { id: 4, name: "FILA Bold Orange", ref: "F8148-O51", oldPrice: 649, newPrice: 329, badge: "FLEXÍVEL", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "hue-rotate(30deg) saturate(1.5)", filter1: "hue-rotate(30deg) saturate(1.5)", filter2: "hue-rotate(30deg)" },
-        { id: 5, name: "FILA Volt Green", ref: "F8150-G50", oldPrice: 579, newPrice: 289, badge: "LEVE", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "hue-rotate(85deg) saturate(1.3)", filter1: "hue-rotate(85deg) saturate(1.3)", filter2: "hue-rotate(85deg)" },
-        { id: 6, name: "FILA Crystal White", ref: "F8139-C52", oldPrice: 689, newPrice: 349, badge: "TENDÊNCIA", image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "invert(0.9) brightness(1.2) contrast(0.8)", filter1: "invert(0.9) brightness(1.2) contrast(0.8)", filter2: "sepia(0.2) brightness(1.1)" }
+        { id: 1, name: "FILA Active Navy", ref: "F8142-N50", oldPrice: 589, newPrice: 299, badge: "MAIS PROCURADO", stock: 3, image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(180deg)", filter2: "" },
+        { id: 2, name: "FILA Sport Red", ref: "F8145-R52", oldPrice: 629, newPrice: 319, badge: "ESPORTIVO", stock: 5, image0: "assets/images/frame_red_side.png", image1: "assets/images/frame_navy_front.png", image2: "assets/images/hero_fila.png", filter0: "", filter1: "hue-rotate(140deg)", filter2: "hue-rotate(140deg)" },
+        { id: 3, name: "FILA Classic Black", ref: "F8140-B53", oldPrice: 599, newPrice: 299, badge: "CLÁSSICO", stock: 8, image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "grayscale(1) brightness(0.2)", filter1: "grayscale(1) brightness(0.2)", filter2: "grayscale(1) contrast(1.1)" },
+        { id: 4, name: "FILA Bold Orange", ref: "F8148-O51", oldPrice: 649, newPrice: 329, badge: "FLEXÍVEL", stock: 4, image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "hue-rotate(30deg) saturate(1.5)", filter1: "hue-rotate(30deg) saturate(1.5)", filter2: "hue-rotate(30deg)" },
+        { id: 5, name: "FILA Volt Green", ref: "F8150-G50", oldPrice: 579, newPrice: 289, badge: "LEVE", stock: 2, image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "hue-rotate(85deg) saturate(1.3)", filter1: "hue-rotate(85deg) saturate(1.3)", filter2: "hue-rotate(85deg)" },
+        { id: 6, name: "FILA Crystal White", ref: "F8139-C52", oldPrice: 689, newPrice: 349, badge: "TENDÊNCIA", stock: 7, image0: "assets/images/frame_navy_front.png", image1: "assets/images/frame_red_side.png", image2: "assets/images/hero_fila.png", filter0: "invert(0.9) brightness(1.2) contrast(0.8)", filter1: "invert(0.9) brightness(1.2) contrast(0.8)", filter2: "sepia(0.2) brightness(1.1)" }
     ];
 
     const defaultLenses = [
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     badge: f.badge,
                     oldPrice: f.old_price,
                     newPrice: f.new_price,
+                    stock: f.stock !== undefined && f.stock !== null ? f.stock : 5,
                     image0: f.image0,
                     image1: f.image1,
                     image2: f.image2,
@@ -81,7 +82,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }));
             } else {
                 console.warn("Vitrine Supabase vazia ou com erro, usando dados locais:", fErr);
-                framesData = getLocalFrames();
+                framesData = getLocalFrames().map(f => ({
+                    ...f,
+                    stock: f.stock !== undefined && f.stock !== null ? f.stock : 5
+                }));
             }
 
             // Tenta buscar as lentes do Supabase (Tabela fila_lenses)
@@ -100,11 +104,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         } catch (e) {
             console.error("Falha de conexão com o Supabase. Utilizando LocalStorage como plano B:", e);
-            framesData = getLocalFrames();
+            framesData = getLocalFrames().map(f => ({
+                ...f,
+                stock: f.stock !== undefined && f.stock !== null ? f.stock : 5
+            }));
             lensesData = getLocalLenses();
         }
     } else {
-        framesData = getLocalFrames();
+        framesData = getLocalFrames().map(f => ({
+            ...f,
+            stock: f.stock !== undefined && f.stock !== null ? f.stock : 5
+        }));
         lensesData = getLocalLenses();
     }
 
@@ -157,9 +167,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="product-info">
                     <h4>${f.name}</h4>
                     <p class="product-ref">REF: ${f.ref}</p>
-                    <div class="product-price-box">
+                    <div class="product-price-box" style="margin-bottom: 8px;">
                         <span class="price-old">R$ ${f.oldPrice},00</span>
                         <span class="price-new">R$ ${f.newPrice},00</span>
+                    </div>
+                    <div class="stock-indicator" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; font-size: 13px; font-weight: 600; color: #EF4444; gap: 2px;">
+                        <div>Apenas <span style="font-weight: 800; text-decoration: underline;">${f.stock !== undefined ? f.stock : 5}</span> unidades em estoque!</div>
+                        <div class="fire-anim" style="font-size: 14px; animation: flameMove 0.8s infinite alternate; display: inline-block;">🔥 Corra! Estoque acabando rápido</div>
                     </div>
                     <button class="btn btn-outline select-frame-btn" data-name="${f.name} (R$ ${f.newPrice},00)" data-price="${f.newPrice}" data-id="${f.id}">
                         <i class="far fa-circle check-icon"></i> Selecionar Armação
@@ -325,6 +339,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Variável para armazenar a receita em Base64
+    let prescriptionBase64 = "";
+
+    const prescriptionInput = document.getElementById('prescription');
+    const prescriptionPreviewBox = document.getElementById('prescription-preview-box');
+    const prescriptionFileName = document.getElementById('prescription-file-name');
+
+    if (prescriptionInput) {
+        prescriptionInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (prescriptionPreviewBox && prescriptionFileName) {
+                    prescriptionFileName.textContent = file.name;
+                    prescriptionPreviewBox.style.display = 'flex';
+                }
+                
+                // Se for imagem, comprime para economizar espaço
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            let width = img.width;
+                            let height = img.height;
+                            const max_size = 800; // Tamanho um pouco maior para a receita ser legível
+                            
+                            if (width > height) {
+                                if (width > max_size) {
+                                    height *= max_size / width;
+                                    width = max_size;
+                                }
+                            } else {
+                                if (height > max_size) {
+                                    width *= max_size / height;
+                                    height = max_size;
+                                }
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            prescriptionBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        };
+                    };
+                } else {
+                    // Se for PDF ou outro formato, lê o Base64 cru
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        prescriptionBase64 = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                prescriptionBase64 = "";
+                if (prescriptionPreviewBox) prescriptionPreviewBox.style.display = 'none';
+            }
+        });
+    }
+
     // Envio do formulário de resgate
     const voucherForm = document.getElementById('resgate-form');
     const formBox = document.getElementById('form-box');
@@ -363,7 +442,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     frame: comboState.frame.name,
                     lens: comboState.lens.name,
                     price: totalCalculado,
-                    code: voucherCode
+                    code: voucherCode,
+                    prescription: prescriptionBase64
                 };
                 
                 // Gravar lead no Supabase (Tabela fila_leads)
@@ -378,7 +458,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             frame: comboState.frame.name,
                             lens: comboState.lens.name,
                             price: totalCalculado,
-                            code: voucherCode
+                            code: voucherCode,
+                            prescription: prescriptionBase64
                         }]);
                         if (!error) {
                             savedOnCloud = true;
@@ -403,14 +484,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const whatsappBtn = document.getElementById('whatsapp-share-btn');
                 const storePhone = '5519992868439';
                 
+                const hasPrescriptionText = prescriptionBase64 ? "📝 *Receita médica enviada no cadastro!*" : "⚠️ *Sem receita médica anexa*";
+                
                 const messageText = `Olá Ópticas Conceição! Acabei de gerar meu cupom no site.\n\n` + 
                                     `🎫 *Código:* ${voucherCode}\n` +
                                     `👤 *Nome:* ${name}\n` +
                                     `📍 *Cidade:* ${city}\n` +
-                                    `📞 *WhatsApp:* ${phone}\n\n` +
+                                    `📞 *WhatsApp:* ${phone}\n` +
+                                    `📄 *Receita:* ${hasPrescriptionText}\n\n` +
                                     `👓 *Aro Fila:* ${comboState.frame.name} (R$ ${comboState.frame.price},00)\n` +
                                     `👁️ *Lente:* ${comboState.lens.name} (Adicional: R$ ${comboState.lens.price},00)\n` +
-                                    `💰 *Total Estimado:* R$ ${totalCalculado},00\n\n` +
+                                    `💰 *Total Combo:* R$ ${totalCalculado},00\n\n` +
                                     `Gostaria de agendar o meu atendimento!`;
                 
                 whatsappBtn.href = `https://api.whatsapp.com/send?phone=${storePhone}&text=${encodeURIComponent(messageText)}`;

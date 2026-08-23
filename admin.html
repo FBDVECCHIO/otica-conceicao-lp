@@ -687,6 +687,27 @@
             }
         }
 
+        window.openPrescription = function(base64Data) {
+            if (!base64Data) return;
+            const newTab = window.open();
+            if (newTab) {
+                newTab.document.write(`
+                    <html>
+                    <head><title>Receita Médica</title></head>
+                    <body style="margin:0; background:#f4f6f9; display:flex; justify-content:center; align-items:center;">
+                        <img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow:0 4px 15px rgba(0,0,0,0.15); border-radius:4px;">
+                    </body>
+                    </html>
+                `);
+                newTab.document.close();
+            } else {
+                const link = document.createElement('a');
+                link.href = base64Data;
+                link.download = 'receita_medica.jpg';
+                link.click();
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', async () => {
             
             // Função para comprimir e converter imagens em Base64
@@ -813,7 +834,8 @@
                                 frame: l.frame,
                                 lens: l.lens,
                                 price: parseFloat(l.price),
-                                code: l.code
+                                code: l.code,
+                                prescription: l.prescription
                             }));
                             loadedFromCloud = true;
                         } else {
@@ -860,9 +882,18 @@
                         <td style="font-weight: 700; color: var(--fila-red);">R$ ${lead.price},00</td>
                         <td><span class="badge badge-code">${lead.code}</span></td>
                         <td>
-                            <a href="https://api.whatsapp.com/send?phone=${cleanPhone}" target="_blank" class="btn-table-whatsapp">
-                                <i class="fab fa-whatsapp"></i> Chamar
-                            </a>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <a href="https://api.whatsapp.com/send?phone=${cleanPhone}" target="_blank" class="btn-table-whatsapp" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+                                    <i class="fab fa-whatsapp"></i> Chamar
+                                </a>
+                                ${lead.prescription ? `
+                                    <button onclick="window.openPrescription('${lead.prescription}')" style="background-color: var(--fila-navy); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%;" title="Ver receita médica anexada pelo cliente">
+                                        <i class="fas fa-file-prescription"></i> Ver Receita
+                                    </button>
+                                ` : `
+                                    <span style="font-size: 10px; color: var(--text-muted); text-align: center; font-style: italic;">Sem receita</span>
+                                `}
+                            </div>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -917,6 +948,7 @@
                                 badge: f.badge,
                                 oldPrice: f.old_price,
                                 newPrice: f.new_price,
+                                stock: f.stock !== undefined && f.stock !== null ? f.stock : 5,
                                 image0: f.image0,
                                 image1: f.image1,
                                 image2: f.image2,
@@ -933,6 +965,10 @@
 
                 if (!loadedFromCloud) {
                     frames = JSON.parse(localStorage.getItem('campanha_frames')) || [];
+                    frames = frames.map(f => ({
+                        ...f,
+                        stock: f.stock !== undefined && f.stock !== null ? f.stock : 5
+                    }));
                 }
 
                 container.innerHTML = '';
@@ -968,14 +1004,18 @@
                             </div>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label>Preço "De" (R$)</label>
                                 <input type="number" name="frame-old-${idx}" value="${f.oldPrice}" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label>Preço "Por" (R$)</label>
                                 <input type="number" name="frame-new-${idx}" value="${f.newPrice}" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Qtd. Estoque</label>
+                                <input type="number" name="frame-stock-${idx}" value="${f.stock !== undefined ? f.stock : 5}" min="0" required>
                             </div>
                         </div>
 
@@ -1100,6 +1140,7 @@
                     f.badge = document.querySelector(`[name="frame-badge-${idx}"]`).value;
                     f.oldPrice = parseFloat(document.querySelector(`[name="frame-old-${idx}"]`).value);
                     f.newPrice = parseFloat(document.querySelector(`[name="frame-new-${idx}"]`).value);
+                    f.stock = parseInt(document.querySelector(`[name="frame-stock-${idx}"]`).value) || 0;
 
                     const img0Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image0"]`);
                     const img1Input = document.querySelector(`[data-frame-idx="${idx}"][data-img-key="image1"]`);
@@ -1130,6 +1171,7 @@
                                 badge: f.badge,
                                 old_price: f.oldPrice,
                                 new_price: f.newPrice,
+                                stock: f.stock,
                                 image0: f.image0,
                                 image1: f.image1,
                                 image2: f.image2,
@@ -1177,6 +1219,7 @@
                     oldPrice: 599,
                     newPrice: 299,
                     badge: "NOVO",
+                    stock: 5,
                     image0: "assets/images/frame_navy_front.png",
                     image1: "assets/images/frame_red_side.png",
                     image2: "assets/images/hero_fila.png",
@@ -1200,6 +1243,7 @@
                             badge: newFrame.badge,
                             old_price: newFrame.oldPrice,
                             new_price: newFrame.newPrice,
+                            stock: newFrame.stock,
                             image0: newFrame.image0,
                             image1: newFrame.image1,
                             image2: newFrame.image2,

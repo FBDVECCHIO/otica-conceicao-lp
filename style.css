@@ -1165,3 +1165,17 @@ footer .container {
         flex-shrink: 0;
     }
 }
+
+/* ==========================================
+   ANIMAÇÃO DO FOGUINHO DE ESTOQUE (CONSUMIDOR)
+   ========================================== */
+@keyframes flameMove {
+    0% {
+        transform: translateY(0) scale(1) rotate(-3deg);
+        filter: drop-shadow(0 0 2px rgba(227, 27, 35, 0.4));
+    }
+    100% {
+        transform: translateY(-2px) scale(1.1) rotate(3deg);
+        filter: drop-shadow(0 0 5px rgba(227, 27, 35, 0.7));
+    }
+}
