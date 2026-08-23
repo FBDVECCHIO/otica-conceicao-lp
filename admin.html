@@ -941,6 +941,9 @@
                     try {
                         const { data, error } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
                         if (!error && data && data.length > 0) {
+                            if (data[0] && !('stock' in data[0])) {
+                                console.error("ATENÇÃO: A coluna 'stock' não existe na tabela 'fila_frames' do Supabase! Por favor, execute o comando SQL no editor do Supabase:\nALTER TABLE public.fila_frames ADD COLUMN stock integer default 5;");
+                            }
                             frames = data.map(f => ({
                                 id: f.id,
                                 name: f.name,

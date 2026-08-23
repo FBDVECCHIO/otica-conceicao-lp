@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Tenta buscar as armações do Supabase (Tabela fila_frames)
             const { data: fData, error: fErr } = await supabaseClient.from('fila_frames').select('*').order('id', { ascending: true });
             if (!fErr && fData && fData.length > 0) {
+                if (fData[0] && !('stock' in fData[0])) {
+                    console.error("ATENÇÃO: A coluna 'stock' não existe na tabela 'fila_frames' do Supabase! Por favor, execute o comando SQL no editor do Supabase:\nALTER TABLE public.fila_frames ADD COLUMN stock integer default 5;");
+                }
                 framesData = fData.map(f => ({
                     id: f.id,
                     name: f.name,
