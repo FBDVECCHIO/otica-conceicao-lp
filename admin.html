@@ -1164,10 +1164,11 @@
                 localStorage.setItem('campanha_frames', JSON.stringify(frames));
 
                 // Grava no Supabase se ativo
+                let supabaseErrorMsg = null;
                 if (supabaseClient) {
                     try {
                         for (let f of frames) {
-                            await supabaseClient.from('fila_frames').upsert({
+                            const { error } = await supabaseClient.from('fila_frames').upsert({
                                 id: f.id,
                                 name: f.name,
                                 ref: f.ref,
@@ -1182,15 +1183,26 @@
                                 filter1: f.filter1 || "",
                                 filter2: f.filter2 || ""
                             });
+                            if (error) {
+                                supabaseErrorMsg = error.message;
+                                console.error("Erro no upsert do Supabase:", error);
+                                break;
+                            }
                         }
                     } catch (err) {
+                        supabaseErrorMsg = err.message;
                         console.error("Falha ao salvar catálogo no Supabase:", err);
                     }
                 }
                 
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
-                alert('Armações salvas com sucesso!');
+                
+                if (supabaseErrorMsg) {
+                    alert('As alterações foram salvas localmente no seu navegador, mas falhou ao sincronizar com o Supabase:\n\n' + supabaseErrorMsg + '\n\nVerifique se você criou a coluna "stock" na tabela "fila_frames".');
+                } else {
+                    alert('Armações salvas com sucesso!');
+                }
                 loadFramesCMS();
             });
 
