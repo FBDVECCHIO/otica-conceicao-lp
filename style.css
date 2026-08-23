@@ -1179,3 +1179,18 @@ footer .container {
         filter: drop-shadow(0 0 5px rgba(227, 27, 35, 0.7));
     }
 }
+
+/* ==========================================
+   PERSONALIZAÇÃO DE FUNDO NAVY DO BANNER DE ARMAÇÕES
+   ========================================== */
+#carousel-banner-2 {
+    background-color: var(--fila-navy);
+}
+
+#carousel-banner-2 .section-title {
+    color: #ffffff;
+}
+
+#carousel-banner-2 .carousel-dot.active {
+    background-color: var(--fila-white);
+}
