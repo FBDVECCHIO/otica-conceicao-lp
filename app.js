@@ -167,17 +167,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="product-info">
                     <h4>${f.name}</h4>
                     <p class="product-ref">REF: ${f.ref}</p>
-                    <div class="product-price-box" style="margin-bottom: 8px;">
+                    <div class="product-price-box" style="margin-bottom: 12px;">
                         <span class="price-old">R$ ${f.oldPrice},00</span>
                         <span class="price-new">R$ ${f.newPrice},00</span>
                     </div>
-                    <div class="stock-indicator" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; font-size: 13px; font-weight: 600; color: #EF4444; gap: 2px;">
-                        <div>Apenas <span style="font-weight: 800; text-decoration: underline;">${f.stock !== undefined ? f.stock : 5}</span> unidades em estoque!</div>
-                        <div class="fire-anim" style="font-size: 14px; animation: flameMove 0.8s infinite alternate; display: inline-block;">🔥 Corra! Estoque acabando rápido</div>
+                    <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                        <button class="btn btn-outline select-frame-btn" data-name="${f.name} (R$ ${f.newPrice},00)" data-price="${f.newPrice}" data-id="${f.id}" style="padding: 10px 12px; font-size: 13px; font-weight: 800; width: auto; flex-grow: 1; margin: 0; text-align: center;">
+                            <i class="far fa-circle check-icon"></i> Selecionar
+                        </button>
+                        <div class="stock-box" style="display: flex; flex-direction: column; align-items: center; line-height: 1.1; flex-shrink: 0; min-width: 60px; border-left: 1px solid #E2E8F0; padding-left: 10px;">
+                            <span style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Estoque</span>
+                            <div style="display: flex; align-items: center; gap: 3px; margin-top: 2px;">
+                                <span style="font-size: 16px; font-weight: 800; color: #EF4444;">${f.stock !== undefined ? f.stock : 5}</span>
+                                <span class="fire-anim" style="font-size: 14px; animation: flameMove 0.8s infinite alternate; display: inline-block;">🔥</span>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-outline select-frame-btn" data-name="${f.name} (R$ ${f.newPrice},00)" data-price="${f.newPrice}" data-id="${f.id}">
-                        <i class="far fa-circle check-icon"></i> Selecionar Armação
-                    </button>
                 </div>
             `;
             track.appendChild(card);
@@ -230,13 +235,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             document.querySelectorAll('.product-card').forEach(card => card.classList.remove('selected'));
             frameButtons.forEach(b => {
-                b.innerHTML = '<i class="far fa-circle check-icon"></i> Selecionar Armação';
+                b.innerHTML = '<i class="far fa-circle check-icon"></i> Selecionar';
                 b.classList.add('btn-outline');
             });
             
             const currentCard = btn.closest('.product-card');
             currentCard.classList.add('selected');
-            btn.innerHTML = '<i class="fas fa-check-circle check-icon"></i> Armação Selecionada';
+            btn.innerHTML = '<i class="fas fa-check-circle check-icon"></i> Selecionada';
             btn.classList.remove('btn-outline');
             
             // Pega a foto principal do óculos selecionado
