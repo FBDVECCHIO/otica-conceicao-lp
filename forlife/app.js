@@ -27,7 +27,7 @@ let forlifeConfig = {
     addonFotossensivel: 150.00
 };
 
-// Estado dos adicionais selecionados pelo cliente
+// Estado dos adicionais de tecnologia
 const selectedAddons = {
     antirreflexo: false,
     bluecut: false,
@@ -41,10 +41,26 @@ let prescriptionBase64 = "";
 // INICIALIZAÇÃO
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    initScarcityBadge();
     await loadForlifeConfig();
     setupEventListeners();
+    setupFAQ();
+    setupScrollTop();
     updatePricingUI();
 });
+
+// Métrica aleatória de vouchers disponíveis (1 a 30)
+function initScarcityBadge() {
+    let stored = sessionStorage.getItem('forlife_vouchers_count');
+    if (!stored) {
+        // Gera número consistente entre 11 e 24
+        stored = Math.floor(Math.random() * 20) + 7;
+        sessionStorage.setItem('forlife_vouchers_count', stored);
+    }
+    document.querySelectorAll('.scarcity-number').forEach(el => {
+        el.textContent = stored;
+    });
+}
 
 // Carregar configurações de preços (Supabase ou LocalStorage)
 async function loadForlifeConfig() {
@@ -83,7 +99,6 @@ async function loadForlifeConfig() {
     }
 }
 
-// Formatar moeda brasileira
 function formatMoney(value) {
     return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -103,7 +118,7 @@ function updatePricingUI() {
     if (comboInstCountEl) comboInstCountEl.textContent = installments;
     if (comboInstValEl) comboInstValEl.textContent = `R$ ${formatMoney(comboPrice / installments)}`;
 
-    // 2. Atualizar Banner 3 (Cards de Adicionais)
+    // 2. Atualizar Banner 3 (Cards de Tecnologia)
     const priceAntirreflexoEl = document.getElementById('price-val-antirreflexo');
     const priceBluecutEl = document.getElementById('price-val-bluecut');
     const priceFotoEl = document.getElementById('price-val-fotossensivel');
@@ -112,7 +127,7 @@ function updatePricingUI() {
     if (priceBluecutEl) priceBluecutEl.textContent = `+ R$ ${formatMoney(addonBluecut)}`;
     if (priceFotoEl) priceFotoEl.textContent = `+ R$ ${formatMoney(addonFotossensivel)}`;
 
-    // 3. Atualizar Banner 4 (Resumo do Pedido)
+    // 3. Atualizar Banner 4 (Resumo)
     const summaryComboPriceEl = document.getElementById('summary-combo-price');
     if (summaryComboPriceEl) summaryComboPriceEl.textContent = `R$ ${formatMoney(comboPrice)}`;
 
@@ -124,7 +139,7 @@ function updatePricingUI() {
         totalAddons += addonAntirreflexo;
         addonsHtml += `
             <div class="summary-line">
-                <span><i class="fas fa-check" style="color:#10B981; margin-right:6px;"></i> Antirreflexo</span>
+                <span><i class="fas fa-check" style="margin-right:6px;"></i> Antirreflexo</span>
                 <span>+ R$ ${formatMoney(addonAntirreflexo)}</span>
             </div>`;
     }
@@ -132,7 +147,7 @@ function updatePricingUI() {
         totalAddons += addonBluecut;
         addonsHtml += `
             <div class="summary-line">
-                <span><i class="fas fa-check" style="color:#10B981; margin-right:6px;"></i> Filtro Luz Azul (Bluecut)</span>
+                <span><i class="fas fa-check" style="margin-right:6px;"></i> Filtro Luz Azul (Bluecut)</span>
                 <span>+ R$ ${formatMoney(addonBluecut)}</span>
             </div>`;
     }
@@ -140,15 +155,15 @@ function updatePricingUI() {
         totalAddons += addonFotossensivel;
         addonsHtml += `
             <div class="summary-line">
-                <span><i class="fas fa-check" style="color:#10B981; margin-right:6px;"></i> Lentes Fotossensíveis</span>
+                <span><i class="fas fa-check" style="margin-right:6px;"></i> Lentes Fotossensíveis</span>
                 <span>+ R$ ${formatMoney(addonFotossensivel)}</span>
             </div>`;
     }
 
     if (!addonsHtml) {
         addonsHtml = `
-            <div class="summary-line" style="opacity: 0.7; font-style: italic;">
-                <span>Nenhum adicional selecionado</span>
+            <div class="summary-line" style="opacity: 0.75; font-style: italic;">
+                <span>Nenhuma tecnologia adicional (Combo Tradicional)</span>
                 <span>R$ 0,00</span>
             </div>`;
     }
@@ -172,7 +187,25 @@ function updatePricingUI() {
 // LISTENERS DE INTERAÇÃO & FORMULÁRIO
 // ==========================================
 function setupEventListeners() {
-    // 1. Toggle nos cards de tecnologia (Banner 3)
+    // 1. Botões de "Gerar meu Voucher" direto (Combo Tradicional, ignora adicionais)
+    document.querySelectorAll('.btn-trigger-traditional').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Desmarcar todos os adicionais
+            selectedAddons.antirreflexo = false;
+            selectedAddons.bluecut = false;
+            selectedAddons.fotossensivel = false;
+
+            document.querySelectorAll('.tech-card').forEach(c => {
+                c.classList.remove('selected');
+                const checkIcon = c.querySelector('.tech-checkbox-badge i');
+                if (checkIcon) checkIcon.style.opacity = '0';
+            });
+
+            updatePricingUI();
+        });
+    });
+
+    // 2. Toggle nos cards de tecnologia (Banner 3)
     const techCards = document.querySelectorAll('.tech-card');
     techCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -190,37 +223,33 @@ function setupEventListeners() {
         });
     });
 
-    // 2. Máscara de Telefone / WhatsApp
-    const phoneInput = document.getElementById('client-phone');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/\D/g, '');
-            if (val.length > 11) val = val.substring(0, 11);
-            
-            if (val.length > 6) {
-                e.target.value = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
-            } else if (val.length > 2) {
-                e.target.value = `(${val.substring(0, 2)}) ${val.substring(2)}`;
-            } else {
-                e.target.value = val;
-            }
-            validateForm();
-        });
+    // 3. Seleção de Situação da Receita Médica (Radio Cards)
+    const radioHave = document.getElementById('recipe-option-have');
+    const radioNeed = document.getElementById('recipe-option-need');
+    const cardHave = document.getElementById('card-recipe-have');
+    const cardNeed = document.getElementById('card-recipe-need');
+    const uploadArea = document.getElementById('prescription-upload-area');
+
+    function handleRecipeChange() {
+        if (radioHave.checked) {
+            cardHave.classList.add('active');
+            cardNeed.classList.remove('active');
+            uploadArea.style.display = 'block';
+        } else if (radioNeed.checked) {
+            cardNeed.classList.add('active');
+            cardHave.classList.remove('active');
+            uploadArea.style.display = 'none';
+            prescriptionBase64 = "";
+            const previewBox = document.getElementById('prescription-preview-box');
+            if (previewBox) previewBox.style.display = 'none';
+        }
+        validateForm();
     }
 
-    // 3. Inputs de texto e validação
-    ['client-name', 'client-email', 'client-city'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', validateForm);
-    });
+    if (radioHave) radioHave.addEventListener('change', handleRecipeChange);
+    if (radioNeed) radioNeed.addEventListener('change', handleRecipeChange);
 
-    // 4. Checkbox obrigatório de receita médica
-    const prescriptionCheck = document.getElementById('prescription-checkbox');
-    if (prescriptionCheck) {
-        prescriptionCheck.addEventListener('change', validateForm);
-    }
-
-    // 5. Upload opcional de receita médica
+    // 4. Upload de Foto / Arquivo da Receita Médica
     const fileInput = document.getElementById('prescription-file');
     const previewBox = document.getElementById('prescription-preview-box');
     const fileNameEl = document.getElementById('prescription-file-name');
@@ -244,7 +273,7 @@ function setupEventListeners() {
                             const ctx = canvas.getContext('2d');
                             let width = img.width;
                             let height = img.height;
-                            const maxSize = 800;
+                            const maxSize = 900;
 
                             if (width > height) {
                                 if (width > maxSize) {
@@ -260,7 +289,7 @@ function setupEventListeners() {
                             canvas.width = width;
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
-                            prescriptionBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                            prescriptionBase64 = canvas.toDataURL('image/jpeg', 0.82);
                         };
                     };
                     reader.readAsDataURL(file);
@@ -278,28 +307,92 @@ function setupEventListeners() {
         });
     }
 
-    // 6. Submissão do Formulário de Voucher
+    // 5. Máscara de Telefone / WhatsApp
+    const phoneInput = document.getElementById('client-phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 11) val = val.substring(0, 11);
+            
+            if (val.length > 6) {
+                e.target.value = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
+            } else if (val.length > 2) {
+                e.target.value = `(${val.substring(0, 2)}) ${val.substring(2)}`;
+            } else {
+                e.target.value = val;
+            }
+            validateForm();
+        });
+    }
+
+    // 6. Inputs e Validação
+    ['client-name', 'client-email', 'client-city'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', validateForm);
+    });
+
+    // 7. Submissão do Formulário de Voucher
     const voucherForm = document.getElementById('voucher-form');
     if (voucherForm) {
         voucherForm.addEventListener('submit', handleVoucherSubmit);
     }
 }
 
-// Validar se o formulário está apto para submissão
+// Validar formulário
 function validateForm() {
     const name = document.getElementById('client-name')?.value.trim() || '';
     const phone = (document.getElementById('client-phone')?.value || '').replace(/\D/g, '');
     const city = document.getElementById('client-city')?.value.trim() || '';
     const email = document.getElementById('client-email')?.value.trim() || '';
-    const hasPrescription = document.getElementById('prescription-checkbox')?.checked || false;
-    const submitBtn = document.getElementById('btn-submit-voucher');
+    
+    const radioHave = document.getElementById('recipe-option-have')?.checked;
+    const radioNeed = document.getElementById('recipe-option-need')?.checked;
+    const hasRecipeChoice = radioHave || radioNeed;
 
-    const isValid = name.length >= 3 && phone.length >= 10 && city.length >= 2 && email.includes('@') && hasPrescription;
+    const submitBtn = document.getElementById('btn-submit-voucher');
+    const isValid = name.length >= 3 && phone.length >= 10 && city.length >= 2 && email.includes('@') && hasRecipeChoice;
 
     if (submitBtn) {
         submitBtn.disabled = !isValid;
     }
     return isValid;
+}
+
+// ==========================================
+// FAQ ACCORDION
+// ==========================================
+function setupFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const q = item.querySelector('.faq-question');
+        if (q) {
+            q.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!isActive) item.classList.add('active');
+            });
+        }
+    });
+}
+
+// ==========================================
+// BOTÃO VOLTAR AO TOPO
+// ==========================================
+function setupScrollTop() {
+    const btn = document.getElementById('scroll-top-btn');
+    if (!btn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 350) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }
 
 // ==========================================
@@ -317,8 +410,11 @@ async function handleVoucherSubmit(e) {
     const phone = document.getElementById('client-phone').value.trim();
     const email = document.getElementById('client-email').value.trim();
     const city = document.getElementById('client-city').value.trim();
+    
+    const hasPrescription = document.getElementById('recipe-option-have').checked;
+    const recipeStatusText = hasPrescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita';
 
-    // Calcular resumo dos adicionais
+    // Resumo dos adicionais
     const addonsArray = [];
     let totalAddons = 0;
 
@@ -339,8 +435,11 @@ async function handleVoucherSubmit(e) {
     const randomHex = Math.random().toString(16).substring(2, 6).toUpperCase();
     const voucherCode = `FORLIFE-${randomHex}`;
 
+    // Apenas data (DD/MM/AAAA) sem a hora, conforme solicitado
+    const todayFormatted = new Date().toLocaleDateString('pt-BR');
+
     const leadData = {
-        date: new Date().toLocaleString('pt-BR'),
+        date: todayFormatted,
         name: name,
         phone: phone,
         email: email,
@@ -348,16 +447,19 @@ async function handleVoucherSubmit(e) {
         comboPrice: forlifeConfig.comboPrice,
         addons: addonsArray,
         totalPrice: totalPrice,
-        hasPrescription: true,
+        hasPrescription: hasPrescription,
+        recipeStatus: recipeStatusText,
         prescriptionFile: prescriptionBase64,
-        code: voucherCode
+        code: voucherCode,
+        seller: '',
+        saleValue: '',
+        osNumber: ''
     };
 
     // 1. Gravar no Supabase (Tabela forlife_leads)
-    let savedOnCloud = false;
     if (supabaseClient) {
         try {
-            const { error } = await supabaseClient.from('forlife_leads').insert([{
+            await supabaseClient.from('forlife_leads').insert([{
                 name: name,
                 phone: phone,
                 email: email,
@@ -365,17 +467,16 @@ async function handleVoucherSubmit(e) {
                 combo_price: forlifeConfig.comboPrice,
                 addons: JSON.stringify(addonsArray),
                 total_price: totalPrice,
-                has_prescription: true,
+                has_prescription: hasPrescription,
                 prescription_file: prescriptionBase64,
                 code: voucherCode
             }]);
-            if (!error) savedOnCloud = true;
         } catch (err) {
             console.warn("Erro ao salvar no Supabase, mantendo cópia local:", err);
         }
     }
 
-    // 2. Gravar no LocalStorage (fallback / backup)
+    // 2. Gravar no LocalStorage
     const localLeads = JSON.parse(localStorage.getItem('forlife_leads')) || [];
     localLeads.push(leadData);
     localStorage.setItem('forlife_leads', JSON.stringify(localLeads));
@@ -384,7 +485,7 @@ async function handleVoucherSubmit(e) {
     const storePhone = '5519992868439';
     const addonsText = addonsArray.length > 0 
         ? addonsArray.map(a => `  • ${a.name} (+ R$ ${formatMoney(a.price)})`).join('\n')
-        : '  • Nenhum adicional';
+        : '  • Combo Tradicional (Sem adicionais)';
 
     const messageText = 
 `Olá, Ópticas Conceição! Acabei de gerar meu voucher exclusivo ForLife no site.\n\n` +
@@ -394,9 +495,9 @@ async function handleVoucherSubmit(e) {
 `📞 *WhatsApp:* ${phone}\n\n` +
 `👓 *Combo:* Óculos Completo (Armação + Lentes Multifocais HD)\n` +
 `💰 *Valor Combo Base:* R$ ${formatMoney(forlifeConfig.comboPrice)}\n\n` +
-`⚡ *Tecnologias Adicionais Selecionadas:*\n${addonsText}\n\n` +
+`⚡ *Tecnologia:*\n${addonsText}\n\n` +
 `💵 *Total:* R$ ${formatMoney(totalPrice)} (em até ${forlifeConfig.installments}x de R$ ${formatMoney(totalPrice / forlifeConfig.installments)} sem juros)\n` +
-`📋 *Receita Médica:* Declaro que possuo receita oftalmológica atualizada.\n\n` +
+`📋 *Situação da Receita:* ${recipeStatusText}\n\n` +
 `Gostaria de garantir as condições do meu voucher e agendar meu atendimento!`;
 
     const whatsappBtn = document.getElementById('btn-whatsapp-voucher');

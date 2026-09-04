@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Estilos Customizados ForLife -->
+    <!-- Estilos Customizados ForLife (Navy, Cinza e Branco) -->
     <link rel="stylesheet" href="/forlife/style.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
                 <img src="/assets/images/logo_branco.png" alt="Ópticas Conceição Logo">
             </a>
             
-            <a href="/forlife/admin.html" class="header-admin-btn" title="Painel Administrativo ForLife" aria-label="Acessar Área Administrativa">
+            <a href="/forlife/admin" class="header-admin-btn" title="Painel Administrativo ForLife" aria-label="Acessar Área Administrativa">
                 <i class="fas fa-cog"></i>
             </a>
         </div>
@@ -39,12 +39,12 @@
     <section class="banner-autoridade" id="autoridade">
         <div class="container">
             <div class="autoridade-content">
-                <span class="section-tag gold">
+                <span class="section-tag white">
                     <i class="fas fa-award"></i> Tradição & Confiança Desde 1951
                 </span>
                 <h1>Há mais de <span>75 anos</span> cuidando da saúde visual de Campinas e região</h1>
                 <p class="autoridade-lead">
-                    Aliamos conhecimento óptico de excelência, tecnologia laboratorial de ponta e um atendimento acolhedor para que seus óculos superem todas as suas expectativas.
+                    Aliamos conhecimento óptico de excelência, tecnologia laboratorial de ponta e um atendimento acolhedor para que seus novos óculos superem todas as suas expectativas.
                 </p>
 
                 <!-- Cards com Estatísticas de Autoridade -->
@@ -55,11 +55,22 @@
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">+100 Mil</div>
-                        <div class="stat-label">Clientes satisfeitos e com a visão renovada</div>
+                        <div class="stat-label">Clientes atendidos com adaptação garantida</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">100%</div>
-                        <div class="stat-label">Garantia de adaptação visual e consultoria</div>
+                        <div class="stat-label">Laboratório próprio de montagem e calibração</div>
+                    </div>
+                </div>
+
+                <!-- CTA Banner 1: Gerar Voucher + Vouchers Disponíveis -->
+                <div class="voucher-cta-group">
+                    <a href="#voucher" class="btn-voucher-action btn-white btn-trigger-traditional">
+                        <i class="fas fa-ticket-alt"></i> Gerar meu Voucher
+                    </a>
+                    <div class="voucher-scarcity-badge on-dark">
+                        <span class="scarcity-pulse-dot"></span>
+                        <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
                     </div>
                 </div>
             </div>
@@ -81,7 +92,7 @@
 
             <!-- Card Destaque do Combo -->
             <div class="combo-card">
-                <div class="combo-card-badge">Combo Campeão</div>
+                <div class="combo-card-badge">Combo Tradicional</div>
                 <div class="combo-grid">
                     <div class="combo-info">
                         <h3>Armação + Lentes Multifocais HD</h3>
@@ -103,9 +114,17 @@
                         <div class="pricing-installments">
                             em até <span id="combo-inst-count">10</span>x de <span id="combo-inst-val">R$ 29,70</span> sem juros
                         </div>
-                        <a href="#tecnologias" class="btn-cta">
-                            <i class="fas fa-sliders-h"></i> Personalizar Lentes
+                        
+                        <!-- CTA Banner 2: Gerar Voucher Direto -->
+                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" style="width: 100%;">
+                            <i class="fas fa-ticket-alt"></i> Gerar meu Voucher
                         </a>
+                        <div style="margin-top: 12px;">
+                            <div class="voucher-scarcity-badge on-light">
+                                <span class="scarcity-pulse-dot"></span>
+                                <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,9 +136,9 @@
         <div class="container">
             <div class="text-center">
                 <span class="section-tag navy">
-                    <i class="fas fa-microchip"></i> Upgrades Tecnológicos
+                    <i class="fas fa-microchip"></i> Upgrades Opcionais
                 </span>
-                <h2 class="section-title">Adicionais de Tecnologia às Lentes</h2>
+                <h2 class="section-title">Tecnologia</h2>
                 <p class="section-subtitle text-muted">
                     Potencialize seu combo selecionando os tratamentos ópticos ideais para sua rotina. O total é atualizado na hora!
                 </p>
@@ -187,6 +206,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- CTA Banner 3: Gerar Voucher -->
+            <div class="voucher-cta-group">
+                <a href="#voucher" class="btn-voucher-action">
+                    <i class="fas fa-ticket-alt"></i> Gerar meu Voucher com Minha Seleção
+                </a>
+                <div class="voucher-scarcity-badge on-light">
+                    <span class="scarcity-pulse-dot"></span>
+                    <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -213,8 +243,8 @@
                         <span id="summary-combo-price">R$ 297,00</span>
                     </div>
 
-                    <div style="margin-top: 14px; font-size: 13px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.7); letter-spacing: 0.5px;">
-                        Tecnologias Adicionais:
+                    <div style="margin-top: 14px; font-size: 13px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.75); letter-spacing: 0.5px;">
+                        Tecnologia Selecionada:
                     </div>
                     
                     <div class="summary-addons-list" id="summary-addons-container">
@@ -228,7 +258,7 @@
                     </div>
                 </div>
 
-                <!-- Coluna 2: Formulário com Checkbox Obrigatório -->
+                <!-- Coluna 2: Formulário com Checkboxes de Receita -->
                 <div class="voucher-form-card">
                     <div id="form-inputs-container">
                         <h3>Dados para o Voucher</h3>
@@ -255,26 +285,37 @@
                                 <input type="text" id="client-city" class="form-input" placeholder="Ex: Campinas" required minlength="2">
                             </div>
 
-                            <!-- Checkbox Obrigatório de Receita Atualizada -->
-                            <div class="checkbox-prescription-wrapper">
-                                <label class="checkbox-label" for="prescription-checkbox">
-                                    <input type="checkbox" id="prescription-checkbox" required>
-                                    <span>
-                                        <i class="fas fa-file-medical"></i> Declaro que possuo receita oftalmológica atualizada (emitida há menos de 1 ano) *
-                                    </span>
-                                </label>
-                            </div>
-
-                            <!-- Upload Opcional da Receita -->
+                            <!-- CHECKBOXES DE RECEITA MÉDICA (OPÇÕES EXCLUSIVAS) -->
                             <div class="form-group">
-                                <label for="prescription-file" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span>Upload da Receita (Opcional)</span>
-                                    <span style="font-size: 11px; font-weight: 500; opacity: 0.7;">Para agilizar o pedido</span>
-                                </label>
-                                <input type="file" id="prescription-file" accept="image/*,application/pdf" class="form-input" style="padding: 10px; border-style: dashed; cursor: pointer;">
-                                <div id="prescription-preview-box" style="margin-top: 8px; display: none; align-items: center; gap: 8px;">
-                                    <i class="fas fa-check-circle" style="color: #10B981;"></i>
-                                    <span id="prescription-file-name" style="font-size: 12px; font-weight: 700; color: #10B981;">Receita carregada!</span>
+                                <label style="margin-bottom: 8px;">Situação da sua Receita Médica *</label>
+                                <div class="recipe-selection-box">
+                                    <!-- Opção 1: Possuo receita atualizada -->
+                                    <label class="recipe-option-card" id="card-recipe-have">
+                                        <input type="radio" name="recipe_status" id="recipe-option-have" value="have" required>
+                                        <span class="recipe-option-text">
+                                            <i class="fas fa-file-medical"></i> Possuo receita atualizada
+                                        </span>
+                                    </label>
+
+                                    <!-- Upload / Foto revelado se marcado -->
+                                    <div id="prescription-upload-area">
+                                        <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary); margin-bottom: 6px;">
+                                            Tirar foto ou anexar imagem da receita (Opcional):
+                                        </div>
+                                        <input type="file" id="prescription-file" accept="image/*,application/pdf" capture="environment" class="form-input" style="padding: 8px; cursor: pointer;">
+                                        <div id="prescription-preview-box" style="margin-top: 8px; display: none; align-items: center; gap: 8px;">
+                                            <i class="fas fa-check-circle" style="color: var(--navy-primary);"></i>
+                                            <span id="prescription-file-name" style="font-size: 12px; font-weight: 700; color: var(--navy-primary);">Receita carregada!</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Opção 2: Preciso atualizar minha receita -->
+                                    <label class="recipe-option-card" id="card-recipe-need">
+                                        <input type="radio" name="recipe_status" id="recipe-option-need" value="need" required>
+                                        <span class="recipe-option-text">
+                                            <i class="fas fa-notes-medical"></i> Preciso atualizar minha receita
+                                        </span>
+                                    </label>
                                 </div>
                             </div>
 
@@ -286,22 +327,22 @@
 
                     <!-- Box de Sucesso do Voucher (Aparece após o envio) -->
                     <div class="voucher-success-box" id="voucher-success-box">
-                        <div style="font-size: 54px; color: #10B981; margin-bottom: 12px;">
+                        <div style="font-size: 50px; color: var(--navy-primary); margin-bottom: 12px;">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <h3 style="font-size: 26px; color: var(--navy-primary); margin-bottom: 8px;">Parabéns, <span id="voucher-user-name"></span>!</h3>
-                        <p style="font-size: 15px; color: var(--text-muted);">
+                        <h3 style="font-size: 24px; color: var(--navy-primary); margin-bottom: 8px;">Parabéns, <span id="voucher-user-name"></span>!</h3>
+                        <p style="font-size: 14px; color: var(--text-muted);">
                             Seu voucher exclusivo do <strong>Combo ForLife</strong> foi gerado e registrado com sucesso!
                         </p>
 
                         <div class="voucher-code-badge" id="voucher-code-display">FORLIFE-XXXX</div>
 
-                        <p style="font-size: 14px; color: var(--text-dark); margin-bottom: 24px; line-height: 1.5;">
-                            Clique no botão abaixo para resgatar no WhatsApp da nossa equipe e agendar seu atendimento:
+                        <p style="font-size: 14px; color: var(--text-dark); margin-bottom: 22px; line-height: 1.5;">
+                            Clique no botão abaixo para resgatar no WhatsApp da nossa equipe e garantir as condições na loja:
                         </p>
 
                         <a href="#" class="btn-whatsapp-share" id="btn-whatsapp-voucher" target="_blank">
-                            <i class="fab fa-whatsapp" style="font-size: 22px;"></i> Resgatar Voucher no WhatsApp
+                            <i class="fab fa-whatsapp" style="font-size: 20px;"></i> Resgatar Voucher no WhatsApp
                         </a>
                     </div>
                 </div>
@@ -309,7 +350,242 @@
         </div>
     </section>
 
-    <!-- BANNER 5: CONTATOS & COMO CHEGAR (Fundo Branco) -->
+    <!-- BANNER EXTRA: TIRA-DÚVIDAS / FAQ (Fundo Cinza Claro) -->
+    <section class="banner-faq" id="faq">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag navy">
+                    <i class="fas fa-question-circle"></i> Perguntas Frequentes
+                </span>
+                <h2 class="section-title">Tira-Dúvidas Sobre o Combo ForLife</h2>
+                <p class="section-subtitle text-muted">
+                    Confira as respostas diretas para as dúvidas mais comuns dos nossos clientes:
+                </p>
+            </div>
+
+            <div class="faq-list">
+                <!-- Tópico 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>1. O que está incluso no Combo ForLife por R$ 297,00?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes Multifocais Digitais HD de alta definição com amplo campo visual.
+                    </div>
+                </div>
+
+                <!-- Tópico 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>2. Como funciona a adaptação com as Lentes Multifocais HD?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Nossas lentes multifocais digitais são produzidas com tecnologia de alta definição (HD) que reduz as distorções laterais, facilitando a transição entre perto, meia-distância e longe. Contamos com 100% de garantia de adaptação e suporte técnico da nossa equipe.
+                    </div>
+                </div>
+
+                <!-- Tópico 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>3. E se eu não tiver a receita em mãos ou precisar atualizar?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sem problemas! Basta selecionar a opção "Preciso atualizar minha receita" ao gerar o seu voucher. Nossa equipe prestará toda a consultoria para indicar clínicas parceiras de confiança em Campinas para realizar seu exame de vista.
+                    </div>
+                </div>
+
+                <!-- Tópico 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>4. Posso parcelar o valor do combo e das tecnologias adicionais?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sim! Tanto o combo base de R$ 297,00 quanto as tecnologias adicionais podem ser parcelados em até 10x sem juros em todos os cartões de crédito aceitos na loja.
+                    </div>
+                </div>
+
+                <!-- Tópico 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>5. Como faço para escolher a minha armação?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Você pode visitar nossa loja física no Centro de Campinas para experimentar dezenas de modelos, ou solicitar consultoria personalizada via WhatsApp, onde nossos consultores enviam fotos e vídeos de modelos que combinam com o formato do seu rosto.
+                    </div>
+                </div>
+
+                <!-- Tópico 6 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>6. Qual a vantagem do tratamento Antirreflexo?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O Antirreflexo elimina o brilho incômodo de lâmpadas e faróis de carros à noite, oferece maior nitidez para leitura e deixa os olhos visíveis e transparentes em fotos e chamadas de vídeo.
+                    </div>
+                </div>
+
+                <!-- Tópico 7 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>7. Para que serve o Filtro de Luz Azul (Bluecut)?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Ele filtra a luz azul prejudicial emitida por computadores, celulares e TVs, diminuindo significativamente a fadiga ocular, ardência, dores de cabeça e a insônia após longas horas de tela.
+                    </div>
+                </div>
+
+                <!-- Tópico 8 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>8. As lentes Fotossensíveis substituem os óculos de sol com grau?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sim! Elas são totalmente inteligentes: permanecem 100% claras dentro de casa ou no escritório e escurecem automaticamente ao entrar em contato com os raios solares em áreas externas.
+                    </div>
+                </div>
+
+                <!-- Tópico 9 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>9. Qual o prazo para confeccionar meus óculos?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Graças ao nosso laboratório óptico especializado, os prazos variam de 3 a 7 dias úteis, com rigoroso controle de centragem óptica milimétrica antes da entrega.
+                    </div>
+                </div>
+
+                <!-- Tópico 10 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>10. Onde fica a loja para atendimento presencial?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Estamos localizados na Rua Barão de Jaguara, 1109 - Centro - Campinas/SP, com estacionamento conveniado próximo e equipe pronta para recepcioná-lo.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA FAQ -->
+            <div class="voucher-cta-group">
+                <a href="#voucher" class="btn-voucher-action btn-trigger-traditional">
+                    <i class="fas fa-ticket-alt"></i> Gerar meu Voucher Agora
+                </a>
+                <div class="voucher-scarcity-badge on-light">
+                    <span class="scarcity-pulse-dot"></span>
+                    <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER EXTRA: AVALIAÇÕES POSITIVAS (Fundo Branco) -->
+    <section class="banner-avaliacoes" id="avaliacoes">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag navy">
+                    <i class="fas fa-star"></i> Satisfação Comprovada
+                </span>
+                <h2 class="section-title">O Que Dizem Nossos Clientes</h2>
+                <p class="section-subtitle text-muted">
+                    Veja a experiência de quem já garantiu seus óculos completos com a gente em Campinas:
+                </p>
+            </div>
+
+            <div class="reviews-grid">
+                <!-- Avaliação 1 -->
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            "Eu tinha muito receio de usar multifocal por causa de tontura, mas a adaptação com as Lentes HD das Ópticas Conceição foi imediata! Excelente atendimento e o preço do combo é imbatível."
+                        </p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">CM</div>
+                        <div class="author-info">
+                            <h5>Carlos M.</h5>
+                            <span>Centro, Campinas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avaliação 2 -->
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            "Comprei o combo com o filtro azul Bluecut pois fico o dia todo no computador. Minhas dores de cabeça acabaram e a armação é linda e muito confortável. Recomendo de olhos fechados!"
+                        </p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">MH</div>
+                        <div class="author-info">
+                            <h5>Maria Helena S.</h5>
+                            <span>Cambuí, Campinas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avaliação 3 -->
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="review-text">
+                            "Minha família compra na Conceição há mais de 30 anos. Essa campanha ForLife superou todas as expectativas em qualidade técnica, agilidade e economia. Parabéns pelo carinho!"
+                        </p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">RF</div>
+                        <div class="author-info">
+                            <h5>Roberto F.</h5>
+                            <span>Taquaral, Campinas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Avaliações -->
+            <div class="voucher-cta-group">
+                <a href="#voucher" class="btn-voucher-action btn-trigger-traditional">
+                    <i class="fas fa-ticket-alt"></i> Quero Meu Voucher de R$ 297,00
+                </a>
+                <div class="voucher-scarcity-badge on-light">
+                    <span class="scarcity-pulse-dot"></span>
+                    <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER 5: CONTATOS & COMO CHEGAR (Fundo Cinza Claro) -->
     <section class="banner-localizacao" id="contato">
         <div class="container">
             <div class="text-center">
@@ -359,16 +635,16 @@
                     <div class="social-buttons-box">
                         <div class="social-title">Siga Nossos Canais:</div>
                         <div class="social-links-row">
-                            <a href="https://instagram.com/opticasconceicao" target="_blank" class="social-btn instagram" title="Instagram Ópticas Conceição">
+                            <a href="https://instagram.com/opticasconceicao" target="_blank" class="social-btn" title="Instagram Ópticas Conceição">
                                 <i class="fab fa-instagram"></i> Instagram
                             </a>
-                            <a href="https://tiktok.com/@opticasconceicao" target="_blank" class="social-btn tiktok" title="TikTok Ópticas Conceição">
+                            <a href="https://tiktok.com/@opticasconceicao" target="_blank" class="social-btn" title="TikTok Ópticas Conceição">
                                 <i class="fab fa-tiktok"></i> TikTok
                             </a>
-                            <a href="https://api.whatsapp.com/send?phone=5519992868439" target="_blank" class="social-btn whatsapp" title="Falar no WhatsApp">
+                            <a href="https://api.whatsapp.com/send?phone=5519992868439" target="_blank" class="social-btn" title="Falar no WhatsApp">
                                 <i class="fab fa-whatsapp"></i> WhatsApp
                             </a>
-                            <a href="mailto:contato@opticaconceicao.com.br" class="social-btn email" title="Enviar E-mail">
+                            <a href="mailto:contato@opticaconceicao.com.br" class="social-btn" title="Enviar E-mail">
                                 <i class="fas fa-envelope"></i> E-mail
                             </a>
                         </div>
@@ -397,6 +673,11 @@
             </p>
         </div>
     </footer>
+
+    <!-- BOTÃO FLUTUANTE DISCRETO PARA SUBIR A PÁGINA -->
+    <button id="scroll-top-btn" class="scroll-top-btn" title="Voltar ao topo" aria-label="Voltar ao topo">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
