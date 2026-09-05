@@ -11,13 +11,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- jsPDF e jsPDF AutoTable para Relatórios em PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
     <style>
         :root {
             --navy-primary: #002C5B;
             --navy-dark: #001A36;
             --navy-light: #0B3C75;
+            --royal-blue: #1D4ED8;
+            --royal-blue-light: #2563EB;
             --gray-bg: #F4F6F9;
             --gray-border: #E2E8F0;
+            --gray-subtle: #F8FAFC;
             --text-dark: #0F172A;
             --text-muted: #64748B;
             --radius-md: 10px;
@@ -97,13 +104,13 @@
         }
 
         .login-form input:focus {
-            border-color: var(--navy-primary);
-            box-shadow: 0 0 0 3px rgba(0, 44, 91, 0.1);
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .btn-login {
             width: 100%;
-            background: var(--navy-primary);
+            background: linear-gradient(135deg, var(--navy-primary) 0%, var(--royal-blue) 100%);
             color: #FFFFFF;
             border: none;
             padding: 14px;
@@ -115,10 +122,11 @@
         }
 
         .btn-login:hover {
-            background: var(--navy-light);
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
 
-        /* PAINEL PRINCIPAL (DASHBOARD) */
+        /* PAINEL PRINCIPAL */
         #dashboard-screen {
             display: none;
             flex-direction: column;
@@ -142,16 +150,18 @@
         }
 
         .admin-brand img {
-            height: 36px;
+            height: 38px;
         }
 
         .admin-brand span {
             font-size: 13px;
             font-weight: 800;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(37, 99, 235, 0.25);
+            color: #93C5FD;
             padding: 4px 10px;
             border-radius: 4px;
             letter-spacing: 1px;
+            border: 1px solid rgba(147, 197, 253, 0.3);
         }
 
         .admin-actions {
@@ -215,36 +225,36 @@
         }
 
         .tab-btn.active {
-            color: var(--navy-primary);
-            border-bottom-color: var(--navy-primary);
+            color: var(--royal-blue);
+            border-bottom-color: var(--royal-blue);
         }
 
         .admin-content {
-            padding: 28px;
-            max-width: 1440px;
+            padding: 24px;
+            max-width: 1600px;
             margin: 0 auto;
             width: 100%;
             flex-grow: 1;
         }
 
-        /* CARDS DE MÉTRICAS */
+        /* MÉTRICAS */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 28px;
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
         .metric-card {
             background: #FFFFFF;
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-md);
-            padding: 22px;
+            padding: 20px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
         }
 
         .metric-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
@@ -252,12 +262,12 @@
         }
 
         .metric-val {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             color: var(--navy-primary);
         }
 
-        /* TABELA DE LEADS */
+        /* TOOLBAR DA TABELA */
         .table-container {
             background: #FFFFFF;
             border: 1px solid var(--gray-border);
@@ -267,31 +277,37 @@
         }
 
         .table-toolbar {
-            padding: 16px 20px;
+            padding: 14px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             border-bottom: 1px solid var(--gray-border);
             background: #FAFAFC;
+            flex-wrap: wrap;
         }
 
         .search-input {
-            padding: 9px 14px;
+            padding: 8px 14px;
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-sm);
-            font-size: 14px;
+            font-size: 13px;
             width: 320px;
             outline: none;
         }
 
+        .search-input:focus {
+            border-color: var(--royal-blue);
+        }
+
         .table-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn-action {
-            padding: 8px 15px;
+            padding: 8px 14px;
             border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 700;
@@ -307,46 +323,237 @@
 
         .btn-action:hover {
             background: var(--gray-bg);
+            border-color: var(--navy-primary);
         }
 
-        table {
+        .btn-action.btn-pdf {
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.3);
+            color: var(--royal-blue);
+        }
+
+        .btn-action.btn-pdf:hover {
+            background: var(--royal-blue);
+            color: #FFFFFF;
+        }
+
+        /* TABELA ULTRA ORGANIZADA SEM QUEBRAS DE LINHA */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table.leads-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
             font-size: 13px;
+            white-space: nowrap;
         }
 
-        th {
+        table.leads-table th {
             background: #F8FAFC;
-            padding: 12px 14px;
+            padding: 10px 12px;
             font-weight: 800;
             color: var(--navy-primary);
-            border-bottom: 1px solid var(--gray-border);
+            border-bottom: 2px solid var(--gray-border);
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.5px;
             white-space: nowrap;
         }
 
-        td {
-            padding: 12px 14px;
+        table.leads-table td {
+            padding: 10px 12px;
             border-bottom: 1px solid #EDF2F7;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
-        tr:hover td {
+        table.leads-table tr.lead-row:hover td {
             background-color: #F8FAFC;
         }
 
-        .badge-code {
-            display: inline-block;
-            background: rgba(0, 44, 91, 0.08);
-            color: var(--navy-primary);
-            font-weight: 800;
-            font-size: 11px;
-            padding: 3px 6px;
+        /* Botão Expandir Detalhes [+] */
+        .btn-expand-row {
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
+            border: 1px solid var(--gray-border);
+            background: #FFFFFF;
+            color: var(--navy-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 800;
+            transition: all 0.2s;
+        }
+
+        .btn-expand-row:hover {
+            background: var(--royal-blue);
+            color: #FFFFFF;
+            border-color: var(--royal-blue);
+        }
+
+        /* Linha de Detalhes Expandida */
+        .details-row {
+            display: none;
+            background-color: #F1F5F9;
+        }
+
+        .details-row.open {
+            display: table-row;
+        }
+
+        .details-content {
+            padding: 14px 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .details-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .details-item strong {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--navy-primary);
             letter-spacing: 0.5px;
+        }
+
+        /* Inputs e Selects na Linha */
+        .table-select {
+            padding: 5px 8px;
+            border: 1px solid var(--gray-border);
+            border-radius: 4px;
+            font-size: 12px;
+            background: #FFFFFF;
+            color: var(--navy-primary);
+            outline: none;
+            font-weight: 600;
+            max-width: 140px;
+            text-overflow: ellipsis;
+        }
+
+        .table-input {
+            padding: 5px 8px;
+            border: 1px solid var(--gray-border);
+            border-radius: 4px;
+            font-size: 12px;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            outline: none;
+            width: 80px;
+        }
+
+        .table-input:focus, .table-select:focus {
+            border-color: var(--royal-blue);
+        }
+
+        /* Botão WhatsApp Somente Ícone */
+        .btn-whatsapp-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #25D366;
+            color: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-whatsapp-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Botões de Ação na Linha: Gravar, Editar, Excluir */
+        .row-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-row-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            border: 1px solid var(--gray-border);
+            background: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-row-action.save {
+            color: #10B981;
+            border-color: #10B981;
+        }
+
+        .btn-row-action.save:hover {
+            background-color: #10B981;
+            color: #FFFFFF;
+        }
+
+        .btn-row-action.edit {
+            color: var(--royal-blue);
+            border-color: var(--royal-blue);
+        }
+
+        .btn-row-action.edit:hover {
+            background-color: var(--royal-blue);
+            color: #FFFFFF;
+        }
+
+        .btn-row-action.delete {
+            color: #EF4444;
+            border-color: #EF4444;
+        }
+
+        .btn-row-action.delete:hover {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+
+        /* Checkbox de Seleção ao lado da OS */
+        .row-select-checkbox {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--royal-blue);
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* Miniatura da Receita */
+        .recipe-thumb {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--gray-border);
+            cursor: pointer;
+            vertical-align: middle;
+            transition: transform 0.2s;
+        }
+
+        .recipe-thumb:hover {
+            transform: scale(1.15);
+            border-color: var(--royal-blue);
         }
 
         .badge-status {
@@ -355,97 +562,28 @@
             color: var(--navy-primary);
             font-size: 11px;
             font-weight: 700;
-            padding: 3px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             border: 1px solid var(--gray-border);
         }
 
-        .badge-status.need-update {
-            background: #EEF2F6;
-            color: #475569;
-        }
-
-        .recipe-thumbnail-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .recipe-thumb {
-            width: 36px;
-            height: 36px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid var(--gray-border);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .recipe-thumb:hover {
-            transform: scale(1.15);
-            border-color: var(--navy-primary);
-        }
-
-        /* Inputs e Selects na Linha da Tabela */
-        .table-select {
-            padding: 6px 8px;
-            border: 1px solid var(--gray-border);
-            border-radius: 4px;
-            font-size: 12px;
-            background: #FFFFFF;
-            color: var(--navy-primary);
-            outline: none;
-            font-weight: 600;
-            width: 120px;
-        }
-
-        .table-input {
-            padding: 6px 8px;
-            border: 1px solid var(--gray-border);
-            border-radius: 4px;
-            font-size: 12px;
-            background: #FFFFFF;
-            color: var(--text-dark);
-            outline: none;
-            width: 90px;
-        }
-
-        .btn-whatsapp-lead {
-            background-color: var(--navy-primary);
-            color: #FFFFFF;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 800;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-        }
-
-        .btn-whatsapp-lead:hover {
-            background-color: var(--navy-light);
-        }
-
-        /* ABA CONFIGURAÇÕES (CMS + VENDEDORES) */
+        /* ABA CONFIGURAÇÕES (3 COLUNAS) */
         .config-sections-grid {
             display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 24px;
+            grid-template-columns: 1.1fr 1fr 1fr;
+            gap: 20px;
         }
 
         .config-card {
             background: #FFFFFF;
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-md);
-            padding: 30px;
+            padding: 26px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
         .config-card h3 {
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 800;
             color: var(--navy-primary);
             margin-bottom: 6px;
@@ -457,20 +595,20 @@
         .config-card p {
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 22px;
+            gap: 14px;
+            margin-bottom: 20px;
         }
 
         .form-group-cfg {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .form-group-cfg label {
@@ -480,27 +618,26 @@
         }
 
         .cfg-input {
-            padding: 10px 12px;
+            padding: 9px 12px;
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-sm);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--navy-primary);
             outline: none;
         }
 
         .cfg-input:focus {
-            border-color: var(--navy-primary);
-            box-shadow: 0 0 0 3px rgba(0, 44, 91, 0.1);
+            border-color: var(--royal-blue);
         }
 
         .btn-save-cfg {
-            background: var(--navy-primary);
+            background: linear-gradient(135deg, var(--navy-primary) 0%, var(--royal-blue) 100%);
             color: #FFFFFF;
             border: none;
-            padding: 12px 22px;
+            padding: 11px 20px;
             border-radius: var(--radius-sm);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
@@ -510,52 +647,52 @@
         }
 
         .btn-save-cfg:hover {
-            background: var(--navy-light);
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
 
-        /* Lista de Vendedores */
-        .seller-add-box {
+        .item-add-box {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 16px;
         }
 
-        .seller-list {
+        .managed-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             max-height: 280px;
             overflow-y: auto;
         }
 
-        .seller-item {
+        .managed-item {
             background: var(--gray-bg);
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-sm);
-            padding: 10px 14px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--navy-primary);
         }
 
-        .btn-del-seller {
+        .btn-del-item {
             background: none;
             border: none;
             color: #94A3B8;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.2s;
         }
 
-        .btn-del-seller:hover {
-            color: var(--navy-primary);
+        .btn-del-item:hover {
+            color: #EF4444;
         }
 
-        /* MODAL DE AMPLIAÇÃO E DOWNLOAD DE RECEITA */
+        /* MODAL DE RECEITA */
         #prescription-modal {
             display: none;
             position: fixed;
@@ -600,14 +737,8 @@
             color: var(--text-muted);
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
         .btn-download-recipe {
-            background: var(--navy-primary);
+            background: var(--royal-blue);
             color: #FFFFFF;
             padding: 10px 20px;
             border-radius: var(--radius-sm);
@@ -620,7 +751,30 @@
         }
 
         .btn-download-recipe:hover {
-            background: var(--navy-light);
+            background: var(--navy-primary);
+        }
+
+        /* Toast Feedback */
+        #admin-toast {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10B981;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 1100px) {
+            .config-sections-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -699,41 +853,51 @@
                     </div>
                 </div>
 
-                <!-- Tabela de Leads -->
+                <!-- Tabela de Leads com Roteamento e PDF -->
                 <div class="table-container">
                     <div class="table-toolbar">
-                        <input type="text" id="search-leads" class="search-input" placeholder="Buscar por Nome, WhatsApp, Cidade, Vendedor ou OS...">
+                        <input type="text" id="search-leads" class="search-input" placeholder="Buscar por Nome, WhatsApp, Cidade, Loja, Vendedor ou OS...">
+                        
                         <div class="table-actions">
-                            <button class="btn-action" id="btn-refresh-leads">
-                                <i class="fas fa-sync-alt"></i> Atualizar
+                            <button class="btn-action btn-pdf" id="btn-pdf-selected" title="Exportar leads marcados na caixa de seleção">
+                                <i class="fas fa-file-pdf"></i> PDF Seleção
                             </button>
-                            <button class="btn-action" id="btn-export-csv">
+                            <button class="btn-action btn-pdf" id="btn-pdf-all" title="Exportar todos os leads listados">
+                                <i class="fas fa-file-pdf"></i> PDF Todos
+                            </button>
+                            <button class="btn-action" id="btn-export-csv" title="Exportar para planilha CSV">
                                 <i class="fas fa-file-excel"></i> Exportar CSV
+                            </button>
+                            <button class="btn-action" id="btn-refresh-leads" title="Recarregar dados">
+                                <i class="fas fa-sync-alt"></i> Atualizar
                             </button>
                         </div>
                     </div>
 
-                    <div style="overflow-x: auto;">
-                        <table>
+                    <div class="table-responsive">
+                        <table class="leads-table">
                             <thead>
                                 <tr>
+                                    <th style="width: 28px; text-align: center;">+</th>
                                     <th>Data</th>
                                     <th>Cliente</th>
-                                    <th>WhatsApp</th>
-                                    <th>Cidade</th>
+                                    <th style="text-align: center;">WhatsApp</th>
+                                    <th>Combo</th>
                                     <th>Tecnologia</th>
-                                    <th>Total Combo</th>
-                                    <th>Receita?</th>
+                                    <th>Receita</th>
+                                    <th>Loja</th>
                                     <th>Vendedor</th>
-                                    <th>Valor Venda</th>
+                                    <th>Valor</th>
                                     <th>Nº OS</th>
-                                    <th>Código</th>
-                                    <th>Ação</th>
+                                    <th style="text-align: center;" title="Marcar para PDF Seleção">
+                                        <input type="checkbox" id="select-all-leads" class="row-select-checkbox" title="Selecionar Todos">
+                                    </th>
+                                    <th style="text-align: center;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="leads-table-body">
                                 <tr>
-                                    <td colspan="12" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                         <i class="fas fa-spinner fa-spin"></i> Carregando leads da campanha ForLife...
                                     </td>
                                 </tr>
@@ -743,18 +907,18 @@
                 </div>
             </div>
 
-            <!-- ABA 2: CONFIGURAÇÕES (CMS + VENDEDORES) -->
+            <!-- ABA 2: CONFIGURAÇÕES (PREÇOS, VENDEDORES & LOJAS) -->
             <div id="tab-cms" class="tab-panel" style="display: none;">
                 <div class="config-sections-grid">
                     <!-- Bloco 1: Gerenciamento de Preços do Combo e Tecnologias -->
                     <div class="config-card">
-                        <h3><i class="fas fa-sliders-h"></i> Preços do Combo e Tecnologias</h3>
-                        <p>Altere os valores exibidos na Landing Page para o combo e tratamentos ópticos adicionais:</p>
+                        <h3><i class="fas fa-sliders-h"></i> Preços do Combo</h3>
+                        <p>Altere os valores exibidos na Landing Page para o combo e adicionais:</p>
 
                         <form id="cms-config-form">
                             <div class="form-grid-2">
                                 <div class="form-group-cfg">
-                                    <label for="cms-combo-price">Preço Combo Base (R$)</label>
+                                    <label for="cms-combo-price">Preço Combo (R$)</label>
                                     <input type="number" step="0.01" id="cms-combo-price" class="cfg-input" required>
                                 </div>
 
@@ -769,7 +933,7 @@
                                 </div>
 
                                 <div class="form-group-cfg">
-                                    <label for="cms-bluecut">Filtro Azul / Bluecut (R$)</label>
+                                    <label for="cms-bluecut">Bluecut (R$)</label>
                                     <input type="number" step="0.01" id="cms-bluecut" class="cfg-input" required>
                                 </div>
 
@@ -788,19 +952,33 @@
                     <!-- Bloco 2: Cadastro de Vendedores -->
                     <div class="config-card">
                         <h3><i class="fas fa-user-tag"></i> Cadastro de Vendedores</h3>
-                        <p>Cadastre os consultores para poder atribuir cada lead e acompanhar as vendas na loja:</p>
+                        <p>Cadastre consultores para atribuir aos leads:</p>
 
-                        <div class="seller-add-box">
+                        <div class="item-add-box">
                             <input type="text" id="new-seller-name" class="cfg-input" placeholder="Nome do Vendedor..." style="flex: 1;">
                             <button type="button" class="btn-save-cfg" id="btn-add-seller">
                                 <i class="fas fa-plus"></i> Adicionar
                             </button>
                         </div>
 
-                        <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--navy-primary); margin-bottom: 8px;">
-                            Vendedores Cadastrados:
+                        <ul class="managed-list" id="sellers-list-container">
+                            <!-- Preenchido dinamicamente -->
+                        </ul>
+                    </div>
+
+                    <!-- Bloco 3: Cadastro de Lojas -->
+                    <div class="config-card">
+                        <h3><i class="fas fa-store"></i> Cadastro de Lojas</h3>
+                        <p>Cadastre as unidades para direcionar os leads:</p>
+
+                        <div class="item-add-box">
+                            <input type="text" id="new-store-name" class="cfg-input" placeholder="Nome da Loja (ex: Loja Centro)..." style="flex: 1;">
+                            <button type="button" class="btn-save-cfg" id="btn-add-store">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
                         </div>
-                        <ul class="seller-list" id="sellers-list-container">
+
+                        <ul class="managed-list" id="stores-list-container">
                             <!-- Preenchido dinamicamente -->
                         </ul>
                     </div>
@@ -815,12 +993,17 @@
             <button class="btn-close-modal" id="btn-close-modal"><i class="fas fa-times"></i></button>
             <h4 style="color: var(--navy-primary); font-size: 18px;">Receita Médica do Cliente</h4>
             <img id="modal-prescription-img" src="" alt="Receita do Cliente">
-            <div class="modal-actions">
+            <div>
                 <a href="#" id="modal-btn-download" download="receita_cliente.jpg" class="btn-download-recipe">
                     <i class="fas fa-download"></i> Baixar Imagem da Receita
                 </a>
             </div>
         </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="admin-toast">
+        <i class="fas fa-check-circle" style="margin-right: 8px;"></i> <span id="admin-toast-text">Dados gravados com sucesso!</span>
     </div>
 
     <!-- Supabase JS CDN -->
@@ -849,6 +1032,7 @@
 
         let allLeads = [];
         let allSellers = ["Juliana", "Marcos", "Fabiana", "Renata"];
+        let allStores = ["Loja Centro - Barão de Jaguara", "Loja Cambuí", "Loja Taquaral", "Loja Shopping Dom Pedro", "Loja Shopping Iguatemi"];
 
         // ==========================================
         // AUTENTICAÇÃO E INICIALIZAÇÃO
@@ -884,16 +1068,28 @@
 
             setupTabs();
             setupSellers();
+            setupStores();
             setupCMS();
             setupModal();
+            setupPDFExports();
         });
 
         function showDashboard() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-screen').style.display = 'flex';
             loadSellers();
+            loadStores();
             loadLeads();
             loadCMSConfig();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('admin-toast');
+            document.getElementById('admin-toast-text').textContent = msg || 'Dados gravados com sucesso!';
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
         }
 
         // ==========================================
@@ -943,10 +1139,10 @@
 
             allSellers.forEach((seller, idx) => {
                 const li = document.createElement('li');
-                li.className = 'seller-item';
+                li.className = 'managed-item';
                 li.innerHTML = `
                     <span><i class="fas fa-user" style="margin-right: 8px; opacity: 0.7;"></i> ${escapeHtml(seller)}</span>
-                    <button class="btn-del-seller" onclick="removeSeller(${idx})" title="Remover Vendedor">
+                    <button class="btn-del-item" onclick="removeSeller(${idx})" title="Remover Vendedor">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 `;
@@ -962,6 +1158,7 @@
                     allSellers.push(name);
                     input.value = '';
                     saveSellers();
+                    showToast(`Vendedor "${name}" adicionado!`);
                 }
             });
         }
@@ -974,11 +1171,72 @@
         };
 
         // ==========================================
+        // GERENCIADOR DE LOJAS
+        // ==========================================
+        function loadStores() {
+            const stored = localStorage.getItem('forlife_stores');
+            if (stored) {
+                try {
+                    allStores = JSON.parse(stored);
+                } catch (e) {}
+            }
+            renderStoresList();
+        }
+
+        function saveStores() {
+            localStorage.setItem('forlife_stores', JSON.stringify(allStores));
+            renderStoresList();
+            renderLeadsTable(allLeads);
+        }
+
+        function renderStoresList() {
+            const container = document.getElementById('stores-list-container');
+            container.innerHTML = '';
+
+            if (allStores.length === 0) {
+                container.innerHTML = '<li style="color: var(--text-muted); font-size: 13px; font-style: italic;">Nenhuma loja cadastrada.</li>';
+                return;
+            }
+
+            allStores.forEach((store, idx) => {
+                const li = document.createElement('li');
+                li.className = 'managed-item';
+                li.innerHTML = `
+                    <span><i class="fas fa-store" style="margin-right: 8px; opacity: 0.7;"></i> ${escapeHtml(store)}</span>
+                    <button class="btn-del-item" onclick="removeStore(${idx})" title="Remover Loja">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function setupStores() {
+            document.getElementById('btn-add-store').addEventListener('click', () => {
+                const input = document.getElementById('new-store-name');
+                const name = input.value.trim();
+                if (name && !allStores.includes(name)) {
+                    allStores.push(name);
+                    input.value = '';
+                    saveStores();
+                    showToast(`Loja "${name}" cadastrada!`);
+                }
+            });
+        }
+
+        window.removeStore = function(idx) {
+            if (confirm(`Remover loja "${allStores[idx]}"?`)) {
+                allStores.splice(idx, 1);
+                saveStores();
+            }
+        };
+
+        // ==========================================
         // LEADS FORLIFE
         // ==========================================
         async function loadLeads() {
             const tbody = document.getElementById('leads-table-body');
-            tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>';
 
             let leads = [];
             let loadedFromCloud = false;
@@ -992,7 +1250,6 @@
 
                     if (!error && data) {
                         leads = data.map(l => {
-                            // Data apenas DD/MM/AAAA (sem hora)
                             const dateOnly = l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : '';
                             return {
                                 id: l.id,
@@ -1008,6 +1265,7 @@
                                 recipeStatus: l.recipe_status || (l.has_prescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita'),
                                 prescriptionFile: l.prescription_file,
                                 code: l.code,
+                                store: l.store || '',
                                 seller: l.seller || '',
                                 saleValue: l.sale_value || '',
                                 osNumber: l.os_number || ''
@@ -1034,81 +1292,200 @@
             document.getElementById('tab-leads-count').textContent = leads.length;
 
             if (leads.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:40px; color: var(--text-muted); font-size: 14px;">Nenhum lead registrado na campanha ForLife ainda.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:40px; color: var(--text-muted); font-size: 14px;">Nenhum lead registrado na campanha ForLife ainda.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = '';
             leads.forEach((lead, index) => {
-                const tr = document.createElement('tr');
                 const cleanPhone = (lead.phone || '').replace(/\D/g, '');
                 
-                // Formatar data apenas (DD/MM/AAAA)
                 let dateDisplay = lead.date || '';
                 if (dateDisplay.includes(',')) dateDisplay = dateDisplay.split(',')[0].trim();
 
                 const addonsText = (lead.addons && lead.addons.length > 0)
-                    ? lead.addons.map(a => `<span style="display:inline-block; background:#EDF2F7; padding:2px 6px; border-radius:4px; font-size:11px; margin:2px;">${escapeHtml(a.name)}</span>`).join(' ')
-                    : '<span style="color:#94A3B8; font-size:12px;">Combo Tradicional</span>';
+                    ? lead.addons.map(a => `<span style="display:inline-block; background:#EDF2F7; padding:2px 6px; border-radius:4px; font-size:11px; margin:1px;">${escapeHtml(a.name)}</span>`).join(' ')
+                    : '<span style="color:#94A3B8; font-size:11px;">Tradicional</span>';
 
-                // Status da Receita com Miniatura se houver imagem
+                // Receita: miniatura se tiver arquivo, ou badge
                 let recipeHtml = '';
                 if (lead.hasPrescription) {
-                    recipeHtml = '<span class="badge-status" style="background:#F1F5F9; color:var(--navy-primary); font-weight:700;"><i class="fas fa-check"></i> Atualizada</span>';
                     if (lead.prescriptionFile) {
-                        recipeHtml += `
-                            <div class="recipe-thumbnail-box">
-                                <img src="${lead.prescriptionFile}" class="recipe-thumb" title="Clique para ampliar e baixar" onclick="openPrescriptionModal('${index}')">
-                            </div>
+                        recipeHtml = `
+                            <img src="${lead.prescriptionFile}" class="recipe-thumb" title="Clique para ampliar e baixar receita" onclick="openPrescriptionModal(${index})">
                         `;
+                    } else {
+                        recipeHtml = '<span class="badge-status" style="color:var(--navy-primary);"><i class="fas fa-check"></i> Atualizada</span>';
                     }
                 } else {
-                    recipeHtml = '<span class="badge-status need-update"><i class="fas fa-redo"></i> Precisa Atualizar</span>';
+                    recipeHtml = '<span class="badge-status" style="color:#64748B;"><i class="fas fa-redo"></i> Renovar</span>';
                 }
 
+                // Opções de Lojas
+                let storeOptions = `<option value="">-- Loja --</option>`;
+                allStores.forEach(s => {
+                    const selected = (lead.store === s) ? 'selected' : '';
+                    storeOptions += `<option value="${escapeHtml(s)}" ${selected}>${escapeHtml(s)}</option>`;
+                });
+
                 // Opções de Vendedores
-                let sellerOptions = `<option value="">-- Atribuir --</option>`;
+                let sellerOptions = `<option value="">-- Vendedor --</option>`;
                 allSellers.forEach(s => {
                     const selected = (lead.seller === s) ? 'selected' : '';
                     sellerOptions += `<option value="${escapeHtml(s)}" ${selected}>${escapeHtml(s)}</option>`;
                 });
 
+                // Linha Principal
+                const tr = document.createElement('tr');
+                tr.className = 'lead-row';
+                tr.id = `row-lead-${index}`;
                 tr.innerHTML = `
-                    <td style="font-size: 12px; color: var(--text-muted); white-space:nowrap;">${escapeHtml(dateDisplay)}</td>
-                    <td style="font-weight: 700; color: var(--navy-primary);">${escapeHtml(lead.name || '')}</td>
-                    <td style="white-space:nowrap;">${escapeHtml(lead.phone || '')}</td>
-                    <td>${escapeHtml(lead.city || '')}</td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn-expand-row" onclick="toggleDetails(${index})" title="Ver mais informações">
+                            <i class="fas fa-plus" id="icon-expand-${index}"></i>
+                        </button>
+                    </td>
+                    <td style="font-size: 12px; color: var(--text-muted);">${escapeHtml(dateDisplay)}</td>
+                    <td style="font-weight: 700; color: var(--navy-primary); max-width: 140px; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(lead.name)}">
+                        ${escapeHtml(lead.name || '')}
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="https://api.whatsapp.com/send?phone=55${cleanPhone}" target="_blank" class="btn-whatsapp-icon" title="Chamar ${escapeHtml(lead.name)} no WhatsApp (${escapeHtml(lead.phone)})">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </td>
+                    <td style="font-weight: 800; color: var(--navy-primary);">R$ ${Number(lead.totalPrice).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                     <td>${addonsText}</td>
-                    <td style="font-weight: 800; color: var(--navy-primary); white-space:nowrap;">R$ ${Number(lead.totalPrice).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                     <td>${recipeHtml}</td>
                     <td>
-                        <select class="table-select" onchange="updateLeadField(${index}, 'seller', this.value)">
+                        <select class="table-select" id="input-store-${index}">
+                            ${storeOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="table-select" id="input-seller-${index}">
                             ${sellerOptions}
                         </select>
                     </td>
                     <td>
-                        <input type="number" step="0.01" class="table-input" placeholder="R$ 0,00" value="${escapeHtml(lead.saleValue || '')}" onchange="updateLeadField(${index}, 'saleValue', this.value)">
+                        <input type="number" step="0.01" class="table-input" id="input-val-${index}" placeholder="R$ 0,00" value="${escapeHtml(lead.saleValue || '')}">
                     </td>
                     <td>
-                        <input type="text" class="table-input" placeholder="Nº OS" value="${escapeHtml(lead.osNumber || '')}" onchange="updateLeadField(${index}, 'osNumber', this.value)">
+                        <input type="text" class="table-input" id="input-os-${index}" placeholder="Nº OS" value="${escapeHtml(lead.osNumber || '')}">
                     </td>
-                    <td><span class="badge-code">${escapeHtml(lead.code || '')}</span></td>
-                    <td>
-                        <a href="https://api.whatsapp.com/send?phone=55${cleanPhone}" target="_blank" class="btn-whatsapp-lead" title="Chamar no WhatsApp">
-                            <i class="fab fa-whatsapp"></i> Chamar
-                        </a>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="row-select-checkbox lead-select-box" data-index="${index}" title="Marcar para PDF Seleção">
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="row-actions-group">
+                            <button type="button" class="btn-row-action save" onclick="saveRowLead(${index})" title="Gravar Dados">
+                                <i class="fas fa-save" id="save-icon-${index}"></i>
+                            </button>
+                            <button type="button" class="btn-row-action edit" onclick="editRowLead(${index})" title="Editar / Focar">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button type="button" class="btn-row-action delete" onclick="deleteRowLead(${index})" title="Excluir Lead">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
+
+                // Linha de Detalhes Expandida (+)
+                const trDetails = document.createElement('tr');
+                trDetails.className = 'details-row';
+                trDetails.id = `details-lead-${index}`;
+                trDetails.innerHTML = `
+                    <td colspan="13" style="padding: 0;">
+                        <div class="details-content">
+                            <div class="details-item">
+                                <strong>WhatsApp Completo:</strong>
+                                <span>${escapeHtml(lead.phone || 'Não informado')}</span>
+                            </div>
+                            <div class="details-item">
+                                <strong>E-mail:</strong>
+                                <span>${escapeHtml(lead.email || 'Não informado')}</span>
+                            </div>
+                            <div class="details-item">
+                                <strong>Cidade / Região:</strong>
+                                <span>${escapeHtml(lead.city || 'Não informado')}</span>
+                            </div>
+                            <div class="details-item">
+                                <strong>Código do Voucher:</strong>
+                                <span style="font-weight: 800; color: var(--royal-blue);">${escapeHtml(lead.code || '')}</span>
+                            </div>
+                            <div class="details-item">
+                                <strong>Situação da Receita:</strong>
+                                <span>${escapeHtml(lead.recipeStatus || '')}</span>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(trDetails);
             });
         }
 
-        // Atualizar campo específico do lead (Vendedor, Valor Venda, OS)
-        window.updateLeadField = function(index, field, value) {
-            if (allLeads[index]) {
-                allLeads[index][field] = value;
+        // Alternar detalhes da linha [+]
+        window.toggleDetails = function(index) {
+            const detailsRow = document.getElementById(`details-lead-${index}`);
+            const icon = document.getElementById(`icon-expand-${index}`);
+            if (detailsRow) {
+                const isOpen = detailsRow.classList.contains('open');
+                detailsRow.classList.toggle('open', !isOpen);
+                if (icon) {
+                    icon.className = isOpen ? 'fas fa-plus' : 'fas fa-minus';
+                }
+            }
+        };
+
+        // Gravar dados da linha
+        window.saveRowLead = function(index) {
+            if (!allLeads[index]) return;
+
+            const storeVal = document.getElementById(`input-store-${index}`)?.value || '';
+            const sellerVal = document.getElementById(`input-seller-${index}`)?.value || '';
+            const saleVal = document.getElementById(`input-val-${index}`)?.value || '';
+            const osVal = document.getElementById(`input-os-${index}`)?.value || '';
+
+            allLeads[index].store = storeVal;
+            allLeads[index].seller = sellerVal;
+            allLeads[index].saleValue = saleVal;
+            allLeads[index].osNumber = osVal;
+
+            localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
+            updateMetrics(allLeads);
+
+            // Feedback visual no botão
+            const icon = document.getElementById(`save-icon-${index}`);
+            if (icon) {
+                icon.className = 'fas fa-check';
+                setTimeout(() => {
+                    icon.className = 'fas fa-save';
+                }, 1500);
+            }
+            showToast(`Dados da linha de "${allLeads[index].name}" gravados com sucesso!`);
+        };
+
+        // Editar/Focar na linha
+        window.editRowLead = function(index) {
+            const inputVal = document.getElementById(`input-val-${index}`);
+            if (inputVal) {
+                inputVal.focus();
+                inputVal.select();
+            }
+        };
+
+        // Excluir Lead
+        window.deleteRowLead = function(index) {
+            if (!allLeads[index]) return;
+            const name = allLeads[index].name;
+            if (confirm(`Deseja realmente excluir o lead de "${name}"? Esta ação não pode ser desfeita.`)) {
+                allLeads.splice(index, 1);
                 localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
+                renderLeadsTable(allLeads);
                 updateMetrics(allLeads);
+                showToast(`Lead de "${name}" excluído.`);
             }
         };
 
@@ -1140,6 +1517,7 @@
                 (l.name && l.name.toLowerCase().includes(q)) ||
                 (l.phone && l.phone.includes(q)) ||
                 (l.city && l.city.toLowerCase().includes(q)) ||
+                (l.store && l.store.toLowerCase().includes(q)) ||
                 (l.seller && l.seller.toLowerCase().includes(q)) ||
                 (l.osNumber && l.osNumber.toLowerCase().includes(q)) ||
                 (l.code && l.code.toLowerCase().includes(q))
@@ -1149,6 +1527,104 @@
 
         document.getElementById('btn-refresh-leads').addEventListener('click', loadLeads);
 
+        // Selecionar todos os checkboxes ao lado da OS
+        document.getElementById('select-all-leads').addEventListener('change', (e) => {
+            const checked = e.target.checked;
+            document.querySelectorAll('.lead-select-box').forEach(cb => {
+                cb.checked = checked;
+            });
+        });
+
+        // ==========================================
+        // GERAÇÃO DE RELATÓRIOS EM PDF (SELEÇÃO & TODOS)
+        // ==========================================
+        function setupPDFExports() {
+            document.getElementById('btn-pdf-selected').addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('.lead-select-box:checked');
+                if (checkboxes.length === 0) {
+                    alert('Por favor, marque as caixas de seleção ao lado da OS dos leads que deseja incluir no PDF.');
+                    return;
+                }
+                const selected = [];
+                checkboxes.forEach(cb => {
+                    const idx = parseInt(cb.getAttribute('data-index'));
+                    if (allLeads[idx]) selected.push(allLeads[idx]);
+                });
+                generatePDF(selected, 'Relatório de Leads - Seleção');
+            });
+
+            document.getElementById('btn-pdf-all').addEventListener('click', () => {
+                if (allLeads.length === 0) {
+                    alert('Nenhum lead para gerar o relatório PDF.');
+                    return;
+                }
+                generatePDF(allLeads, 'Relatório Geral de Leads - Todos');
+            });
+        }
+
+        function generatePDF(leadsArray, title) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape');
+
+                // Cabeçalho do PDF
+                doc.setFontSize(16);
+                doc.setTextColor(0, 44, 91);
+                doc.text("ÓPTICAS CONCEIÇÃO - CAMPANHA FORLIFE", 14, 15);
+
+                doc.setFontSize(11);
+                doc.setTextColor(100, 116, 139);
+                const emissionDate = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+                doc.text(`${title} | Gerado em: ${emissionDate} | Total de Registros: ${leadsArray.length}`, 14, 22);
+
+                // Montagem dos Dados da Tabela
+                const tableData = leadsArray.map(l => {
+                    const tech = (l.addons && l.addons.length > 0) ? l.addons.map(a => a.name).join(' + ') : 'Tradicional';
+                    const valVenda = l.saleValue ? `R$ ${Number(l.saleValue).toFixed(2)}` : '-';
+                    return [
+                        l.date || '',
+                        l.name || '',
+                        l.phone || '',
+                        l.store || 'Não atribuída',
+                        l.seller || 'Não atribuído',
+                        `R$ ${Number(l.totalPrice).toFixed(2)}`,
+                        tech,
+                        valVenda,
+                        l.osNumber || '-',
+                        l.code || ''
+                    ];
+                });
+
+                doc.autoTable({
+                    head: [['Data', 'Cliente', 'WhatsApp', 'Loja', 'Vendedor', 'Combo', 'Tecnologia', 'Valor', 'Nº OS', 'Código']],
+                    body: tableData,
+                    startY: 27,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [0, 44, 91],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        fontSize: 9
+                    },
+                    bodyStyles: {
+                        fontSize: 8,
+                        cellPadding: 3
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 250, 252]
+                    }
+                });
+
+                const filename = `relatorio_forlife_${new Date().toISOString().slice(0, 10)}.pdf`;
+                doc.save(filename);
+                showToast('Relatório PDF gerado com sucesso!');
+            } catch (err) {
+                console.error('Erro ao gerar PDF:', err);
+                alert('Ocorreu um erro ao gerar o PDF. Tentando imprimir pelo navegador...');
+                window.print();
+            }
+        }
+
         // Exportação CSV
         document.getElementById('btn-export-csv').addEventListener('click', () => {
             if (allLeads.length === 0) {
@@ -1156,10 +1632,10 @@
                 return;
             }
 
-            let csv = 'Data;Nome;Telefone;Email;Cidade;Tecnologia;Total;Situacao_Receita;Vendedor;Valor_Venda;OS;Codigo\n';
+            let csv = 'Data;Nome;Telefone;Email;Cidade;Loja;Vendedor;Tecnologia;Total;Valor_Venda;OS;Codigo\n';
             allLeads.forEach(l => {
                 const addonsStr = (l.addons || []).map(a => a.name).join(' + ') || 'Combo Tradicional';
-                csv += `"${l.date}";"${l.name}";"${l.phone}";"${l.email}";"${l.city}";"${addonsStr}";"R$ ${Number(l.totalPrice).toFixed(2)}";"${l.recipeStatus || ''}";"${l.seller || ''}";"${l.saleValue || ''}";"${l.osNumber || ''}";"${l.code}"\n`;
+                csv += `"${l.date}";"${l.name}";"${l.phone}";"${l.email}";"${l.city}";"${l.store || ''}";"${l.seller || ''}";"${addonsStr}";"R$ ${Number(l.totalPrice).toFixed(2)}";"${l.saleValue || ''}";"${l.osNumber || ''}";"${l.code}"\n`;
             });
 
             const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
@@ -1245,7 +1721,7 @@
 
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Preços';
-                alert('Preços e configurações salvos com sucesso!');
+                showToast('Preços salvos com sucesso!');
             });
         }
 

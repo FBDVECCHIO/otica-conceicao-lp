@@ -1,16 +1,22 @@
 /* ==========================================
    LANDING PAGE FORLIFE - ÓPTICAS CONCEIÇÃO
-   Identidade Estrita: Navy Blue, Cinza & Branco
+   Identidade: Navy Blue, Azul Royal, Cinza & Branco
    ========================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-    /* Paleta Estrita */
+    /* Paleta Principal: Navy Blue, Azul Royal, Cinza e Branco */
     --navy-primary: #002C5B;
     --navy-dark: #001A36;
     --navy-light: #0B3C75;
     --navy-surface: #E8EEF5;
+    
+    /* Azul Royal para toques vibrantes */
+    --royal-blue: #1D4ED8;
+    --royal-blue-light: #2563EB;
+    --royal-blue-subtle: rgba(37, 99, 235, 0.08);
+    --royal-blue-glow: rgba(37, 99, 235, 0.22);
     
     --gray-bg: #F4F6F9;
     --gray-border: #E2E8F0;
@@ -65,7 +71,7 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
-    padding: 6px 16px;
+    padding: 7px 18px;
     border-radius: var(--radius-full);
     margin-bottom: 16px;
 }
@@ -74,6 +80,12 @@ body {
     background-color: rgba(0, 44, 91, 0.08);
     color: var(--navy-primary);
     border: 1px solid rgba(0, 44, 91, 0.18);
+}
+
+.section-tag.royal {
+    background-color: var(--royal-blue-subtle);
+    color: var(--royal-blue);
+    border: 1px solid rgba(37, 99, 235, 0.25);
 }
 
 .section-tag.white {
@@ -108,7 +120,7 @@ body {
 }
 
 /* ==========================================
-   CABEÇALHO (Header)
+   CABEÇALHO (Header) - LOGO AMPLIADO & SEM ENGRENAGEM
    ========================================== */
 .header-forlife {
     background-color: var(--navy-dark);
@@ -122,35 +134,24 @@ body {
 
 .header-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
+.header-logo-link {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.header-logo-link:hover {
+    transform: scale(1.02);
+}
+
+/* Logo da loja aumentado para ocupar melhor a altura do cabeçalho */
 .header-logo-link img {
-    height: 42px;
+    height: 62px;
     display: block;
     object-fit: contain;
-}
-
-.header-admin-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.header-admin-btn:hover {
-    background-color: #FFFFFF;
-    color: var(--navy-primary);
-    transform: rotate(45deg);
 }
 
 /* ==========================================
@@ -171,7 +172,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background-color: var(--navy-primary);
+    background: linear-gradient(135deg, var(--navy-primary) 0%, var(--royal-blue) 100%);
     color: #FFFFFF;
     font-size: 15px;
     font-weight: 800;
@@ -181,25 +182,27 @@ body {
     border: none;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(0, 44, 91, 0.2);
+    box-shadow: 0 4px 14px var(--royal-blue-glow);
 }
 
 .btn-voucher-action.btn-white {
-    background-color: #FFFFFF;
+    background: #FFFFFF;
     color: var(--navy-primary);
     border: 1px solid var(--gray-border);
+    box-shadow: 0 4px 12px rgba(0, 44, 91, 0.15);
 }
 
 .btn-voucher-action:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 44, 91, 0.25);
-    background-color: var(--navy-light);
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+    background: linear-gradient(135deg, var(--royal-blue) 0%, var(--navy-primary) 100%);
     color: #FFFFFF;
 }
 
 .btn-voucher-action.btn-white:hover {
-    background-color: var(--navy-primary);
+    background: var(--royal-blue);
     color: #FFFFFF;
+    border-color: var(--royal-blue);
 }
 
 .voucher-scarcity-badge {
@@ -219,23 +222,24 @@ body {
 }
 
 .voucher-scarcity-badge.on-light {
-    background: var(--gray-subtle);
+    background: #FFFFFF;
     border: 1px solid var(--gray-border);
     color: var(--navy-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .scarcity-pulse-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #FFFFFF;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    background-color: var(--royal-blue-light);
+    box-shadow: 0 0 8px var(--royal-blue-light);
     animation: dotPulse 1.8s infinite;
 }
 
-.voucher-scarcity-badge.on-light .scarcity-pulse-dot {
-    background-color: var(--navy-primary);
-    box-shadow: 0 0 6px rgba(0, 44, 91, 0.4);
+.voucher-scarcity-badge.on-dark .scarcity-pulse-dot {
+    background-color: #60A5FA;
+    box-shadow: 0 0 8px #60A5FA;
 }
 
 @keyframes dotPulse {
@@ -273,7 +277,7 @@ body {
 .autoridade-content h1 span {
     color: #FFFFFF;
     text-decoration: underline;
-    text-decoration-color: rgba(255, 255, 255, 0.4);
+    text-decoration-color: var(--royal-blue-light);
 }
 
 .autoridade-lead {
@@ -302,6 +306,7 @@ body {
 .stat-box:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-3px);
+    border-color: var(--royal-blue-light);
 }
 
 .stat-number {
@@ -343,7 +348,7 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
-    background: var(--navy-primary);
+    background: var(--royal-blue);
     color: #FFFFFF;
     font-size: 12px;
     font-weight: 800;
@@ -351,6 +356,7 @@ body {
     border-radius: var(--radius-full);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px var(--royal-blue-glow);
 }
 
 .combo-grid {
@@ -391,7 +397,7 @@ body {
 }
 
 .combo-features li i {
-    color: var(--navy-primary);
+    color: var(--royal-blue);
     font-size: 16px;
 }
 
@@ -423,7 +429,7 @@ body {
 .pricing-installments {
     font-size: 17px;
     font-weight: 800;
-    color: var(--navy-light);
+    color: var(--royal-blue);
     margin-bottom: 20px;
 }
 
@@ -458,12 +464,13 @@ body {
 .tech-card:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
+    border-color: var(--royal-blue-light);
 }
 
 .tech-card.selected {
-    border-color: var(--navy-primary);
+    border-color: var(--royal-blue);
     background: #FFFFFF;
-    box-shadow: 0 10px 26px rgba(0, 44, 91, 0.1);
+    box-shadow: 0 10px 26px var(--royal-blue-glow);
 }
 
 .tech-header {
@@ -477,8 +484,8 @@ body {
     width: 50px;
     height: 50px;
     border-radius: var(--radius-md);
-    background: rgba(0, 44, 91, 0.06);
-    color: var(--navy-primary);
+    background: var(--royal-blue-subtle);
+    color: var(--royal-blue);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -487,7 +494,7 @@ body {
 }
 
 .tech-card.selected .tech-icon-box {
-    background: var(--navy-primary);
+    background: var(--royal-blue);
     color: #FFFFFF;
 }
 
@@ -504,8 +511,8 @@ body {
 }
 
 .tech-card.selected .tech-checkbox-badge {
-    border-color: var(--navy-primary);
-    background: var(--navy-primary);
+    border-color: var(--royal-blue);
+    background: var(--royal-blue);
     color: #FFFFFF;
 }
 
@@ -542,7 +549,7 @@ body {
 .tech-price-val {
     font-size: 19px;
     font-weight: 800;
-    color: var(--navy-primary);
+    color: var(--royal-blue);
 }
 
 /* ==========================================
@@ -622,7 +629,7 @@ body {
 .summary-total-installments {
     font-size: 15px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.9);
+    color: #93C5FD;
 }
 
 /* Formulário de Resgate */
@@ -672,12 +679,12 @@ body {
 }
 
 .form-input:focus {
-    border-color: var(--navy-primary);
+    border-color: var(--royal-blue);
     background-color: #FFFFFF;
-    box-shadow: 0 0 0 3px rgba(0, 44, 91, 0.1);
+    box-shadow: 0 0 0 3px var(--royal-blue-glow);
 }
 
-/* CHECKBOXES DE RECEITA (NOVO DESIGN DUPLO) */
+/* CHECKBOXES DE RECEITA */
 .recipe-selection-box {
     margin: 18px 0;
     display: flex;
@@ -699,20 +706,20 @@ body {
 }
 
 .recipe-option-card:hover {
-    border-color: var(--navy-primary);
+    border-color: var(--royal-blue);
     background-color: #FFFFFF;
 }
 
 .recipe-option-card.active {
-    border-color: var(--navy-primary);
-    background-color: var(--navy-surface);
+    border-color: var(--royal-blue);
+    background-color: var(--royal-blue-subtle);
 }
 
 .recipe-option-card input[type="radio"],
 .recipe-option-card input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--navy-primary);
+    accent-color: var(--royal-blue);
     cursor: pointer;
 }
 
@@ -723,14 +730,14 @@ body {
 }
 
 .recipe-option-card.active .recipe-option-text {
-    color: var(--navy-primary);
+    color: var(--royal-blue);
 }
 
 /* Área de Upload / Tirar Foto da Receita */
 #prescription-upload-area {
     display: none;
     background-color: var(--gray-subtle);
-    border: 1px dashed var(--navy-primary);
+    border: 1px dashed var(--royal-blue);
     border-radius: var(--radius-sm);
     padding: 14px;
     margin-top: 8px;
@@ -755,20 +762,20 @@ body {
     border-radius: var(--radius-sm);
     font-size: 13px;
     font-weight: 700;
-    color: var(--navy-primary);
+    color: var(--royal-blue);
     cursor: pointer;
     transition: var(--transition);
 }
 
 .btn-photo-action:hover {
-    background: var(--navy-primary);
+    background: var(--royal-blue);
     color: #FFFFFF;
 }
 
-/* Botão de Envio */
+/* Botão de Envio do Voucher */
 .btn-submit-voucher {
     width: 100%;
-    background-color: var(--navy-primary);
+    background: linear-gradient(135deg, var(--navy-primary) 0%, var(--royal-blue) 100%);
     color: #FFFFFF;
     border: none;
     padding: 15px 22px;
@@ -781,18 +788,18 @@ body {
     justify-content: center;
     gap: 10px;
     transition: var(--transition);
-    box-shadow: 0 4px 14px rgba(0, 44, 91, 0.2);
+    box-shadow: 0 4px 14px var(--royal-blue-glow);
     margin-top: 14px;
 }
 
 .btn-submit-voucher:hover:not(:disabled) {
-    background-color: var(--navy-light);
+    background: linear-gradient(135deg, var(--royal-blue) 0%, var(--navy-primary) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 44, 91, 0.28);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
 }
 
 .btn-submit-voucher:disabled {
-    background-color: #94A3B8;
+    background: #94A3B8;
     cursor: not-allowed;
     box-shadow: none;
     opacity: 0.8;
@@ -808,14 +815,14 @@ body {
 .voucher-code-badge {
     display: inline-block;
     background: var(--navy-dark);
-    color: #FFFFFF;
+    color: #93C5FD;
     font-size: 24px;
     font-weight: 900;
     letter-spacing: 2px;
     padding: 12px 26px;
     border-radius: var(--radius-md);
     margin: 18px 0;
-    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border: 1px dashed rgba(147, 197, 253, 0.4);
 }
 
 .btn-whatsapp-share {
@@ -823,20 +830,20 @@ body {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    background-color: var(--navy-primary);
+    background-color: #25D366;
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 800;
     padding: 15px 28px;
     border-radius: var(--radius-md);
     text-decoration: none;
-    box-shadow: 0 4px 14px rgba(0, 44, 91, 0.25);
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
     transition: var(--transition);
     width: 100%;
 }
 
 .btn-whatsapp-share:hover {
-    background-color: var(--navy-dark);
+    background-color: #1EBE5D;
     transform: translateY(-2px);
 }
 
@@ -865,7 +872,7 @@ body {
 }
 
 .faq-item:hover {
-    border-color: var(--navy-primary);
+    border-color: var(--royal-blue);
 }
 
 .faq-question {
@@ -886,7 +893,7 @@ body {
 
 .faq-icon {
     font-size: 16px;
-    color: var(--navy-primary);
+    color: var(--royal-blue);
     transition: transform 0.3s ease;
     flex-shrink: 0;
     margin-left: 12px;
@@ -939,12 +946,12 @@ body {
 
 .review-card:hover {
     transform: translateY(-3px);
-    border-color: var(--navy-primary);
+    border-color: var(--royal-blue);
     box-shadow: var(--shadow-sm);
 }
 
 .review-stars {
-    color: var(--navy-primary);
+    color: var(--royal-blue);
     font-size: 14px;
     margin-bottom: 12px;
     display: flex;
@@ -969,7 +976,7 @@ body {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background-color: var(--navy-primary);
+    background-color: var(--royal-blue);
     color: #FFFFFF;
     font-size: 14px;
     font-weight: 800;
@@ -1025,8 +1032,8 @@ body {
     width: 42px;
     height: 42px;
     border-radius: var(--radius-sm);
-    background: rgba(0, 44, 91, 0.08);
-    color: var(--navy-primary);
+    background: var(--royal-blue-subtle);
+    color: var(--royal-blue);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1083,8 +1090,9 @@ body {
 }
 
 .social-btn:hover {
-    background: var(--navy-primary);
+    background: var(--royal-blue);
     color: #FFFFFF;
+    border-color: var(--royal-blue);
     transform: translateY(-2px);
 }
 
@@ -1107,7 +1115,7 @@ body {
 }
 
 /* ==========================================
-   RODAPÉ (Footer)
+   RODAPÉ (Footer) - COM ENGRENAGEM DISCRETA
    ========================================== */
 .footer-forlife {
     background-color: var(--navy-dark);
@@ -1117,6 +1125,7 @@ body {
     text-align: center;
     font-size: 13px;
     line-height: 1.6;
+    position: relative;
 }
 
 .footer-forlife p {
@@ -1124,8 +1133,28 @@ body {
     margin: 0 auto;
 }
 
+/* Ícone de engrenagem discreto no rodapé */
+.footer-admin-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 16px;
+    transition: all 0.3s ease;
+}
+
+.footer-admin-link:hover {
+    color: rgba(255, 255, 255, 0.7);
+    transform: rotate(60deg);
+}
+
 /* ==========================================
-   BOTÃO DISCRETO DE VOLTAR AO TOPO
+   BOTÃO FLUTUANTE VOLTAR AO TOPO
    ========================================== */
 .scroll-top-btn {
     position: fixed;
@@ -1155,7 +1184,7 @@ body {
 }
 
 .scroll-top-btn:hover {
-    background: var(--navy-dark);
+    background: var(--royal-blue);
     transform: translateY(-3px);
 }
 
@@ -1169,6 +1198,9 @@ body {
    RESPONSIVIDADE MOBILE
    ========================================== */
 @media (max-width: 900px) {
+    .header-logo-link img {
+        height: 48px;
+    }
     .autoridade-content h1 {
         font-size: 30px;
     }
