@@ -136,7 +136,7 @@
         .admin-header {
             background-color: var(--navy-dark);
             color: #FFFFFF;
-            padding: 16px 28px;
+            padding: 8px 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -150,7 +150,9 @@
         }
 
         .admin-brand img {
-            height: 38px;
+            height: 64px;
+            display: block;
+            object-fit: contain;
         }
 
         .admin-brand span {
@@ -679,6 +681,27 @@
             color: var(--navy-primary);
         }
 
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-edit-item {
+            background: none;
+            border: none;
+            color: var(--royal-blue);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            padding: 2px 4px;
+        }
+
+        .btn-edit-item:hover {
+            color: var(--navy-primary);
+            transform: scale(1.15);
+        }
+
         .btn-del-item {
             background: none;
             border: none;
@@ -686,10 +709,12 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
+            padding: 2px 4px;
         }
 
         .btn-del-item:hover {
             color: #EF4444;
+            transform: scale(1.15);
         }
 
         /* MODAL DE RECEITA */
@@ -783,7 +808,7 @@
     <!-- 1. TELA DE LOGIN -->
     <div id="login-screen">
         <div class="login-card">
-            <img src="/assets/images/logo_preto.png" alt="Ópticas Conceição">
+            <img src="/assets/images/logo_preto.png" alt="Ópticas Conceição - Desde 1948">
             <h2>Painel da Campanha ForLife</h2>
             <p>Entre com suas credenciais para gerenciar leads e configurações da promoção:</p>
 
@@ -807,7 +832,9 @@
     <div id="dashboard-screen">
         <header class="admin-header">
             <div class="admin-brand">
-                <img src="/assets/images/logo_branco.png" alt="Ópticas Conceição">
+                <a href="/forlife" target="_blank" title="Ópticas Conceição - Desde 1948" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="/assets/images/logo_branco.png" alt="Ópticas Conceição - Desde 1948">
+                </a>
                 <span>CAMPANHA FORLIFE</span>
             </div>
             <div class="admin-actions">
@@ -823,7 +850,7 @@
         <!-- Navegação de Abas -->
         <nav class="admin-nav">
             <button class="tab-btn active" data-tab="tab-leads" id="tab-btn-leads">
-                <i class="fas fa-users"></i> Leads Cadastrados (<span id="tab-leads-count">0</span>)
+                <i class="fas fa-users"></i> Leads (<span id="tab-leads-count">0</span>)
             </button>
             <button class="tab-btn" data-tab="tab-cms" id="tab-btn-cms">
                 <i class="fas fa-cog"></i> Configurações
@@ -1142,9 +1169,14 @@
                 li.className = 'managed-item';
                 li.innerHTML = `
                     <span><i class="fas fa-user" style="margin-right: 8px; opacity: 0.7;"></i> ${escapeHtml(seller)}</span>
-                    <button class="btn-del-item" onclick="removeSeller(${idx})" title="Remover Vendedor">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <div class="item-actions">
+                        <button class="btn-edit-item" onclick="editSeller(${idx})" title="Editar Vendedor">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-del-item" onclick="removeSeller(${idx})" title="Remover Vendedor">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(li);
             });
@@ -1162,6 +1194,23 @@
                 }
             });
         }
+
+        window.editSeller = function(idx) {
+            const current = allSellers[idx];
+            const updated = prompt('Editar nome do vendedor:', current);
+            if (updated !== null) {
+                const trimmed = updated.trim();
+                if (trimmed && trimmed !== current) {
+                    allLeads.forEach(l => {
+                        if (l.seller === current) l.seller = trimmed;
+                    });
+                    localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
+                    allSellers[idx] = trimmed;
+                    saveSellers();
+                    showToast(`Vendedor alterado para "${trimmed}"!`);
+                }
+            }
+        };
 
         window.removeSeller = function(idx) {
             if (confirm(`Remover vendedor "${allSellers[idx]}"?`)) {
@@ -1203,9 +1252,14 @@
                 li.className = 'managed-item';
                 li.innerHTML = `
                     <span><i class="fas fa-store" style="margin-right: 8px; opacity: 0.7;"></i> ${escapeHtml(store)}</span>
-                    <button class="btn-del-item" onclick="removeStore(${idx})" title="Remover Loja">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <div class="item-actions">
+                        <button class="btn-edit-item" onclick="editStore(${idx})" title="Editar Loja">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-del-item" onclick="removeStore(${idx})" title="Remover Loja">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(li);
             });
@@ -1223,6 +1277,23 @@
                 }
             });
         }
+
+        window.editStore = function(idx) {
+            const current = allStores[idx];
+            const updated = prompt('Editar nome da loja:', current);
+            if (updated !== null) {
+                const trimmed = updated.trim();
+                if (trimmed && trimmed !== current) {
+                    allLeads.forEach(l => {
+                        if (l.store === current) l.store = trimmed;
+                    });
+                    localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
+                    allStores[idx] = trimmed;
+                    saveStores();
+                    showToast(`Loja alterada para "${trimmed}"!`);
+                }
+            }
+        };
 
         window.removeStore = function(idx) {
             if (confirm(`Remover loja "${allStores[idx]}"?`)) {

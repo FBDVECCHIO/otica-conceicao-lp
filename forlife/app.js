@@ -482,7 +482,7 @@ async function handleVoucherSubmit(e) {
     localStorage.setItem('forlife_leads', JSON.stringify(localLeads));
 
     // 3. Montar Mensagem de WhatsApp
-    const storePhone = '5519992868439';
+    const storePhone = '5519978056552';
     const addonsText = addonsArray.length > 0 
         ? addonsArray.map(a => `  • ${a.name} (+ R$ ${formatMoney(a.price)})`).join('\n')
         : '  • Combo Tradicional (Sem adicionais)';

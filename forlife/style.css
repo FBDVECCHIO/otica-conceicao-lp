@@ -125,7 +125,7 @@ body {
 .header-forlife {
     background-color: var(--navy-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 16px 0;
+    padding: 8px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -147,11 +147,30 @@ body {
     transform: scale(1.02);
 }
 
-/* Logo da loja aumentado para ocupar melhor a altura do cabeçalho */
+/* Logo da loja aumentado para ocupar quase toda a altura vertical do cabeçalho */
 .header-logo-link img {
-    height: 62px;
+    height: 76px;
     display: block;
     object-fit: contain;
+}
+
+/* Título de Tecnologia ao lado do Logo */
+.tech-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.tech-title-logo {
+    height: 42px;
+    object-fit: contain;
+}
+
+.tech-heading {
+    margin-bottom: 0 !important;
 }
 
 /* ==========================================
@@ -1199,7 +1218,7 @@ body {
    ========================================== */
 @media (max-width: 900px) {
     .header-logo-link img {
-        height: 48px;
+        height: 58px;
     }
     .autoridade-content h1 {
         font-size: 30px;
