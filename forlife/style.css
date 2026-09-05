@@ -125,7 +125,7 @@ body {
 .header-forlife {
     background-color: var(--navy-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 10px 0;
+    padding: 12px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -139,7 +139,9 @@ body {
 }
 
 .header-logo-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.3s ease;
 }
 
@@ -147,9 +149,9 @@ body {
     transform: scale(1.02);
 }
 
-/* Logo da Conceição aumentado em 2x (2cm de altura e largura proporcional) */
+/* Logo da Conceição com letras ampliadas em 3x (enquadramento sem margens vazias) */
 .header-logo-link img {
-    height: 2cm;
+    height: 52px;
     width: auto;
     display: block;
     object-fit: contain;
@@ -1484,9 +1486,9 @@ body {
    ========================================== */
 @media (max-width: 900px) {
     .header-logo-link img {
-        height: 1.8cm;
+        height: 42px;
         width: auto;
-        max-width: 88vw;
+        max-width: 85vw;
     }
     .autoridade-content h1 {
         font-size: 30px;
