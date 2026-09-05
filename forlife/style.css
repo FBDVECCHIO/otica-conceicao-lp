@@ -585,9 +585,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: calc(16px - 1mm);
     margin-bottom: 18px;
-    padding: 6px 0;
+    padding: 5px 0;
 }
 
 .tech-circle-col {
@@ -598,8 +598,8 @@ body {
 }
 
 .tech-circle-frame {
-    width: 106px;
-    height: 106px;
+    width: calc(106px + 0.5mm);
+    height: calc(106px + 0.5mm);
     border-radius: 50%;
     overflow: hidden;
     border: 2.5px solid var(--gray-border);
@@ -1426,11 +1426,11 @@ body {
 
 @media (max-width: 400px) {
     .tech-circle-frame {
-        width: 90px;
-        height: 90px;
+        width: calc(90px + 0.5mm);
+        height: calc(90px + 0.5mm);
     }
     .tech-circles-container {
-        gap: 8px;
+        gap: calc(8px - 1mm);
     }
     .tech-circle-label {
         padding: 3px 10px;
