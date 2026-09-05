@@ -223,6 +223,25 @@ function setupEventListeners() {
         });
     });
 
+    // 2.1 Accordion Spring nos cards de tecnologia ("Conhecer o benefício")
+    document.querySelectorAll('.tech-accordion-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Impede de marcar/desmarcar o card ao clicar no accordion
+            const accordion = btn.closest('.tech-accordion');
+            if (accordion) {
+                const isOpen = accordion.classList.contains('open');
+                accordion.classList.toggle('open', !isOpen);
+                btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+            }
+        });
+    });
+
+    document.querySelectorAll('.tech-accordion').forEach(acc => {
+        acc.addEventListener('click', (e) => {
+            e.stopPropagation(); // Impede clique no corpo do texto de desmarcar card
+        });
+    });
+
     // 3. Seleção de Situação da Receita Médica (Radio Cards)
     const radioHave = document.getElementById('recipe-option-have');
     const radioNeed = document.getElementById('recipe-option-need');
