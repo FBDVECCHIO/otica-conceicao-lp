@@ -1326,13 +1326,24 @@
                     if (!error && data) {
                         leads = data.map(l => {
                             const dateOnly = l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : '';
+                            
+                            let leadCity = l.city || '';
+                            let leadStore = l.store || '';
+                            if (!leadStore && leadCity.includes('(Loja:')) {
+                                const match = leadCity.match(/\(Loja:\s*([^)]+)\)/);
+                                if (match) {
+                                    leadStore = match[1].trim();
+                                    leadCity = leadCity.replace(/\s*\(Loja:[^)]+\)/, '').trim();
+                                }
+                            }
+
                             return {
                                 id: l.id,
                                 date: dateOnly,
                                 name: l.name,
                                 phone: l.phone,
                                 email: l.email,
-                                city: l.city,
+                                city: leadCity,
                                 comboPrice: l.combo_price,
                                 addons: typeof l.addons === 'string' ? JSON.parse(l.addons || '[]') : (l.addons || []),
                                 totalPrice: parseFloat(l.total_price),
@@ -1340,7 +1351,7 @@
                                 recipeStatus: l.recipe_status || (l.has_prescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita'),
                                 prescriptionFile: l.prescription_file,
                                 code: l.code,
-                                store: l.store || '',
+                                store: leadStore,
                                 seller: l.seller || '',
                                 saleValue: l.sale_value || '',
                                 osNumber: l.os_number || ''
@@ -1353,8 +1364,35 @@
                 }
             }
 
-            if (!loadedFromCloud) {
-                leads = JSON.parse(localStorage.getItem('forlife_leads')) || [];
+            const localLeads = JSON.parse(localStorage.getItem('forlife_leads')) || [];
+            if (loadedFromCloud) {
+                const cloudCodes = new Set(leads.map(l => l.code));
+                localLeads.forEach(loc => {
+                    if (loc && loc.code && !cloudCodes.has(loc.code)) {
+                        leads.unshift(loc);
+                        cloudCodes.add(loc.code);
+
+                        // Sincronizar automaticamente no Supabase caso estivesse pendente
+                        if (supabaseClient) {
+                            supabaseClient.from('forlife_leads').insert([{
+                                name: loc.name,
+                                phone: loc.phone,
+                                email: loc.email,
+                                city: loc.store ? `${loc.city} (Loja: ${loc.store})` : loc.city,
+                                combo_price: loc.comboPrice || 297,
+                                addons: JSON.stringify(loc.addons || []),
+                                total_price: loc.totalPrice || 297,
+                                has_prescription: loc.hasPrescription || false,
+                                prescription_file: loc.prescriptionFile || '',
+                                code: loc.code
+                            }]).then(res => {
+                                if (!res.error) console.log("Lead local recuperado e sincronizado com o Supabase:", loc.code);
+                            }).catch(() => {});
+                        }
+                    }
+                });
+            } else {
+                leads = localLeads;
             }
 
             allLeads = leads;

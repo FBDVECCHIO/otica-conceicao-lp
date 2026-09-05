@@ -268,57 +268,66 @@ function setupEventListeners() {
     if (radioHave) radioHave.addEventListener('change', handleRecipeChange);
     if (radioNeed) radioNeed.addEventListener('change', handleRecipeChange);
 
-    // 4. Upload de Foto / Arquivo da Receita Médica
-    const fileInput = document.getElementById('prescription-file');
-    const previewBox = document.getElementById('prescription-preview-box');
-    const fileNameEl = document.getElementById('prescription-file-name');
-
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                if (previewBox && fileNameEl) {
-                    fileNameEl.textContent = file.name;
-                    previewBox.style.display = 'flex';
-                }
-
+    // Função assíncrona para processar e comprimir arquivo da receita
+    function processPrescriptionFile(file) {
+        return new Promise((resolve) => {
+            if (!file) { resolve(""); return; }
+            const reader = new FileReader();
+            reader.onload = (event) => {
                 if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const img = new Image();
-                        img.src = event.target.result;
-                        img.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        try {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             let width = img.width;
                             let height = img.height;
-                            const maxSize = 900;
+                            const maxSize = 1200;
 
                             if (width > height) {
                                 if (width > maxSize) {
-                                    height *= maxSize / width;
+                                    height = Math.round(height * (maxSize / width));
                                     width = maxSize;
                                 }
                             } else {
                                 if (height > maxSize) {
-                                    width *= maxSize / height;
+                                    width = Math.round(width * (maxSize / height));
                                     height = maxSize;
                                 }
                             }
                             canvas.width = width;
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
-                            prescriptionBase64 = canvas.toDataURL('image/jpeg', 0.82);
-                        };
+                            resolve(canvas.toDataURL('image/jpeg', 0.82));
+                        } catch (err) {
+                            resolve(event.target.result);
+                        }
                     };
-                    reader.readAsDataURL(file);
+                    img.onerror = () => resolve(event.target.result);
+                    img.src = event.target.result;
                 } else {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        prescriptionBase64 = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
+                    resolve(event.target.result);
                 }
+            };
+            reader.onerror = () => resolve("");
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 4. Upload de Foto / Arquivo da Receita Médica
+    const fileInput = document.getElementById('prescription-file');
+    const previewBox = document.getElementById('prescription-preview-box');
+    const fileNameEl = document.getElementById('prescription-file-name');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (previewBox && fileNameEl) {
+                    fileNameEl.textContent = file.name;
+                    previewBox.style.display = 'flex';
+                }
+                prescriptionBase64 = await processPrescriptionFile(file);
             } else {
                 prescriptionBase64 = "";
                 if (previewBox) previewBox.style.display = 'none';
@@ -472,6 +481,16 @@ async function handleVoucherSubmit(e) {
     const hasPrescription = document.getElementById('recipe-option-have').checked;
     const recipeStatusText = hasPrescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita';
 
+    // Garantir que a imagem da receita esteja processada caso o envio seja rápido
+    const fileInputEl = document.getElementById('prescription-file');
+    if (hasPrescription && !prescriptionBase64 && fileInputEl && fileInputEl.files && fileInputEl.files[0]) {
+        try {
+            prescriptionBase64 = await processPrescriptionFile(fileInputEl.files[0]);
+        } catch(e) {
+            console.warn("Aviso ao processar arquivo da receita:", e);
+        }
+    }
+
     // Resumo dos adicionais
     const addonsArray = [];
     let totalAddons = 0;
@@ -518,7 +537,8 @@ async function handleVoucherSubmit(e) {
     // 1. Gravar no Supabase (Tabela forlife_leads)
     if (supabaseClient) {
         try {
-            await supabaseClient.from('forlife_leads').insert([{
+            // Tentar primeiro com a coluna store nativa
+            let res = await supabaseClient.from('forlife_leads').insert([{
                 name: name,
                 phone: phone,
                 email: email,
@@ -528,9 +548,32 @@ async function handleVoucherSubmit(e) {
                 addons: JSON.stringify(addonsArray),
                 total_price: totalPrice,
                 has_prescription: hasPrescription,
-                prescription_file: prescriptionBase64,
+                prescription_file: prescriptionBase64 || '',
                 code: voucherCode
             }]);
+
+            // Se falhou porque a coluna 'store' não existe no banco, salvar com fallback seguro embutido na cidade
+            if (res.error && (res.error.code === 'PGRST204' || (res.error.message && res.error.message.includes('store')))) {
+                console.warn("Coluna 'store' não detectada no Supabase. Usando armazenamento compatível embutido...");
+                res = await supabaseClient.from('forlife_leads').insert([{
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    city: store ? `${city} (Loja: ${store})` : city,
+                    combo_price: forlifeConfig.comboPrice,
+                    addons: JSON.stringify(addonsArray),
+                    total_price: totalPrice,
+                    has_prescription: hasPrescription,
+                    prescription_file: prescriptionBase64 || '',
+                    code: voucherCode
+                }]);
+            }
+
+            if (res.error) {
+                console.error("Erro ao salvar lead no Supabase:", res.error);
+            } else {
+                console.log("Lead salvo com sucesso no Supabase!");
+            }
         } catch (err) {
             console.warn("Erro ao salvar no Supabase, mantendo cópia local:", err);
         }
