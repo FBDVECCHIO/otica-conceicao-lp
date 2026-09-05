@@ -125,7 +125,7 @@ body {
 .header-forlife {
     background-color: var(--navy-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 8px 0;
+    padding: 10px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -147,9 +147,10 @@ body {
     transform: scale(1.02);
 }
 
-/* Logo da loja aumentado para ocupar quase toda a altura vertical do cabeçalho */
+/* Logo da Conceição com 1 cm de altura e largura proporcional */
 .header-logo-link img {
-    height: 76px;
+    height: 1cm;
+    width: auto;
     display: block;
     object-fit: contain;
 }
@@ -495,21 +496,30 @@ body {
 .tech-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 16px;
+    gap: 12px;
+}
+
+.tech-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
 }
 
 .tech-icon-box {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: var(--radius-md);
     background: var(--royal-blue-subtle);
     color: var(--royal-blue);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 20px;
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
 .tech-card.selected .tech-icon-box {
@@ -527,6 +537,7 @@ body {
     justify-content: center;
     color: transparent;
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
 .tech-card.selected .tech-checkbox-badge {
@@ -536,10 +547,11 @@ body {
 }
 
 .tech-title {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 800;
     color: var(--navy-primary);
-    margin-bottom: 8px;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .tech-desc {
@@ -1218,7 +1230,8 @@ body {
    ========================================== */
 @media (max-width: 900px) {
     .header-logo-link img {
-        height: 58px;
+        height: 1cm;
+        width: auto;
     }
     .autoridade-content h1 {
         font-size: 30px;

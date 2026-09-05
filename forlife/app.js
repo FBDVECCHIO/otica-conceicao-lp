@@ -331,11 +331,48 @@ function setupEventListeners() {
         if (el) el.addEventListener('input', validateForm);
     });
 
+    const storeSelect = document.getElementById('client-store');
+    if (storeSelect) {
+        storeSelect.addEventListener('change', validateForm);
+    }
+
+    populateStoresDropdown();
+
     // 7. Submissão do Formulário de Voucher
     const voucherForm = document.getElementById('voucher-form');
     if (voucherForm) {
         voucherForm.addEventListener('submit', handleVoucherSubmit);
     }
+}
+
+// Preencher dropdown de lojas com lojas cadastradas no ADM
+function populateStoresDropdown() {
+    const select = document.getElementById('client-store');
+    if (!select) return;
+
+    let stores = [
+        "Ótica Conceição - Matriz: Rua Dr. Mascarenhas, 246 - Botafogo",
+        "Ótica Conceição I: Rua Barão de Jaguara, 1084 - Centro",
+        "Ótica Conceição II: Rua Barão de Jaguara, 1109 - Centro"
+    ];
+
+    const stored = localStorage.getItem('forlife_stores');
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                stores = parsed;
+            }
+        } catch (e) {}
+    }
+
+    select.innerHTML = '<option value="" disabled selected>Selecione a loja onde quer ir...</option>';
+    stores.forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st;
+        opt.textContent = st;
+        select.appendChild(opt);
+    });
 }
 
 // Validar formulário
@@ -344,13 +381,14 @@ function validateForm() {
     const phone = (document.getElementById('client-phone')?.value || '').replace(/\D/g, '');
     const city = document.getElementById('client-city')?.value.trim() || '';
     const email = document.getElementById('client-email')?.value.trim() || '';
+    const store = document.getElementById('client-store')?.value.trim() || '';
     
     const radioHave = document.getElementById('recipe-option-have')?.checked;
     const radioNeed = document.getElementById('recipe-option-need')?.checked;
     const hasRecipeChoice = radioHave || radioNeed;
 
     const submitBtn = document.getElementById('btn-submit-voucher');
-    const isValid = name.length >= 3 && phone.length >= 10 && city.length >= 2 && email.includes('@') && hasRecipeChoice;
+    const isValid = name.length >= 3 && phone.length >= 10 && city.length >= 2 && email.includes('@') && hasRecipeChoice && store.length > 0;
 
     if (submitBtn) {
         submitBtn.disabled = !isValid;
@@ -410,6 +448,7 @@ async function handleVoucherSubmit(e) {
     const phone = document.getElementById('client-phone').value.trim();
     const email = document.getElementById('client-email').value.trim();
     const city = document.getElementById('client-city').value.trim();
+    const store = document.getElementById('client-store')?.value.trim() || '';
     
     const hasPrescription = document.getElementById('recipe-option-have').checked;
     const recipeStatusText = hasPrescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita';
@@ -444,6 +483,7 @@ async function handleVoucherSubmit(e) {
         phone: phone,
         email: email,
         city: city,
+        store: store,
         comboPrice: forlifeConfig.comboPrice,
         addons: addonsArray,
         totalPrice: totalPrice,
@@ -464,6 +504,7 @@ async function handleVoucherSubmit(e) {
                 phone: phone,
                 email: email,
                 city: city,
+                store: store,
                 combo_price: forlifeConfig.comboPrice,
                 addons: JSON.stringify(addonsArray),
                 total_price: totalPrice,
@@ -492,6 +533,7 @@ async function handleVoucherSubmit(e) {
 `🎫 *Código do Voucher:* ${voucherCode}\n` +
 `👤 *Nome:* ${name}\n` +
 `📍 *Cidade:* ${city}\n` +
+`🏪 *Loja Escolhida:* ${store}\n` +
 `📞 *WhatsApp:* ${phone}\n\n` +
 `👓 *Combo:* Óculos Completo (Armação + Lentes Multifocais HD)\n` +
 `💰 *Valor Combo Base:* R$ ${formatMoney(forlifeConfig.comboPrice)}\n\n` +
