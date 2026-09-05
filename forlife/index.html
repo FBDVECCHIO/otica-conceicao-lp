@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Estilos Customizados ForLife (Navy, Cinza e Branco) -->
-    <link rel="stylesheet" href="/forlife/style.css?v=20260905i">
+    <link rel="stylesheet" href="/forlife/style.css?v=20260905j">
 </head>
 <body>
 
@@ -387,7 +387,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="client-store">Escolha a loja onde deseja ir *</label>
+                                <label for="client-store">Escolha a loja:</label>
                                 <select id="client-store" class="form-input" required style="cursor: pointer; background-color: #FFFFFF; font-weight: 600;">
                                     <option value="" disabled selected>Selecione a loja onde quer ir...</option>
                                     <!-- Preenchido dinamicamente via app.js com lojas cadastradas no ADM -->
@@ -396,14 +396,12 @@
 
                             <!-- CHECKBOXES DE RECEITA MÉDICA (OPÇÕES EXCLUSIVAS) -->
                             <div class="form-group">
-                                <label style="margin-bottom: 8px;">Situação da sua Receita Médica *</label>
+                                <label style="margin-bottom: 8px;">Sua receita:</label>
                                 <div class="recipe-selection-box">
-                                    <!-- Opção 1: Possuo receita atualizada -->
+                                    <!-- Opção 1: Possuo receita -->
                                     <label class="recipe-option-card" id="card-recipe-have">
                                         <input type="radio" name="recipe_status" id="recipe-option-have" value="have" required>
-                                        <span class="recipe-option-text">
-                                            <i class="fas fa-file-medical"></i> Possuo receita atualizada
-                                        </span>
+                                        <span class="recipe-option-text">Possuo receita</span>
                                     </label>
 
                                     <!-- Upload / Foto revelado se marcado -->
@@ -418,12 +416,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- Opção 2: Preciso atualizar minha receita -->
+                                    <!-- Opção 2: Preciso atualizar -->
                                     <label class="recipe-option-card" id="card-recipe-need">
                                         <input type="radio" name="recipe_status" id="recipe-option-need" value="need" required>
-                                        <span class="recipe-option-text">
-                                            <i class="fas fa-notes-medical"></i> Preciso atualizar minha receita
-                                        </span>
+                                        <span class="recipe-option-text">Preciso atualizar</span>
                                     </label>
                                 </div>
                             </div>
@@ -808,6 +804,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Script de Comportamento ForLife -->
-    <script src="/forlife/app.js?v=20260905i"></script>
+    <script src="/forlife/app.js?v=20260905j"></script>
 </body>
 </html>

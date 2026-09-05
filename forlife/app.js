@@ -479,7 +479,7 @@ async function handleVoucherSubmit(e) {
     const store = document.getElementById('client-store')?.value.trim() || '';
     
     const hasPrescription = document.getElementById('recipe-option-have').checked;
-    const recipeStatusText = hasPrescription ? 'Possuo receita atualizada' : 'Preciso atualizar minha receita';
+    const recipeStatusText = hasPrescription ? 'Possuo receita' : 'Preciso atualizar';
 
     // Garantir que a imagem da receita esteja processada caso o envio seja rápido
     const fileInputEl = document.getElementById('prescription-file');
