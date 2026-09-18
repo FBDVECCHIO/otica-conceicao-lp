@@ -1365,10 +1365,15 @@
             }
 
             const localLeads = JSON.parse(localStorage.getItem('forlife_leads')) || [];
+            const deletedCodes = new Set(JSON.parse(localStorage.getItem('forlife_deleted_codes')) || []);
+
             if (loadedFromCloud) {
+                // Filtrar leads da nuvem que foram excluídos
+                leads = leads.filter(l => !l.code || !deletedCodes.has(l.code));
+
                 const cloudCodes = new Set(leads.map(l => l.code));
                 localLeads.forEach(loc => {
-                    if (loc && loc.code && !cloudCodes.has(loc.code)) {
+                    if (loc && loc.code && !cloudCodes.has(loc.code) && !deletedCodes.has(loc.code)) {
                         leads.unshift(loc);
                         cloudCodes.add(loc.code);
 
@@ -1392,7 +1397,7 @@
                     }
                 });
             } else {
-                leads = localLeads;
+                leads = localLeads.filter(l => !l.code || !deletedCodes.has(l.code));
             }
 
             allLeads = leads;
@@ -1553,18 +1558,19 @@
         };
 
         // Gravar dados da linha
-        window.saveRowLead = function(index) {
+        window.saveRowLead = async function(index) {
             if (!allLeads[index]) return;
 
+            const targetLead = allLeads[index];
             const storeVal = document.getElementById(`input-store-${index}`)?.value || '';
             const sellerVal = document.getElementById(`input-seller-${index}`)?.value || '';
             const saleVal = document.getElementById(`input-val-${index}`)?.value || '';
             const osVal = document.getElementById(`input-os-${index}`)?.value || '';
 
-            allLeads[index].store = storeVal;
-            allLeads[index].seller = sellerVal;
-            allLeads[index].saleValue = saleVal;
-            allLeads[index].osNumber = osVal;
+            targetLead.store = storeVal;
+            targetLead.seller = sellerVal;
+            targetLead.saleValue = saleVal;
+            targetLead.osNumber = osVal;
 
             localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
             updateMetrics(allLeads);
@@ -1572,12 +1578,43 @@
             // Feedback visual no botão
             const icon = document.getElementById(`save-icon-${index}`);
             if (icon) {
+                icon.className = 'fas fa-spinner fa-spin';
+            }
+
+            if (supabaseClient && (targetLead.id || targetLead.code)) {
+                try {
+                    const updatePayload = {
+                        store: storeVal || null,
+                        seller: sellerVal || null,
+                        sale_value: saleVal ? parseFloat(saleVal) : null,
+                        os_number: osVal || null
+                    };
+
+                    let updateQuery;
+                    if (targetLead.id) {
+                        updateQuery = supabaseClient.from('forlife_leads').update(updatePayload).eq('id', targetLead.id);
+                    } else if (targetLead.code) {
+                        updateQuery = supabaseClient.from('forlife_leads').update(updatePayload).eq('code', targetLead.code);
+                    }
+
+                    if (updateQuery) {
+                        const { error } = await updateQuery;
+                        if (error) {
+                            console.warn("Aviso ao atualizar no Supabase:", error);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Exceção ao atualizar no Supabase:", e);
+                }
+            }
+
+            if (icon) {
                 icon.className = 'fas fa-check';
                 setTimeout(() => {
                     icon.className = 'fas fa-save';
                 }, 1500);
             }
-            showToast(`Dados da linha de "${allLeads[index].name}" gravados com sucesso!`);
+            showToast(`Dados da linha de "${targetLead.name}" gravados com sucesso!`);
         };
 
         // Editar/Focar na linha
@@ -1590,15 +1627,58 @@
         };
 
         // Excluir Lead
-        window.deleteRowLead = function(index) {
+        window.deleteRowLead = async function(index) {
             if (!allLeads[index]) return;
-            const name = allLeads[index].name;
-            if (confirm(`Deseja realmente excluir o lead de "${name}"? Esta ação não pode ser desfeita.`)) {
+            const targetLead = allLeads[index];
+            const name = targetLead.name || 'Lead';
+            const code = targetLead.code;
+            const id = targetLead.id;
+
+            if (confirm(`Deseja realmente excluir permanentemente o lead de "${name}"? Esta ação não pode ser desfeita.`)) {
+                // 1. Guardar código na lista de excluídos para evitar ressuscitação por cache local
+                if (code) {
+                    try {
+                        const deletedCodes = JSON.parse(localStorage.getItem('forlife_deleted_codes')) || [];
+                        if (!deletedCodes.includes(code)) {
+                            deletedCodes.push(code);
+                            localStorage.setItem('forlife_deleted_codes', JSON.stringify(deletedCodes));
+                        }
+                    } catch (e) {}
+                }
+
+                // 2. Remover da lista em memória e do localStorage
                 allLeads.splice(index, 1);
                 localStorage.setItem('forlife_leads', JSON.stringify(allLeads));
                 renderLeadsTable(allLeads);
                 updateMetrics(allLeads);
-                showToast(`Lead de "${name}" excluído.`);
+
+                // 3. Excluir permanentemente no Supabase
+                if (supabaseClient) {
+                    showToast(`Excluindo lead do banco de dados...`);
+                    try {
+                        let deleteQuery;
+                        if (id) {
+                            deleteQuery = supabaseClient.from('forlife_leads').delete().eq('id', id);
+                        } else if (code) {
+                            deleteQuery = supabaseClient.from('forlife_leads').delete().eq('code', code);
+                        }
+
+                        if (deleteQuery) {
+                            const { error } = await deleteQuery;
+                            if (error) {
+                                console.error("Erro ao deletar no Supabase:", error);
+                                showToast(`Aviso: Excluído localmente, mas erro no banco: ${error.message}`);
+                                return;
+                            }
+                        }
+                        showToast(`Lead de "${name}" excluído permanentemente com sucesso!`);
+                    } catch (e) {
+                        console.error("Exceção ao deletar no Supabase:", e);
+                        showToast(`Lead de "${name}" excluído.`);
+                    }
+                } else {
+                    showToast(`Lead de "${name}" excluído localmente.`);
+                }
             }
         };
 
