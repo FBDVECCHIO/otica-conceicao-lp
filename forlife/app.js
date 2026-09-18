@@ -607,9 +607,29 @@ async function handleVoucherSubmit(e) {
     const whatsappBtn = document.getElementById('btn-whatsapp-voucher');
     if (whatsappBtn) {
         whatsappBtn.href = `https://api.whatsapp.com/send?phone=${storePhone}&text=${encodeURIComponent(messageText)}`;
+        whatsappBtn.onclick = () => {
+            if (typeof fbq === 'function') {
+                try {
+                    fbq('track', 'Contact', { content_name: 'WhatsApp Atendimento ForLife' });
+                } catch (e) {}
+            }
+        };
     }
 
-    // 4. Exibir Tela de Sucesso
+    // 4. Disparar Evento Lead no Meta Pixel
+    if (typeof fbq === 'function') {
+        try {
+            fbq('track', 'Lead', {
+                content_name: 'Combo ForLife',
+                currency: 'BRL',
+                value: totalPrice
+            });
+        } catch (e) {
+            console.warn('Erro ao registrar evento fbq Lead:', e);
+        }
+    }
+
+    // 5. Exibir Tela de Sucesso
     document.getElementById('voucher-code-display').textContent = voucherCode;
     document.getElementById('voucher-user-name').textContent = name.split(' ')[0];
     
