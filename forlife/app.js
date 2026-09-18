@@ -616,9 +616,23 @@ async function handleVoucherSubmit(e) {
         };
     }
 
-    // 4. Disparar Eventos Lead e CompleteRegistration no Meta Pixel
+    // 4. Disparar Eventos Lead e CompleteRegistration no Meta Pixel com Correspondência Avançada
     if (typeof fbq === 'function') {
         try {
+            const cleanPhone = (phone || '').replace(/\D/g, '');
+            const phoneFormatted = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
+            const nameParts = (name || '').trim().split(/\s+/);
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            // Correspondência Avançada de Dados (Advanced Matching) para potencializar anúncios no Facebook
+            fbq('init', '2904508746602007', {
+                fn: firstName.toLowerCase(),
+                ln: lastName.toLowerCase(),
+                ph: phoneFormatted,
+                ct: (city || '').toLowerCase()
+            });
+
             fbq('track', 'Lead', {
                 content_name: 'Combo ForLife',
                 currency: 'BRL',
