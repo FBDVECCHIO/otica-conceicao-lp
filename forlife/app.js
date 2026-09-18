@@ -616,7 +616,7 @@ async function handleVoucherSubmit(e) {
         };
     }
 
-    // 4. Disparar Evento Lead no Meta Pixel
+    // 4. Disparar Eventos Lead e CompleteRegistration no Meta Pixel
     if (typeof fbq === 'function') {
         try {
             fbq('track', 'Lead', {
@@ -624,8 +624,14 @@ async function handleVoucherSubmit(e) {
                 currency: 'BRL',
                 value: totalPrice
             });
+            fbq('track', 'CompleteRegistration', {
+                content_name: 'Combo ForLife - Voucher Resgatado',
+                currency: 'BRL',
+                value: totalPrice,
+                status: true
+            });
         } catch (e) {
-            console.warn('Erro ao registrar evento fbq Lead:', e);
+            console.warn('Erro ao registrar eventos fbq no Meta Pixel:', e);
         }
     }
 
@@ -638,3 +644,17 @@ async function handleVoucherSubmit(e) {
     successBox.style.display = 'block';
     successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+
+// Verificação de URL para teste de eventos do Meta Pixel (ex: ?complete_registration=1 ou #voucher-success)
+try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('complete_registration') || window.location.hash === '#voucher-success') {
+        if (typeof fbq === 'function') {
+            fbq('track', 'CompleteRegistration', {
+                content_name: 'Combo ForLife - Teste Inscrição',
+                status: true
+            });
+        }
+    }
+} catch (e) {}
+
