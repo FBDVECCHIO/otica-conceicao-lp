@@ -146,6 +146,26 @@ function updateVisitRecordLocation(newLoc) {
             visit.precision = newLoc.precision || visit.precision;
             localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
         }
+
+        // Sincronizar localização precisa no Supabase
+        const supabaseTrafficId = sessionStorage.getItem('forlife_supabase_traffic_id');
+        if (supabaseClient && supabaseTrafficId && newLoc) {
+            const currentDwell = getActiveDwellSeconds();
+            const meta = JSON.stringify({
+                dwell: currentDwell,
+                scroll: currentMaxScrollDepth,
+                action: (visit && visit.last_clicked_element) || null,
+                neigh: newLoc.neighborhood || '',
+                lat: newLoc.latitude || null,
+                lon: newLoc.longitude || null,
+                prec: newLoc.precision || 'gps'
+            });
+            supabaseClient.from('forlife_traffic').update({
+                city: newLoc.city || (visit && visit.city),
+                region: newLoc.region || (visit && visit.region),
+                term: meta
+            }).eq('id', parseInt(supabaseTrafficId, 10)).then(() => {}).catch(() => {});
+        }
     } catch (e) {}
 }
 
@@ -234,12 +254,28 @@ function syncDwellAndScrollToStorage() {
         const visitId = sessionStorage.getItem('forlife_current_visit_id');
         const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
         const visit = visitId ? trafficLog.find(v => v.id === visitId) : trafficLog[0];
+        const currentDwell = getActiveDwellSeconds();
         if (visit) {
-            visit.dwell_seconds = getActiveDwellSeconds();
+            visit.dwell_seconds = currentDwell;
             if (currentMaxScrollDepth > (visit.scroll_depth || 0)) {
                 visit.scroll_depth = currentMaxScrollDepth;
             }
             localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+        }
+
+        // Sincronizar em Nuvem com o Supabase
+        const supabaseTrafficId = sessionStorage.getItem('forlife_supabase_traffic_id');
+        if (supabaseClient && supabaseTrafficId) {
+            const meta = JSON.stringify({
+                dwell: currentDwell,
+                scroll: currentMaxScrollDepth,
+                action: (visit && visit.last_clicked_element) || null,
+                neigh: (visit && visit.neighborhood) || '',
+                lat: (visit && visit.latitude) || null,
+                lon: (visit && visit.longitude) || null,
+                prec: (visit && visit.precision) || 'ip'
+            });
+            supabaseClient.from('forlife_traffic').update({ term: meta }).eq('id', parseInt(supabaseTrafficId, 10)).then(() => {}).catch(() => {});
         }
     } catch (e) {}
 }
@@ -434,20 +470,34 @@ async function initTrafficTracker() {
         // 1. Gravação no Supabase (se a tabela forlife_traffic existir)
         if (supabaseClient) {
             try {
-                await supabaseClient.from('forlife_traffic').insert([{
+                const initialMeta = JSON.stringify({
+                    dwell: 0,
+                    scroll: 0,
+                    action: null,
+                    neigh: loc.neighborhood || '',
+                    lat: loc.latitude || null,
+                    lon: loc.longitude || null,
+                    prec: loc.precision || 'ip'
+                });
+
+                const { data, error } = await supabaseClient.from('forlife_traffic').insert([{
                     source: visitRecord.source,
                     medium: visitRecord.medium,
                     campaign: visitRecord.campaign,
                     utm_id: visitRecord.utm_id,
                     content: visitRecord.content,
-                    term: visitRecord.term,
+                    term: initialMeta,
                     city: visitRecord.city,
                     region: visitRecord.region,
                     country: visitRecord.country,
                     device: visitRecord.device,
                     page_url: visitRecord.page_url,
                     converted: false
-                }]);
+                }]).select('id');
+
+                if (data && data.length > 0 && data[0].id) {
+                    sessionStorage.setItem('forlife_supabase_traffic_id', data[0].id.toString());
+                }
             } catch (e) {
                 console.warn("Tabela forlife_traffic no Supabase:", e);
             }
@@ -1043,6 +1093,17 @@ async function handleVoucherSubmit(e) {
             console.warn("Erro ao salvar no Supabase, mantendo cópia local:", err);
         }
     }
+
+    // Atualizar conversão no registro de tráfego do Supabase
+    try {
+        const supabaseTrafficId = sessionStorage.getItem('forlife_supabase_traffic_id');
+        if (supabaseClient && supabaseTrafficId) {
+            supabaseClient.from('forlife_traffic').update({
+                converted: true,
+                voucher_code: voucherCode
+            }).eq('id', parseInt(supabaseTrafficId, 10)).then(() => {}).catch(() => {});
+        }
+    } catch (e) {}
 
     // 2. Gravar no LocalStorage
     const localLeads = JSON.parse(localStorage.getItem('forlife_leads')) || [];

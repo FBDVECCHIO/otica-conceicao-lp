@@ -2686,7 +2686,23 @@
                         .order('created_at', { ascending: false })
                         .limit(1000);
                     if (!error && data) {
-                        cloudTraffic = data;
+                        cloudTraffic = data.map(item => {
+                            if (item && item.term && typeof item.term === 'string' && item.term.trim().startsWith('{')) {
+                                try {
+                                    const meta = JSON.parse(item.term);
+                                    if (meta) {
+                                        if (typeof meta.dwell === 'number') item.dwell_seconds = meta.dwell;
+                                        if (typeof meta.scroll === 'number') item.scroll_depth = meta.scroll;
+                                        if (meta.action) item.last_clicked_element = meta.action;
+                                        if (meta.neigh) item.neighborhood = meta.neigh;
+                                        if (meta.lat) item.latitude = meta.lat;
+                                        if (meta.lon) item.longitude = meta.lon;
+                                        if (meta.prec) item.precision = meta.prec;
+                                    }
+                                } catch (e) {}
+                            }
+                            return item;
+                        });
                     }
                 } catch (e) {
                     console.warn("Consulta forlife_traffic no Supabase:", e);
