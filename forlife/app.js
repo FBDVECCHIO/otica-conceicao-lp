@@ -47,7 +47,199 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupFAQ();
     setupScrollTop();
     updatePricingUI();
+    initTrafficTracker();
 });
+
+// ==========================================
+// RASTREAMENTO DE TRÁFEGO, UTMS & GEOLOCALIZAÇÃO
+// ==========================================
+function getActiveUtm() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const source = urlParams.get('utm_source');
+        const medium = urlParams.get('utm_medium');
+        const campaign = urlParams.get('utm_campaign');
+        const utmId = urlParams.get('utm_id');
+        const content = urlParams.get('utm_content');
+        const term = urlParams.get('utm_term');
+
+        // Se houver parâmetros UTM na URL, atualiza a sessão
+        if (source || campaign || utmId || medium) {
+            const utmData = {
+                source: (source || '').toLowerCase().trim(),
+                medium: (medium || '').toLowerCase().trim(),
+                campaign: (campaign || '').trim(),
+                utm_id: (utmId || '').trim(),
+                content: (content || '').trim(),
+                term: (term || '').trim()
+            };
+            sessionStorage.setItem('forlife_utm', JSON.stringify(utmData));
+            return utmData;
+        }
+
+        // Recuperar da sessão se o usuário navegou na mesma aba
+        const saved = sessionStorage.getItem('forlife_utm');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+
+        // Inferência por referrer se veio de redes sociais
+        let inferredSource = 'Direto / Orgânico';
+        let inferredMedium = 'direct';
+        const ref = (document.referrer || '').toLowerCase();
+        if (ref.includes('tiktok')) { inferredSource = 'tiktok'; inferredMedium = 'social'; }
+        else if (ref.includes('instagram')) { inferredSource = 'instagram'; inferredMedium = 'social'; }
+        else if (ref.includes('facebook') || ref.includes('fb.')) { inferredSource = 'facebook'; inferredMedium = 'social'; }
+        else if (ref.includes('google')) { inferredSource = 'google'; inferredMedium = 'search'; }
+        else if (ref.includes('whatsapp')) { inferredSource = 'whatsapp'; inferredMedium = 'messaging'; }
+
+        return {
+            source: inferredSource,
+            medium: inferredMedium,
+            campaign: 'Geral',
+            utm_id: '',
+            content: '',
+            term: ''
+        };
+    } catch (e) {
+        return { source: 'Direto / Orgânico', medium: 'direct', campaign: 'Geral', utm_id: '', content: '', term: '' };
+    }
+}
+
+async function detectVisitorLocation() {
+    const cached = sessionStorage.getItem('forlife_visitor_location');
+    if (cached) {
+        try { return JSON.parse(cached); } catch (e) {}
+    }
+
+    try {
+        const res = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(3000) });
+        if (res.ok) {
+            const data = await res.json();
+            const loc = {
+                city: data.cityName || 'Campinas e Região',
+                region: data.regionName || 'SP',
+                country: data.countryCode || 'BR'
+            };
+            sessionStorage.setItem('forlife_visitor_location', JSON.stringify(loc));
+            return loc;
+        }
+    } catch (e) {}
+
+    try {
+        const res2 = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+        if (res2.ok) {
+            const data2 = await res2.json();
+            const loc2 = {
+                city: data2.city || 'Campinas e Região',
+                region: data2.region_code || data2.region || 'SP',
+                country: data2.country_code || 'BR'
+            };
+            sessionStorage.setItem('forlife_visitor_location', JSON.stringify(loc2));
+            return loc2;
+        }
+    } catch (e) {}
+
+    const defaultLoc = { city: 'Campinas e Região', region: 'SP', country: 'BR' };
+    sessionStorage.setItem('forlife_visitor_location', JSON.stringify(defaultLoc));
+    return defaultLoc;
+}
+
+async function initTrafficTracker() {
+    try {
+        const now = Date.now();
+        const lastTrack = sessionStorage.getItem('forlife_last_track_time');
+        // Evita duplicar cliques da mesma aba em menos de 5 minutos
+        if (lastTrack && (now - parseInt(lastTrack, 10)) < 300000) {
+            return;
+        }
+
+        const utm = getActiveUtm();
+        const loc = await detectVisitorLocation();
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        const device = isMobile ? 'Mobile' : 'Desktop';
+        const visitId = 'vis_' + Math.random().toString(36).substring(2, 9);
+
+        const visitRecord = {
+            id: visitId,
+            created_at: new Date().toISOString(),
+            source: utm.source,
+            medium: utm.medium,
+            campaign: utm.campaign,
+            utm_id: utm.utm_id,
+            content: utm.content,
+            term: utm.term,
+            city: loc.city,
+            region: loc.region,
+            country: loc.country,
+            device: device,
+            page_url: window.location.href,
+            converted: false,
+            voucher_code: null
+        };
+
+        sessionStorage.setItem('forlife_current_visit_id', visitId);
+        sessionStorage.setItem('forlife_last_track_time', now.toString());
+
+        // 1. Gravação no Supabase (se a tabela forlife_traffic existir)
+        if (supabaseClient) {
+            try {
+                await supabaseClient.from('forlife_traffic').insert([{
+                    source: visitRecord.source,
+                    medium: visitRecord.medium,
+                    campaign: visitRecord.campaign,
+                    utm_id: visitRecord.utm_id,
+                    content: visitRecord.content,
+                    term: visitRecord.term,
+                    city: visitRecord.city,
+                    region: visitRecord.region,
+                    country: visitRecord.country,
+                    device: visitRecord.device,
+                    page_url: visitRecord.page_url,
+                    converted: false
+                }]);
+            } catch (e) {
+                console.warn("Tabela forlife_traffic no Supabase:", e);
+            }
+        }
+
+        // 2. Gravação no log compartilhado de tráfego (sempre disponível para o Admin)
+        try {
+            const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+            trafficLog.unshift(visitRecord);
+            if (trafficLog.length > 500) trafficLog.length = 500;
+            localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+        } catch (e) {}
+
+    } catch (err) {
+        console.warn("Erro ao rastrear tráfego:", err);
+    }
+}
+
+function markVisitConverted(voucherCode) {
+    try {
+        const visitId = sessionStorage.getItem('forlife_current_visit_id');
+        const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+        if (visitId) {
+            const visit = trafficLog.find(v => v.id === visitId);
+            if (visit) {
+                visit.converted = true;
+                visit.voucher_code = voucherCode;
+            }
+        } else if (trafficLog.length > 0) {
+            trafficLog[0].converted = true;
+            trafficLog[0].voucher_code = voucherCode;
+        }
+        localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+
+        if (supabaseClient && voucherCode) {
+            supabaseClient.from('forlife_traffic')
+                .update({ converted: true, voucher_code: voucherCode })
+                .eq('voucher_code', voucherCode)
+                .catch(() => {});
+        }
+    } catch (e) {}
+}
 
 // Métrica aleatória de vouchers disponíveis (1 a 30)
 function initScarcityBadge() {
@@ -515,6 +707,12 @@ async function handleVoucherSubmit(e) {
     // Apenas data (DD/MM/AAAA) sem a hora, conforme solicitado
     const todayFormatted = new Date().toLocaleDateString('pt-BR');
 
+    // Rastreabilidade de Origem (UTM TikTok, Meta, etc.)
+    const utm = getActiveUtm();
+    markVisitConverted(voucherCode);
+    const hasUtm = utm.source && utm.source !== 'Direto / Orgânico';
+    const utmInfo = hasUtm ? `${utm.source}${utm.campaign ? ' / ' + utm.campaign : ''}` : '';
+
     const leadData = {
         date: todayFormatted,
         name: name,
@@ -531,18 +729,24 @@ async function handleVoucherSubmit(e) {
         code: voucherCode,
         seller: '',
         saleValue: '',
-        osNumber: ''
+        osNumber: '',
+        utmSource: utm.source || 'Direto',
+        utmCampaign: utm.campaign || 'Geral',
+        utmMedium: utm.medium || ''
     };
 
     // 1. Gravar no Supabase (Tabela forlife_leads)
     if (supabaseClient) {
         try {
+            const cityWithStore = store ? `${city} (Loja: ${store})` : city;
+            const cityWithUtm = hasUtm ? `${cityWithStore} [${utmInfo}]` : cityWithStore;
+
             // Tentar primeiro com a coluna store nativa
             let res = await supabaseClient.from('forlife_leads').insert([{
                 name: name,
                 phone: phone,
                 email: email,
-                city: city,
+                city: cityWithUtm,
                 store: store,
                 combo_price: forlifeConfig.comboPrice,
                 addons: JSON.stringify(addonsArray),
@@ -559,7 +763,7 @@ async function handleVoucherSubmit(e) {
                     name: name,
                     phone: phone,
                     email: email,
-                    city: store ? `${city} (Loja: ${store})` : city,
+                    city: cityWithUtm,
                     combo_price: forlifeConfig.comboPrice,
                     addons: JSON.stringify(addonsArray),
                     total_price: totalPrice,
@@ -590,6 +794,10 @@ async function handleVoucherSubmit(e) {
         ? addonsArray.map(a => `  • ${a.name} (+ R$ ${formatMoney(a.price)})`).join('\n')
         : '  • Combo Tradicional (Sem adicionais)';
 
+    const utmNotice = hasUtm 
+        ? `🎯 *Origem:* Anúncio ${utm.source.toUpperCase()}${utm.campaign ? ' (' + utm.campaign + ')' : ''}\n` 
+        : '';
+
     const messageText = 
 `Olá, Ópticas Conceição! Acabei de gerar meu voucher exclusivo ForLife no site.\n\n` +
 `🎫 *Código do Voucher:* ${voucherCode}\n` +
@@ -597,6 +805,7 @@ async function handleVoucherSubmit(e) {
 `📍 *Cidade:* ${city}\n` +
 `🏪 *Loja Escolhida:* ${store}\n` +
 `📞 *WhatsApp:* ${phone}\n\n` +
+utmNotice +
 `👓 *Combo:* Óculos Completo (Armação + Lentes Multifocais HD)\n` +
 `💰 *Valor Combo Base:* R$ ${formatMoney(forlifeConfig.comboPrice)}\n\n` +
 `⚡ *Tecnologia:*\n${addonsText}\n\n` +

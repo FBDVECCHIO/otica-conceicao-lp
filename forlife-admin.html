@@ -717,6 +717,264 @@
             transform: scale(1.15);
         }
 
+        /* ========================================== */
+        /* BLOCO DE RASTREABILIDADE DE TRÁFEGO E UTMS */
+        /* ========================================== */
+        .traffic-section-wrapper {
+            margin-top: 30px;
+            background: #FFFFFF;
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .traffic-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 22px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .traffic-header-flex h3 {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--navy-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .traffic-header-flex p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+        }
+
+        .traffic-controls-flex {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .traffic-filter-btn {
+            background: var(--gray-bg);
+            border: 1px solid var(--gray-border);
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .traffic-filter-btn.active, .traffic-filter-btn:hover {
+            background: var(--navy-primary);
+            color: #FFFFFF;
+            border-color: var(--navy-primary);
+        }
+
+        .traffic-metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        .traffic-metric-card {
+            background: var(--gray-bg);
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .traffic-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .traffic-metric-card.highlight-tiktok {
+            border-left: 4px solid #00F2FE;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+        }
+
+        .traffic-metric-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .traffic-metric-number {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--navy-primary);
+            line-height: 1.2;
+        }
+
+        .traffic-metric-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .traffic-grid-analytics {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .traffic-subcard {
+            background: #FFFFFF;
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-sm);
+            padding: 18px;
+        }
+
+        .traffic-subcard h4 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--navy-primary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ranking-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .ranking-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        .ranking-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .ranking-bar-bg {
+            height: 7px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .ranking-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--royal-blue), #38BDF8);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        .ranking-bar-fill.tiktok {
+            background: linear-gradient(90deg, #010101, #FE2C55);
+        }
+
+        /* GERADOR DE LINKS UTM */
+        .utm-generator-panel {
+            background: #F8FAFC;
+            border: 1px dashed #CBD5E1;
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            margin-bottom: 26px;
+        }
+
+        .utm-generator-panel h4 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--navy-primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .utm-generator-panel p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .utm-form-grid {
+            display: grid;
+            grid-template-columns: 180px 1.5fr 1.2fr auto;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .badge-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge-source.tiktok {
+            background: #010101;
+            color: #00F2FE;
+            border: 1px solid #333;
+        }
+
+        .badge-source.facebook, .badge-source.instagram {
+            background: #1877F2;
+            color: #FFFFFF;
+        }
+
+        .badge-source.google {
+            background: #EA4335;
+            color: #FFFFFF;
+        }
+
+        .badge-source.whatsapp {
+            background: #25D366;
+            color: #FFFFFF;
+        }
+
+        .badge-source.direto {
+            background: #64748B;
+            color: #FFFFFF;
+        }
+
+        @media (max-width: 900px) {
+            .traffic-grid-analytics {
+                grid-template-columns: 1fr;
+            }
+            .utm-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* MODAL DE RECEITA */
         #prescription-modal {
             display: none;
@@ -1010,6 +1268,149 @@
                         </ul>
                     </div>
                 </div>
+
+                <!-- Bloco 4: Rastreabilidade de Tráfego, Campanhas (UTMs) & Regiões -->
+                <div class="traffic-section-wrapper">
+                    <div class="traffic-header-flex">
+                        <div>
+                            <h3><i class="fas fa-chart-line"></i> Rastreabilidade de Tráfego & Campanhas (UTMs)</h3>
+                            <p>Monitore cliques dos anúncios do TikTok, Meta Ads, cidades dos visitantes e conversões em vouchers.</p>
+                        </div>
+                        <div class="traffic-controls-flex">
+                            <button type="button" class="traffic-filter-btn active" data-period="all">Todo Período</button>
+                            <button type="button" class="traffic-filter-btn" data-period="today">Hoje</button>
+                            <button type="button" class="traffic-filter-btn" data-period="7days">7 Dias</button>
+                            <button type="button" class="btn-action" id="btn-refresh-traffic" title="Atualizar dados de tráfego">
+                                <i class="fas fa-sync-alt"></i> Atualizar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cards de Métricas de Cliques -->
+                    <div class="traffic-metrics-row">
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-mouse-pointer"></i> Total de Cliques / Acessos</div>
+                            <div class="traffic-metric-number" id="traffic-total-clicks">0</div>
+                            <div class="traffic-metric-sub">Visitas registradas na LP</div>
+                        </div>
+
+                        <div class="traffic-metric-card highlight-tiktok">
+                            <div class="traffic-metric-label" style="color: #FE2C55;"><i class="fab fa-tiktok"></i> Cliques via TikTok</div>
+                            <div class="traffic-metric-number" id="traffic-tiktok-clicks" style="color: #010101;">0</div>
+                            <div class="traffic-metric-sub" id="traffic-tiktok-pct">0% do tráfego total</div>
+                        </div>
+
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-bullhorn"></i> Outras Origens</div>
+                            <div class="traffic-metric-number" id="traffic-other-clicks">0</div>
+                            <div class="traffic-metric-sub">Meta, Google, Direto</div>
+                        </div>
+
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-ticket-alt"></i> Vouchers Gerados</div>
+                            <div class="traffic-metric-number" id="traffic-vouchers-converted" style="color: #10B981;">0</div>
+                            <div class="traffic-metric-sub" id="traffic-conversion-rate">Taxa de Conversão: 0%</div>
+                        </div>
+                    </div>
+
+                    <!-- Grids Analíticos: Cidades / Regiões e Campanhas -->
+                    <div class="traffic-grid-analytics">
+                        <!-- Coluna 1: Cidades / Regiões com Mais Acessos -->
+                        <div class="traffic-subcard">
+                            <h4>
+                                <span><i class="fas fa-map-marker-alt" style="color: #EF4444; margin-right: 6px;"></i> Cidades & Regiões dos Visitantes</span>
+                                <span id="traffic-unique-cities" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 cidades</span>
+                            </h4>
+                            <ul class="ranking-list" id="traffic-cities-list">
+                                <li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso registrado ainda.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Coluna 2: Campanhas & Origens -->
+                        <div class="traffic-subcard">
+                            <h4>
+                                <span><i class="fas fa-tags" style="color: var(--royal-blue); margin-right: 6px;"></i> Desempenho por Campanha</span>
+                                <span id="traffic-campaigns-count" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 ativas</span>
+                            </h4>
+                            <ul class="ranking-list" id="traffic-campaigns-list">
+                                <li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhuma campanha detectada ainda.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Gerador & Organizador de Links UTM -->
+                    <div class="utm-generator-panel">
+                        <h4><i class="fas fa-link" style="color: var(--royal-blue);"></i> Gerador Rápido de Links com UTM (TikTok, Instagram, etc.)</h4>
+                        <p>Use esta ferramenta para criar os links oficiais para colar nos seus anúncios do TikTok Ads, Bio do Instagram ou WhatsApp:</p>
+                        
+                        <div class="utm-form-grid">
+                            <div class="form-group-cfg">
+                                <label for="utm-gen-source">Canal / Rede</label>
+                                <select id="utm-gen-source" class="cfg-input">
+                                    <option value="tiktok">TikTok Ads</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="facebook">Facebook Ads</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="google">Google Ads</option>
+                                    <option value="influencer">Influenciador</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group-cfg">
+                                <label for="utm-gen-campaign">Nome da Campanha (utm_campaign)</label>
+                                <input type="text" id="utm-gen-campaign" class="cfg-input" placeholder="ex: promo_multifocal_setembro" value="combo_forlife_tiktok">
+                            </div>
+
+                            <div class="form-group-cfg">
+                                <label for="utm-gen-id">ID do Anúncio (utm_id)</label>
+                                <input type="text" id="utm-gen-id" class="cfg-input" placeholder="ex: __CAMPAIGN_ID__" value="__CAMPAIGN_ID__">
+                            </div>
+
+                            <div class="form-group-cfg">
+                                <label>&nbsp;</label>
+                                <button type="button" class="btn-save-cfg" id="btn-copy-utm-link" style="background: #10B981; height: 38px;">
+                                    <i class="fas fa-copy"></i> Copiar Link
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <input type="text" id="utm-preview-output" readonly class="cfg-input" style="width: 100%; font-family: monospace; font-size: 12px; background: #FFFFFF; color: var(--navy-primary);" value="https://lp.opticaconceicao.com.br/forlife?utm_source=tiktok&utm_medium=paid&utm_id=__CAMPAIGN_ID__&utm_campaign=combo_forlife_tiktok">
+                        </div>
+                    </div>
+
+                    <!-- Tabela dos Últimos Cliques em Tempo Real -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="font-size: 14px; font-weight: 800; color: var(--navy-primary); margin: 0;">
+                                <i class="fas fa-history" style="margin-right: 6px;"></i> Feed dos Últimos Cliques / Acessos
+                            </h4>
+                            <span style="font-size: 11px; color: var(--text-muted);">Atualização automática</span>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                            <table class="leads-table" style="font-size: 12px;">
+                                <thead>
+                                    <tr>
+                                        <th>Data / Hora</th>
+                                        <th>Origem</th>
+                                        <th>Campanha</th>
+                                        <th>Cidade / Estado</th>
+                                        <th>Dispositivo</th>
+                                        <th style="text-align: center;">Voucher</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="traffic-recent-body">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                                            Nenhum acesso registrado ainda.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1112,6 +1513,8 @@
             loadStores();
             loadLeads();
             loadCMSConfig();
+            loadTrafficMetrics();
+            setupUTMGenerator();
         }
 
         function showToast(msg) {
@@ -1943,8 +2346,283 @@
             downloadBtn.href = lead.prescriptionFile;
             downloadBtn.download = `receita_${(lead.name || 'cliente').replace(/\s+/g, '_')}.jpg`;
 
-            modal.style.display = 'flex';
-        };
+        // ==========================================
+        // RASTREAMENTO DE TRÁFEGO, UTMS E CIDADES
+        // ==========================================
+        let allTrafficLogs = [];
+        let currentTrafficPeriod = 'all';
+
+        async function loadTrafficMetrics() {
+            let cloudTraffic = [];
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('forlife_traffic')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(500);
+                    if (!error && data) {
+                        cloudTraffic = data;
+                    }
+                } catch (e) {
+                    console.warn("Consulta forlife_traffic no Supabase:", e);
+                }
+            }
+
+            const localTraffic = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+            
+            // Mesclar e desduplicar por ID
+            const map = new Map();
+            cloudTraffic.forEach(item => {
+                if (item && item.id) map.set(item.id, item);
+            });
+            localTraffic.forEach(item => {
+                if (item && item.id && !map.has(item.id)) {
+                    map.set(item.id, item);
+                } else if (item && item.id && item.converted) {
+                    const existing = map.get(item.id);
+                    if (existing) existing.converted = true;
+                }
+            });
+
+            allTrafficLogs = Array.from(map.values());
+            allTrafficLogs.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            renderTrafficDashboard(allTrafficLogs);
+        }
+
+        function renderTrafficDashboard(logs) {
+            const now = Date.now();
+            const filtered = logs.filter(item => {
+                if (currentTrafficPeriod === 'today') {
+                    const itemDate = new Date(item.created_at);
+                    const today = new Date();
+                    return itemDate.toDateString() === today.toDateString();
+                } else if (currentTrafficPeriod === '7days') {
+                    const itemTime = new Date(item.created_at).getTime();
+                    return (now - itemTime) <= (7 * 24 * 60 * 60 * 1000);
+                }
+                return true;
+            });
+
+            const totalClicks = filtered.length;
+            const tiktokClicks = filtered.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
+            const otherClicks = totalClicks - tiktokClicks;
+            const vouchersConverted = filtered.filter(l => l.converted).length;
+
+            const tiktokPct = totalClicks > 0 ? Math.round((tiktokClicks / totalClicks) * 100) : 0;
+            const convRate = totalClicks > 0 ? ((vouchersConverted / totalClicks) * 100).toFixed(1) : '0';
+
+            const totalClicksEl = document.getElementById('traffic-total-clicks');
+            if (totalClicksEl) totalClicksEl.textContent = totalClicks;
+            const tiktokClicksEl = document.getElementById('traffic-tiktok-clicks');
+            if (tiktokClicksEl) tiktokClicksEl.textContent = tiktokClicks;
+            const tiktokPctEl = document.getElementById('traffic-tiktok-pct');
+            if (tiktokPctEl) tiktokPctEl.textContent = `${tiktokPct}% do tráfego total`;
+            const otherClicksEl = document.getElementById('traffic-other-clicks');
+            if (otherClicksEl) otherClicksEl.textContent = otherClicks;
+            const vouchersConvertedEl = document.getElementById('traffic-vouchers-converted');
+            if (vouchersConvertedEl) vouchersConvertedEl.textContent = vouchersConverted;
+            const convRateEl = document.getElementById('traffic-conversion-rate');
+            if (convRateEl) convRateEl.textContent = `Taxa de Conversão: ${convRate}%`;
+
+            // 1. Ranking de Cidades & Regiões
+            const cityCounts = {};
+            filtered.forEach(l => {
+                let city = (l.city || '').trim();
+                let region = (l.region || '').trim();
+                let label = city ? `${city} (${region || 'SP'})` : 'Região de Campinas';
+                cityCounts[label] = (cityCounts[label] || 0) + 1;
+            });
+
+            const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]);
+            const citiesList = document.getElementById('traffic-cities-list');
+            const uniqueCitiesEl = document.getElementById('traffic-unique-cities');
+            if (uniqueCitiesEl) uniqueCitiesEl.textContent = `${sortedCities.length} ${sortedCities.length === 1 ? 'cidade' : 'cidades'}`;
+
+            if (citiesList) {
+                if (sortedCities.length === 0) {
+                    citiesList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso registrado no período.</li>';
+                } else {
+                    citiesList.innerHTML = '';
+                    const maxCount = sortedCities[0][1] || 1;
+                    sortedCities.slice(0, 10).forEach(([cityName, count]) => {
+                        const pct = Math.round((count / maxCount) * 100);
+                        const li = document.createElement('li');
+                        li.className = 'ranking-item';
+                        li.innerHTML = `
+                            <div class="ranking-item-header">
+                                <span><i class="fas fa-map-marker-alt" style="font-size: 10px; color: #EF4444; margin-right: 4px;"></i> ${escapeHtml(cityName)}</span>
+                                <span><strong>${count}</strong> ${count === 1 ? 'visita' : 'visitas'}</span>
+                            </div>
+                            <div class="ranking-bar-bg">
+                                <div class="ranking-bar-fill" style="width: ${pct}%;"></div>
+                            </div>
+                        `;
+                        citiesList.appendChild(li);
+                    });
+                }
+            }
+
+            // 2. Ranking de Campanhas
+            const campCounts = {};
+            filtered.forEach(l => {
+                let source = (l.source || 'Direto').toLowerCase();
+                let campaign = (l.campaign || 'Geral').trim();
+                let key = `${source}: ${campaign}`;
+                if (!campCounts[key]) campCounts[key] = { source, campaign, clicks: 0, converted: 0 };
+                campCounts[key].clicks++;
+                if (l.converted) campCounts[key].converted++;
+            });
+
+            const sortedCamps = Object.values(campCounts).sort((a, b) => b.clicks - a.clicks);
+            const campsList = document.getElementById('traffic-campaigns-list');
+            const campCountEl = document.getElementById('traffic-campaigns-count');
+            if (campCountEl) campCountEl.textContent = `${sortedCamps.length} ${sortedCamps.length === 1 ? 'campanha' : 'campanhas'}`;
+
+            if (campsList) {
+                if (sortedCamps.length === 0) {
+                    campsList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhuma campanha detectada no período.</li>';
+                } else {
+                    campsList.innerHTML = '';
+                    const maxCamp = sortedCamps[0].clicks || 1;
+                    sortedCamps.slice(0, 10).forEach(camp => {
+                        const pct = Math.round((camp.clicks / maxCamp) * 100);
+                        const isTiktok = camp.source.includes('tiktok');
+                        const badgeClass = isTiktok ? 'tiktok' : (camp.source.includes('facebook') || camp.source.includes('instagram') ? 'facebook' : 'direto');
+                        const li = document.createElement('li');
+                        li.className = 'ranking-item';
+                        li.innerHTML = `
+                            <div class="ranking-item-header">
+                                <span>
+                                    <span class="badge-source ${badgeClass}" style="margin-right: 4px; font-size: 10px; padding: 1px 5px;">
+                                        ${isTiktok ? '<i class="fab fa-tiktok"></i>' : ''} ${escapeHtml(camp.source.toUpperCase())}
+                                    </span>
+                                    <strong>${escapeHtml(camp.campaign)}</strong>
+                                </span>
+                                <span>
+                                    <strong>${camp.clicks}</strong> cliques 
+                                    ${camp.converted > 0 ? `<span style="color: #10B981; font-size: 11px;">(${camp.converted} conv.)</span>` : ''}
+                                </span>
+                            </div>
+                            <div class="ranking-bar-bg">
+                                <div class="ranking-bar-fill ${isTiktok ? 'tiktok' : ''}" style="width: ${pct}%;"></div>
+                            </div>
+                        `;
+                        campsList.appendChild(li);
+                    });
+                }
+            }
+
+            // 3. Tabela de Acessos Recentes
+            const tbody = document.getElementById('traffic-recent-body');
+            if (tbody) {
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Nenhum clique registrado no período selecionado.</td></tr>';
+                } else {
+                    tbody.innerHTML = '';
+                    filtered.slice(0, 20).forEach(item => {
+                        const dateObj = new Date(item.created_at);
+                        const dateFormatted = !isNaN(dateObj) ? `${dateObj.toLocaleDateString('pt-BR')} ${dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}` : '--';
+                        
+                        const src = (item.source || 'direto').toLowerCase();
+                        let badgeClass = 'direto';
+                        let badgeIcon = '';
+                        if (src.includes('tiktok')) { badgeClass = 'tiktok'; badgeIcon = '<i class="fab fa-tiktok"></i> '; }
+                        else if (src.includes('instagram')) { badgeClass = 'instagram'; badgeIcon = '<i class="fab fa-instagram"></i> '; }
+                        else if (src.includes('facebook')) { badgeClass = 'facebook'; badgeIcon = '<i class="fab fa-facebook"></i> '; }
+                        else if (src.includes('google')) { badgeClass = 'google'; badgeIcon = '<i class="fab fa-google"></i> '; }
+                        else if (src.includes('whatsapp')) { badgeClass = 'whatsapp'; badgeIcon = '<i class="fab fa-whatsapp"></i> '; }
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="font-size: 11px; color: var(--text-muted);">${escapeHtml(dateFormatted)}</td>
+                            <td><span class="badge-source ${badgeClass}">${badgeIcon}${escapeHtml(src.toUpperCase())}</span></td>
+                            <td style="font-weight: 700; color: var(--navy-primary);">${escapeHtml(item.campaign || 'Geral')}</td>
+                            <td>${escapeHtml(item.city || 'Campinas')} ${item.region ? `(${escapeHtml(item.region)})` : ''}</td>
+                            <td style="font-size: 11px; color: var(--text-muted);">
+                                <i class="${item.device === 'Mobile' ? 'fas fa-mobile-alt' : 'fas fa-desktop'}"></i> ${escapeHtml(item.device || 'Mobile')}
+                            </td>
+                            <td style="text-align: center;">
+                                ${item.converted 
+                                    ? `<span class="badge-status" style="color: #10B981; font-weight: 800;"><i class="fas fa-check"></i> ${escapeHtml(item.voucher_code || 'Voucher')}</span>` 
+                                    : '<span style="color: #94A3B8; font-size: 11px;">Visualizou</span>'}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            }
+        }
+
+        // ==========================================
+        // GERADOR DE LINKS COM UTM
+        // ==========================================
+        function setupUTMGenerator() {
+            const sourceSelect = document.getElementById('utm-gen-source');
+            const campaignInput = document.getElementById('utm-gen-campaign');
+            const idInput = document.getElementById('utm-gen-id');
+            const outputInput = document.getElementById('utm-preview-output');
+            const copyBtn = document.getElementById('btn-copy-utm-link');
+
+            if (!sourceSelect || !outputInput) return;
+
+            function updateUtmUrl() {
+                const baseUrl = 'https://lp.opticaconceicao.com.br/forlife';
+                const src = sourceSelect.value || 'tiktok';
+                const medium = (src === 'whatsapp' || src === 'influencer') ? 'social' : 'paid';
+                const camp = encodeURIComponent((campaignInput.value || 'combo_forlife').trim().toLowerCase().replace(/\s+/g, '_'));
+                const adId = encodeURIComponent((idInput.value || '').trim());
+
+                let finalUrl = `${baseUrl}?utm_source=${src}&utm_medium=${medium}&utm_campaign=${camp}`;
+                if (adId) {
+                    finalUrl += `&utm_id=${adId}`;
+                }
+                outputInput.value = finalUrl;
+            }
+
+            sourceSelect.addEventListener('change', updateUtmUrl);
+            campaignInput.addEventListener('input', updateUtmUrl);
+            idInput.addEventListener('input', updateUtmUrl);
+
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    outputInput.select();
+                    navigator.clipboard.writeText(outputInput.value).then(() => {
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                        copyBtn.style.background = '#059669';
+                        showToast('Link rastreado copiado para a área de transferência!');
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.style.background = '#10B981';
+                        }, 1800);
+                    }).catch(() => {
+                        document.execCommand('copy');
+                        showToast('Link copiado!');
+                    });
+                });
+            }
+
+            // Filtros de Período
+            document.querySelectorAll('.traffic-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.traffic-filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentTrafficPeriod = btn.getAttribute('data-period');
+                    renderTrafficDashboard(allTrafficLogs);
+                });
+            });
+
+            // Botão Atualizar
+            const refreshBtn = document.getElementById('btn-refresh-traffic');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    loadTrafficMetrics();
+                    showToast('Métricas de tráfego atualizadas!');
+                });
+            }
+        }
 
         function escapeHtml(text) {
             if (!text) return '';
