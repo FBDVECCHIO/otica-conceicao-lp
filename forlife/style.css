@@ -1741,11 +1741,21 @@ body {
     .banner-combo .container {
         padding: 0 14px;
     }
-    .banner-combo .section-title {
-        font-size: 21px;
-        margin-bottom: 4px;
+    /* Padronização de tamanho dos títulos de todos os banners */
+    .section-title {
+        font-size: 28px !important;
+        margin-bottom: 6px;
         line-height: 1.25;
-        letter-spacing: -0.3px;
+        letter-spacing: -0.4px;
+    }
+    .banner-autoridade.light-mode .autoridade-content h2 {
+        font-size: 28px !important;
+    }
+    .banner-combo .section-title {
+        font-size: 28px !important;
+        margin-bottom: 4px;
+        line-height: 1.22;
+        letter-spacing: -0.4px;
     }
     .banner-combo .section-subtitle {
         font-size: 13.5px;
