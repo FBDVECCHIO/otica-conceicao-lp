@@ -129,7 +129,7 @@ body {
 .header-forlife {
     background-color: var(--navy-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 0;
+    padding: 31px 0; /* Altura aumentada em 1 cm (+38px) mantendo o logo no tamanho atual */
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -1729,7 +1729,7 @@ body {
         display: block;
     }
     .header-forlife {
-        padding: 8px 0;
+        padding: 27px 0; /* Altura aumentada em 1 cm (+38px) mantendo o logo no tamanho atual */
     }
     .header-logo-link img {
         height: 34px;
