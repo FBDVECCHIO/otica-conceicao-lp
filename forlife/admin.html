@@ -966,6 +966,151 @@
             color: #FFFFFF;
         }
 
+        .ranking-item.clickable {
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+        }
+        .ranking-item.clickable:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+            transform: translateX(2px);
+        }
+        .ranking-item.active-filter {
+            background: #EFF6FF !important;
+            border-color: var(--royal-blue) !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+        .traffic-active-filter-badge {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: var(--navy-primary);
+        }
+        .btn-clear-campaign-filter {
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            color: #EF4444;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .btn-clear-campaign-filter:hover {
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+        }
+        .traffic-feed-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            background: #F8FAFC;
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .traffic-feed-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+        }
+        .traffic-feed-filters select,
+        .traffic-feed-filters input {
+            padding: 7px 10px;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            outline: none;
+        }
+        .traffic-feed-filters select:focus,
+        .traffic-feed-filters input:focus {
+            border-color: var(--royal-blue);
+        }
+        .traffic-feed-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn-traffic-pdf {
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-traffic-pdf.filtered {
+            background: #EF4444;
+            color: #FFFFFF;
+        }
+        .btn-traffic-pdf.filtered:hover {
+            background: #DC2626;
+        }
+        .btn-traffic-pdf.all {
+            background: var(--navy-primary);
+            color: #FFFFFF;
+        }
+        .btn-traffic-pdf.all:hover {
+            background: var(--royal-blue);
+        }
+        .traffic-pagination-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding: 10px 4px 4px 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .traffic-pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .traffic-page-btn {
+            padding: 5px 10px;
+            border: 1px solid #CBD5E1;
+            border-radius: 5px;
+            background: #FFFFFF;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all 0.15s;
+        }
+        .traffic-page-btn:hover:not(:disabled) {
+            background: #F1F5F9;
+            border-color: #94A3B8;
+        }
+        .traffic-page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 900px) {
             .traffic-grid-analytics {
                 grid-template-columns: 1fr;
@@ -1313,6 +1458,12 @@
                         </div>
                     </div>
 
+                    <!-- Banner de Filtro Cruzado Ativo (Quando clica em uma campanha) -->
+                    <div class="traffic-active-filter-badge" id="traffic-active-filter-badge">
+                        <span><i class="fas fa-filter" style="color: var(--royal-blue); margin-right: 6px;"></i> Filtrando cidades e cliques pela campanha: <strong id="traffic-filtered-campaign-name"></strong></span>
+                        <button type="button" class="btn-clear-campaign-filter" id="btn-clear-campaign-filter"><i class="fas fa-times"></i> Limpar Filtro</button>
+                    </div>
+
                     <!-- Grids Analíticos: Cidades / Regiões e Campanhas -->
                     <div class="traffic-grid-analytics">
                         <!-- Coluna 1: Cidades / Regiões com Mais Acessos -->
@@ -1391,7 +1542,39 @@
                             <span style="font-size: 11px; color: var(--text-muted);">Atualização automática</span>
                         </div>
 
-                        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                        <!-- Toolbar de Filtros e Exportação PDF do Feed -->
+                        <div class="traffic-feed-toolbar">
+                            <div class="traffic-feed-filters">
+                                <select id="traffic-filter-campaign" title="Filtrar por Campanha">
+                                    <option value="all">Todas as Campanhas</option>
+                                </select>
+                                <select id="traffic-filter-source" title="Filtrar por Origem">
+                                    <option value="all">Todas as Origens</option>
+                                    <option value="tiktok">TikTok Ads</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="facebook">Facebook Ads</option>
+                                    <option value="google">Google Ads</option>
+                                    <option value="whatsapp">WhatsApp / Bio</option>
+                                    <option value="direto">Acesso Direto</option>
+                                </select>
+                                <select id="traffic-filter-status" title="Filtrar por Conversão em Voucher">
+                                    <option value="all">Todos os Status</option>
+                                    <option value="converted">Apenas Gerou Voucher</option>
+                                    <option value="viewed">Apenas Visualizou</option>
+                                </select>
+                                <input type="text" id="traffic-search-input" placeholder="Buscar por cidade, ID...">
+                            </div>
+                            <div class="traffic-feed-actions">
+                                <button type="button" class="btn-traffic-pdf filtered" id="btn-traffic-pdf-filtered" title="Exportar PDF com base nos filtros da tela">
+                                    <i class="fas fa-file-pdf"></i> PDF Filtrado
+                                </button>
+                                <button type="button" class="btn-traffic-pdf all" id="btn-traffic-pdf-all" title="Exportar PDF com todo o histórico registrado">
+                                    <i class="fas fa-download"></i> PDF Geral
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
                             <table class="leads-table" style="font-size: 12px;">
                                 <thead>
                                     <tr>
@@ -1406,11 +1589,26 @@
                                 <tbody id="traffic-recent-body">
                                     <tr>
                                         <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
-                                            Nenhum acesso registrado ainda.
+                                             Nenhum acesso registrado ainda.
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Paginação do Feed -->
+                        <div class="traffic-pagination-wrapper">
+                            <div id="traffic-pagination-info">Mostrando 0 de 0 acessos</div>
+                            <div class="traffic-pagination-controls">
+                                <select id="traffic-page-size" class="cfg-input" style="padding: 4px 8px; font-size: 11px; height: 30px;">
+                                    <option value="10" selected>10 por página</option>
+                                    <option value="25">25 por página</option>
+                                    <option value="50">50 por página</option>
+                                </select>
+                                <button type="button" class="traffic-page-btn" id="traffic-btn-prev" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+                                <span id="traffic-page-indicator" style="font-weight: 700; color: var(--navy-primary); margin: 0 4px;">Página 1 de 1</span>
+                                <button type="button" class="traffic-page-btn" id="traffic-btn-next" disabled>Próximo <i class="fas fa-chevron-right"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2357,6 +2555,13 @@
         // ==========================================
         let allTrafficLogs = [];
         let currentTrafficPeriod = 'all';
+        let selectedTrafficCampaign = 'all';
+        let trafficFilterSource = 'all';
+        let trafficFilterStatus = 'all';
+        let trafficSearchQuery = '';
+        let trafficCurrentPage = 1;
+        let trafficPageSize = 10;
+        let trafficListenersAttached = false;
 
         async function loadTrafficMetrics() {
             let cloudTraffic = [];
@@ -2366,7 +2571,7 @@
                         .from('forlife_traffic')
                         .select('*')
                         .order('created_at', { ascending: false })
-                        .limit(500);
+                        .limit(1000);
                     if (!error && data) {
                         cloudTraffic = data;
                     }
@@ -2395,11 +2600,12 @@
             allTrafficLogs.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
             renderTrafficDashboard(allTrafficLogs);
+            setupTrafficFeedEvents();
         }
 
-        function renderTrafficDashboard(logs) {
+        function getPeriodFilteredLogs(logs) {
             const now = Date.now();
-            const filtered = logs.filter(item => {
+            return logs.filter(item => {
                 if (currentTrafficPeriod === 'today') {
                     const itemDate = new Date(item.created_at);
                     const today = new Date();
@@ -2410,11 +2616,32 @@
                 }
                 return true;
             });
+        }
 
-            const totalClicks = filtered.length;
-            const tiktokClicks = filtered.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
+        window.setCampaignFilter = function(campaignName) {
+            selectedTrafficCampaign = (selectedTrafficCampaign === campaignName) ? 'all' : campaignName;
+            trafficCurrentPage = 1;
+            const campSelect = document.getElementById('traffic-filter-campaign');
+            if (campSelect) campSelect.value = selectedTrafficCampaign;
+            renderTrafficDashboard(allTrafficLogs);
+        };
+
+        window.clearCampaignFilter = function() {
+            selectedTrafficCampaign = 'all';
+            trafficCurrentPage = 1;
+            const campSelect = document.getElementById('traffic-filter-campaign');
+            if (campSelect) campSelect.value = 'all';
+            renderTrafficDashboard(allTrafficLogs);
+        };
+
+        function renderTrafficDashboard(logs) {
+            const periodLogs = getPeriodFilteredLogs(logs);
+
+            // Cards de Métricas Principais
+            const totalClicks = periodLogs.length;
+            const tiktokClicks = periodLogs.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
             const otherClicks = totalClicks - tiktokClicks;
-            const vouchersConverted = filtered.filter(l => l.converted).length;
+            const vouchersConverted = periodLogs.filter(l => l.converted).length;
 
             const tiktokPct = totalClicks > 0 ? Math.round((tiktokClicks / totalClicks) * 100) : 0;
             const convRate = totalClicks > 0 ? ((vouchersConverted / totalClicks) * 100).toFixed(1) : '0';
@@ -2432,9 +2659,58 @@
             const convRateEl = document.getElementById('traffic-conversion-rate');
             if (convRateEl) convRateEl.textContent = `Taxa de Conversão: ${convRate}%`;
 
-            // 1. Ranking de Cidades & Regiões
+            // Badge de Filtro Ativo
+            const badgeEl = document.getElementById('traffic-active-filter-badge');
+            const badgeNameEl = document.getElementById('traffic-filtered-campaign-name');
+            if (badgeEl && badgeNameEl) {
+                if (selectedTrafficCampaign !== 'all') {
+                    badgeEl.style.display = 'flex';
+                    badgeNameEl.textContent = selectedTrafficCampaign;
+                } else {
+                    badgeEl.style.display = 'none';
+                }
+            }
+
+            // Popular Dropdown de Campanhas no Feed
+            populateCampaignDropdown(periodLogs);
+
+            // 1. Ranking de Cidades & Regiões (Filtradas pela Campanha Selecionada, se houver)
+            renderTrafficCities(periodLogs);
+
+            // 2. Ranking de Campanhas (Com destaque visual da campanha selecionada)
+            renderTrafficCampaigns(periodLogs);
+
+            // 3. Tabela do Feed de Cliques com Paginação
+            renderTrafficFeedTable(periodLogs);
+        }
+
+        function populateCampaignDropdown(periodLogs) {
+            const campSelect = document.getElementById('traffic-filter-campaign');
+            if (!campSelect) return;
+
+            const campMap = new Map();
+            periodLogs.forEach(l => {
+                const c = (l.campaign || 'Geral').trim();
+                campMap.set(c, (campMap.get(c) || 0) + 1);
+            });
+
+            const currentVal = selectedTrafficCampaign;
+            let optionsHtml = `<option value="all">Todas as Campanhas (${periodLogs.length})</option>`;
+            Array.from(campMap.entries()).sort((a, b) => b[1] - a[1]).forEach(([camp, count]) => {
+                const isSelected = (camp === currentVal) ? 'selected' : '';
+                optionsHtml += `<option value="${escapeHtml(camp)}" ${isSelected}>${escapeHtml(camp)} (${count})</option>`;
+            });
+            campSelect.innerHTML = optionsHtml;
+        }
+
+        function renderTrafficCities(periodLogs) {
+            // Se houver campanha selecionada, filtra cidades apenas para essa campanha
+            const logsForCities = (selectedTrafficCampaign !== 'all')
+                ? periodLogs.filter(l => (l.campaign || 'Geral').trim() === selectedTrafficCampaign)
+                : periodLogs;
+
             const cityCounts = {};
-            filtered.forEach(l => {
+            logsForCities.forEach(l => {
                 let city = (l.city || '').trim();
                 let region = (l.region || '').trim();
                 let label = city ? `${city} (${region || 'SP'})` : 'Região de Campinas';
@@ -2444,15 +2720,19 @@
             const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]);
             const citiesList = document.getElementById('traffic-cities-list');
             const uniqueCitiesEl = document.getElementById('traffic-unique-cities');
-            if (uniqueCitiesEl) uniqueCitiesEl.textContent = `${sortedCities.length} ${sortedCities.length === 1 ? 'cidade' : 'cidades'}`;
+
+            if (uniqueCitiesEl) {
+                const suffix = (selectedTrafficCampaign !== 'all') ? ' (filtradas)' : '';
+                uniqueCitiesEl.textContent = `${sortedCities.length} ${sortedCities.length === 1 ? 'cidade' : 'cidades'}${suffix}`;
+            }
 
             if (citiesList) {
                 if (sortedCities.length === 0) {
-                    citiesList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso registrado no período.</li>';
+                    citiesList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso para esta campanha no período.</li>';
                 } else {
                     citiesList.innerHTML = '';
                     const maxCount = sortedCities[0][1] || 1;
-                    sortedCities.slice(0, 10).forEach(([cityName, count]) => {
+                    sortedCities.slice(0, 15).forEach(([cityName, count]) => {
                         const pct = Math.round((count / maxCount) * 100);
                         const li = document.createElement('li');
                         li.className = 'ranking-item';
@@ -2469,10 +2749,11 @@
                     });
                 }
             }
+        }
 
-            // 2. Ranking de Campanhas
+        function renderTrafficCampaigns(periodLogs) {
             const campCounts = {};
-            filtered.forEach(l => {
+            periodLogs.forEach(l => {
                 let source = (l.source || 'Direto').toLowerCase();
                 let campaign = (l.campaign || 'Geral').trim();
                 let key = `${source}: ${campaign}`;
@@ -2492,12 +2773,19 @@
                 } else {
                     campsList.innerHTML = '';
                     const maxCamp = sortedCamps[0].clicks || 1;
-                    sortedCamps.slice(0, 10).forEach(camp => {
+                    sortedCamps.slice(0, 20).forEach(camp => {
                         const pct = Math.round((camp.clicks / maxCamp) * 100);
                         const isTiktok = camp.source.includes('tiktok');
-                        const badgeClass = isTiktok ? 'tiktok' : (camp.source.includes('facebook') || camp.source.includes('instagram') ? 'facebook' : 'direto');
+                        const isInstagram = camp.source.includes('instagram');
+                        const isFacebook = camp.source.includes('facebook');
+                        const badgeClass = isTiktok ? 'tiktok' : (isInstagram || isFacebook ? 'facebook' : 'direto');
+                        const isCurrentActive = (selectedTrafficCampaign === camp.campaign);
+
                         const li = document.createElement('li');
-                        li.className = 'ranking-item';
+                        li.className = `ranking-item clickable ${isCurrentActive ? 'active-filter' : ''}`;
+                        li.setAttribute('title', isCurrentActive ? 'Clique para desmarcar filtro' : `Clique para filtrar cidades e cliques de "${camp.campaign}"`);
+                        li.onclick = () => setCampaignFilter(camp.campaign);
+
                         li.innerHTML = `
                             <div class="ranking-item-header">
                                 <span>
@@ -2505,6 +2793,7 @@
                                         ${isTiktok ? '<i class="fab fa-tiktok"></i>' : ''} ${escapeHtml(camp.source.toUpperCase())}
                                     </span>
                                     <strong>${escapeHtml(camp.campaign)}</strong>
+                                    ${isCurrentActive ? '<i class="fas fa-check-circle" style="color: var(--royal-blue); margin-left: 4px;"></i>' : ''}
                                 </span>
                                 <span>
                                     <strong>${camp.clicks}</strong> cliques 
@@ -2519,15 +2808,60 @@
                     });
                 }
             }
+        }
 
-            // 3. Tabela de Acessos Recentes
+        function getFeedFilteredLogs(periodLogs) {
+            return periodLogs.filter(item => {
+                // Filtro de Campanha
+                if (selectedTrafficCampaign !== 'all') {
+                    if ((item.campaign || 'Geral').trim() !== selectedTrafficCampaign) return false;
+                }
+                // Filtro de Origem
+                if (trafficFilterSource !== 'all') {
+                    const s = (item.source || '').toLowerCase();
+                    if (!s.includes(trafficFilterSource.toLowerCase())) return false;
+                }
+                // Filtro de Status
+                if (trafficFilterStatus === 'converted' && !item.converted) return false;
+                if (trafficFilterStatus === 'viewed' && item.converted) return false;
+
+                // Busca Livre
+                if (trafficSearchQuery) {
+                    const q = trafficSearchQuery.toLowerCase();
+                    const matchCity = (item.city || '').toLowerCase().includes(q);
+                    const matchRegion = (item.region || '').toLowerCase().includes(q);
+                    const matchCamp = (item.campaign || '').toLowerCase().includes(q);
+                    const matchId = (item.utm_id || '').toLowerCase().includes(q);
+                    const matchSrc = (item.source || '').toLowerCase().includes(q);
+                    const matchVoucher = (item.voucher_code || '').toLowerCase().includes(q);
+                    if (!matchCity && !matchRegion && !matchCamp && !matchId && !matchSrc && !matchVoucher) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        function renderTrafficFeedTable(periodLogs) {
+            const feedFiltered = getFeedFilteredLogs(periodLogs);
+            const totalCount = feedFiltered.length;
+            const totalPages = Math.max(1, Math.ceil(totalCount / trafficPageSize));
+
+            if (trafficCurrentPage > totalPages) {
+                trafficCurrentPage = totalPages;
+            }
+
+            const startIdx = (trafficCurrentPage - 1) * trafficPageSize;
+            const endIdx = Math.min(totalCount, startIdx + trafficPageSize);
+            const pageItems = feedFiltered.slice(startIdx, endIdx);
+
             const tbody = document.getElementById('traffic-recent-body');
             if (tbody) {
-                if (filtered.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Nenhum clique registrado no período selecionado.</td></tr>';
+                if (totalCount === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Nenhum clique encontrado com os filtros selecionados.</td></tr>';
                 } else {
                     tbody.innerHTML = '';
-                    filtered.slice(0, 20).forEach(item => {
+                    pageItems.forEach(item => {
                         const dateObj = new Date(item.created_at);
                         const dateFormatted = !isNaN(dateObj) ? `${dateObj.toLocaleDateString('pt-BR')} ${dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}` : '--';
                         
@@ -2561,6 +2895,199 @@
                         tbody.appendChild(tr);
                     });
                 }
+            }
+
+            // Atualizar Paginação
+            const infoEl = document.getElementById('traffic-pagination-info');
+            const pageIndicatorEl = document.getElementById('traffic-page-indicator');
+            const prevBtn = document.getElementById('traffic-btn-prev');
+            const nextBtn = document.getElementById('traffic-btn-next');
+
+            if (infoEl) {
+                infoEl.textContent = totalCount > 0 
+                    ? `Mostrando ${startIdx + 1} - ${endIdx} de ${totalCount} acessos`
+                    : `Mostrando 0 de 0 acessos`;
+            }
+            if (pageIndicatorEl) {
+                pageIndicatorEl.textContent = `Página ${trafficCurrentPage} de ${totalPages}`;
+            }
+            if (prevBtn) prevBtn.disabled = (trafficCurrentPage <= 1);
+            if (nextBtn) nextBtn.disabled = (trafficCurrentPage >= totalPages);
+        }
+
+        function setupTrafficFeedEvents() {
+            if (trafficListenersAttached) return;
+            trafficListenersAttached = true;
+
+            const campSelect = document.getElementById('traffic-filter-campaign');
+            if (campSelect) {
+                campSelect.addEventListener('change', (e) => {
+                    selectedTrafficCampaign = e.target.value;
+                    trafficCurrentPage = 1;
+                    renderTrafficDashboard(allTrafficLogs);
+                });
+            }
+
+            const srcSelect = document.getElementById('traffic-filter-source');
+            if (srcSelect) {
+                srcSelect.addEventListener('change', (e) => {
+                    trafficFilterSource = e.target.value;
+                    trafficCurrentPage = 1;
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    renderTrafficFeedTable(periodLogs);
+                });
+            }
+
+            const statusSelect = document.getElementById('traffic-filter-status');
+            if (statusSelect) {
+                statusSelect.addEventListener('change', (e) => {
+                    trafficFilterStatus = e.target.value;
+                    trafficCurrentPage = 1;
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    renderTrafficFeedTable(periodLogs);
+                });
+            }
+
+            const searchInput = document.getElementById('traffic-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    trafficSearchQuery = e.target.value.trim();
+                    trafficCurrentPage = 1;
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    renderTrafficFeedTable(periodLogs);
+                });
+            }
+
+            const pageSizeSelect = document.getElementById('traffic-page-size');
+            if (pageSizeSelect) {
+                pageSizeSelect.addEventListener('change', (e) => {
+                    trafficPageSize = parseInt(e.target.value, 10) || 10;
+                    trafficCurrentPage = 1;
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    renderTrafficFeedTable(periodLogs);
+                });
+            }
+
+            const prevBtn = document.getElementById('traffic-btn-prev');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (trafficCurrentPage > 1) {
+                        trafficCurrentPage--;
+                        const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                        renderTrafficFeedTable(periodLogs);
+                    }
+                });
+            }
+
+            const nextBtn = document.getElementById('traffic-btn-next');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    const feedFiltered = getFeedFilteredLogs(periodLogs);
+                    const totalPages = Math.max(1, Math.ceil(feedFiltered.length / trafficPageSize));
+                    if (trafficCurrentPage < totalPages) {
+                        trafficCurrentPage++;
+                        renderTrafficFeedTable(periodLogs);
+                    }
+                });
+            }
+
+            const clearFilterBtn = document.getElementById('btn-clear-campaign-filter');
+            if (clearFilterBtn) {
+                clearFilterBtn.addEventListener('click', clearCampaignFilter);
+            }
+
+            // Botões de Exportação PDF
+            const pdfFilteredBtn = document.getElementById('btn-traffic-pdf-filtered');
+            if (pdfFilteredBtn) {
+                pdfFilteredBtn.addEventListener('click', () => {
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    const feedFiltered = getFeedFilteredLogs(periodLogs);
+                    const campSub = (selectedTrafficCampaign !== 'all') ? `Campanha: ${selectedTrafficCampaign}` : 'Todas as Campanhas';
+                    const periodSub = (currentTrafficPeriod === 'today') ? 'Hoje' : (currentTrafficPeriod === '7days' ? 'Últimos 7 Dias' : 'Todo o Período');
+                    generateTrafficPDF(feedFiltered, 'Relatório Filtrado de Tráfego', `${periodSub} | ${campSub}`);
+                });
+            }
+
+            const pdfAllBtn = document.getElementById('btn-traffic-pdf-all');
+            if (pdfAllBtn) {
+                pdfAllBtn.addEventListener('click', () => {
+                    generateTrafficPDF(allTrafficLogs, 'Relatório Geral de Tráfego - Todos os Acessos', 'Histórico Completo');
+                });
+            }
+        }
+
+        function generateTrafficPDF(logsArray, title, subtitle) {
+            try {
+                if (!logsArray || logsArray.length === 0) {
+                    alert('Nenhum registro de tráfego para exportar no relatório PDF.');
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape');
+
+                // Cabeçalho Oficial
+                doc.setFontSize(15);
+                doc.setTextColor(0, 44, 91);
+                doc.text("ÓPTICAS CONCEIÇÃO - RELATÓRIO DE TRÁFEGO E AUDITORIA DE ANÚNCIOS", 14, 15);
+
+                doc.setFontSize(10);
+                doc.setTextColor(100, 116, 139);
+                const emissionDate = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+                doc.text(`${title} | ${subtitle || ''} | Gerado em: ${emissionDate} | Registros: ${logsArray.length}`, 14, 22);
+
+                // Resumo de Métricas
+                const totalClicks = logsArray.length;
+                const tiktokClicks = logsArray.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
+                const vouchersConverted = logsArray.filter(l => l.converted).length;
+                const convRate = totalClicks > 0 ? ((vouchersConverted / totalClicks) * 100).toFixed(1) : '0';
+
+                doc.setFontSize(9);
+                doc.setTextColor(30, 41, 59);
+                doc.text(`Total de Acessos: ${totalClicks}  |  Cliques TikTok: ${tiktokClicks}  |  Vouchers Gerados: ${vouchersConverted}  |  Taxa de Conversão: ${convRate}%`, 14, 28);
+
+                // Montagem da Tabela
+                const tableData = logsArray.map(item => {
+                    const dateObj = new Date(item.created_at);
+                    const dateFormatted = !isNaN(dateObj) 
+                        ? `${dateObj.toLocaleDateString('pt-BR')} ${dateObj.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}` 
+                        : '--';
+                    const src = (item.source || 'DIRETO').toUpperCase();
+                    const camp = item.campaign || 'Geral';
+                    const utmId = item.utm_id || '-';
+                    const cityReg = `${item.city || 'Campinas'}${item.region ? ' (' + item.region + ')' : ''}`;
+                    const dev = item.device || 'Mobile';
+                    const status = item.converted ? `VOUCHER: ${item.voucher_code || 'Sim'}` : 'Visualizou';
+
+                    return [dateFormatted, src, camp, utmId, cityReg, dev, status];
+                });
+
+                doc.autoTable({
+                    head: [['Data / Hora', 'Origem', 'Campanha', 'ID Anúncio', 'Cidade / Estado', 'Dispositivo', 'Conversão']],
+                    body: tableData,
+                    startY: 32,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [0, 44, 91],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        fontSize: 8
+                    },
+                    bodyStyles: {
+                        fontSize: 8,
+                        cellPadding: 2.5
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 250, 252]
+                    }
+                });
+
+                const filename = `relatorio_trafego_forlife_${new Date().toISOString().slice(0, 10)}.pdf`;
+                doc.save(filename);
+                showToast('Relatório PDF de tráfego gerado com sucesso!');
+            } catch (err) {
+                console.error('Erro ao gerar PDF de tráfego:', err);
+                alert('Ocorreu um erro ao gerar o PDF. Verifique o console.');
             }
         }
 
