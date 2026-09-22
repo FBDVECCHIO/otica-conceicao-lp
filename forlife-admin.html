@@ -1073,11 +1073,11 @@
             <form class="login-form" id="login-form">
                 <div class="form-group">
                     <label for="username">Usuário</label>
-                    <input type="text" id="username" placeholder="Digite seu usuário" required autofocus>
+                    <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username" autocapitalize="none" spellcheck="false">
                 </div>
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                    <input type="password" id="password" placeholder="Digite sua senha" required autocomplete="current-password" autocapitalize="none">
                 </div>
                 <button type="submit" class="btn-login">
                     <i class="fas fa-lock-open"></i> Acessar Painel
@@ -1481,14 +1481,14 @@
 
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const user = document.getElementById('username').value.trim();
-                const pass = document.getElementById('password').value.trim();
+                const user = (document.getElementById('username').value || '').trim();
+                const pass = (document.getElementById('password').value || '').trim();
 
-                if (user === 'admin' && pass === 'conceicao-admin') {
+                if (user.toLowerCase() === 'admin' && pass === 'conceicao-admin') {
                     sessionStorage.setItem('forlife_admin_auth', 'true');
                     showDashboard();
                 } else {
-                    alert('Usuário ou senha incorretos!');
+                    alert('Usuário ou senha incorretos! Verifique maiúsculas e minúsculas.');
                 }
             });
 
@@ -2345,6 +2345,9 @@
             img.src = lead.prescriptionFile;
             downloadBtn.href = lead.prescriptionFile;
             downloadBtn.download = `receita_${(lead.name || 'cliente').replace(/\s+/g, '_')}.jpg`;
+
+            modal.style.display = 'flex';
+        };
 
         // ==========================================
         // RASTREAMENTO DE TRÁFEGO, UTMS E CIDADES
