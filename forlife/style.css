@@ -348,8 +348,9 @@ body {
    BANNER 2: COMBO COMPLETO R$ 297 (Fundo Branco)
    ========================================== */
 .banner-combo {
-    background-color: #FFFFFF;
-    padding: 85px 0;
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-primary) 100%);
+    color: #FFFFFF;
+    padding: 65px 0 85px;
 }
 
 .combo-card {
@@ -458,7 +459,7 @@ body {
    BANNER 3: ADICIONAIS DE TECNOLOGIA (Fundo Cinza Claro)
    ========================================== */
 .banner-tecnologias {
-    background-color: var(--gray-bg);
+    background-color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1138,7 +1139,8 @@ body {
    BANNER EXTRA: TIRA-DÚVIDAS / FAQ (Fundo Cinza)
    ========================================== */
 .banner-faq {
-    background-color: #FFFFFF;
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-primary) 100%);
+    color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1209,7 +1211,7 @@ body {
    BANNER EXTRA: AVALIAÇÕES POSITIVAS (Fundo Branco)
    ========================================== */
 .banner-avaliacoes {
-    background-color: var(--gray-bg);
+    background-color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1221,7 +1223,7 @@ body {
 }
 
 .review-card {
-    background: #FFFFFF;
+    background: var(--gray-bg);
     border: 1px solid var(--gray-border);
     border-radius: var(--radius-md);
     padding: 26px;
@@ -1287,7 +1289,8 @@ body {
    BANNER 5: CONTATOS & COMO CHEGAR (Fundo Cinza Claro)
    ========================================== */
 .banner-localizacao {
-    background-color: #FFFFFF;
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-primary) 100%);
+    color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1654,4 +1657,62 @@ body {
     font-size: 13.5px;
     font-weight: 600;
     color: #475569;
+}
+
+.banner-combo .section-title {
+    color: #FFFFFF !important;
+}
+.banner-combo .section-subtitle {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+.banner-combo .combo-card {
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+.banner-faq .section-title {
+    color: #FFFFFF !important;
+}
+.banner-faq .section-subtitle {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+.banner-faq .faq-item {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.banner-faq .faq-question h4 {
+    color: var(--navy-primary) !important;
+}
+.banner-faq .faq-question .faq-icon {
+    color: var(--royal-blue) !important;
+}
+.banner-faq .faq-answer {
+    color: #334155 !important;
+}
+
+.banner-localizacao .section-title {
+    color: #FFFFFF !important;
+}
+.banner-localizacao .section-subtitle {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+.banner-localizacao .contact-info-card {
+    background: #FFFFFF !important;
+    color: var(--text-dark) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.banner-localizacao .contact-details h4 {
+    color: var(--navy-primary) !important;
+}
+.banner-localizacao .social-title {
+    color: #FFFFFF !important;
+}
+.banner-localizacao .social-btn {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
+.banner-localizacao .social-btn:hover {
+    background: #FFFFFF !important;
+    color: var(--navy-primary) !important;
 }
