@@ -964,7 +964,7 @@ async function handleVoucherSubmit(e) {
 
     const submitBtn = document.getElementById('btn-submit-voucher');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Voucher Oficial...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Cupom Oficial...';
 
     const name = document.getElementById('client-name').value.trim();
     const phone = document.getElementById('client-phone').value.trim();
@@ -1121,8 +1121,8 @@ async function handleVoucherSubmit(e) {
         : '';
 
     const messageText = 
-`Olá, Ópticas Conceição! Acabei de gerar meu voucher exclusivo ForLife no site.\n\n` +
-`🎫 *Código do Voucher:* ${voucherCode}\n` +
+`Olá, Ópticas Conceição! Acabei de gerar meu cupom exclusivo ForLife no site.\n\n` +
+`🎫 *Código do Cupom:* ${voucherCode}\n` +
 `👤 *Nome:* ${name}\n` +
 `📍 *Cidade:* ${city}\n` +
 `🏪 *Loja Escolhida:* ${store}\n` +
@@ -1133,7 +1133,7 @@ utmNotice +
 `⚡ *Tecnologia:*\n${addonsText}\n\n` +
 `💵 *Total:* R$ ${formatMoney(totalPrice)} (em até ${forlifeConfig.installments}x de R$ ${formatMoney(totalPrice / forlifeConfig.installments)} sem juros)\n` +
 `📋 *Situação da Receita:* ${recipeStatusText}\n\n` +
-`Gostaria de garantir as condições do meu voucher e agendar meu atendimento!`;
+`Gostaria de garantir as condições do meu cupom e agendar meu atendimento!`;
 
     const whatsappBtn = document.getElementById('btn-whatsapp-voucher');
     if (whatsappBtn) {
@@ -1170,7 +1170,7 @@ utmNotice +
                 value: totalPrice
             });
             fbq('track', 'CompleteRegistration', {
-                content_name: 'Combo ForLife - Voucher Resgatado',
+                content_name: 'Combo ForLife - Cupom Resgatado',
                 currency: 'BRL',
                 value: totalPrice,
                 status: true
