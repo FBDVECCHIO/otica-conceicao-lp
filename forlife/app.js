@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupScrollTop();
     updatePricingUI();
     initTrafficTracker();
+    initDwellTimeTracker();
+    initScrollDepthTracker();
+    initHeatmapTracker();
 });
 
 // ==========================================
@@ -106,6 +109,65 @@ function getActiveUtm() {
     }
 }
 
+async function reverseGeocodeCoords(lat, lon) {
+    try {
+        const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=pt`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
+        if (res.ok) {
+            const data = await res.json();
+            const neighborhood = data.locality || data.suburb || (data.localityInfo && data.localityInfo.administrative && data.localityInfo.administrative[3] ? data.localityInfo.administrative[3].name : '');
+            const city = data.city || (data.localityInfo && data.localityInfo.administrative && data.localityInfo.administrative[2] ? data.localityInfo.administrative[2].name : 'Campinas');
+            const state = data.principalSubdivisionCode ? data.principalSubdivisionCode.replace('BR-', '') : (data.principalSubdivision || 'SP');
+            return {
+                city: city,
+                region: state,
+                country: data.countryCode || 'BR',
+                neighborhood: neighborhood,
+                latitude: parseFloat(lat.toFixed(5)),
+                longitude: parseFloat(lon.toFixed(5)),
+                precision: 'gps'
+            };
+        }
+    } catch (e) {}
+    return null;
+}
+
+function updateVisitRecordLocation(newLoc) {
+    try {
+        const visitId = sessionStorage.getItem('forlife_current_visit_id');
+        const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+        const visit = visitId ? trafficLog.find(v => v.id === visitId) : trafficLog[0];
+        if (visit && newLoc) {
+            visit.city = newLoc.city || visit.city;
+            visit.region = newLoc.region || visit.region;
+            visit.neighborhood = newLoc.neighborhood || visit.neighborhood;
+            visit.latitude = newLoc.latitude || visit.latitude;
+            visit.longitude = newLoc.longitude || visit.longitude;
+            visit.precision = newLoc.precision || visit.precision;
+            localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+        }
+    } catch (e) {}
+}
+
+function tryAcquireGpsLocation() {
+    if (!navigator.geolocation) return;
+    try {
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const preciseLoc = await reverseGeocodeCoords(lat, lon);
+                if (preciseLoc) {
+                    sessionStorage.setItem('forlife_visitor_location', JSON.stringify(preciseLoc));
+                    updateVisitRecordLocation(preciseLoc);
+                }
+            },
+            () => {},
+            { enableHighAccuracy: true, timeout: 6000, maximumAge: 120000 }
+        );
+    } catch (e) {}
+}
+
 async function detectVisitorLocation() {
     const cached = sessionStorage.getItem('forlife_visitor_location');
     if (cached) {
@@ -119,7 +181,11 @@ async function detectVisitorLocation() {
             const loc = {
                 city: data.cityName || 'Campinas e Região',
                 region: data.regionName || 'SP',
-                country: data.countryCode || 'BR'
+                country: data.countryCode || 'BR',
+                neighborhood: '',
+                latitude: data.latitude || null,
+                longitude: data.longitude || null,
+                precision: 'ip'
             };
             sessionStorage.setItem('forlife_visitor_location', JSON.stringify(loc));
             return loc;
@@ -133,16 +199,191 @@ async function detectVisitorLocation() {
             const loc2 = {
                 city: data2.city || 'Campinas e Região',
                 region: data2.region_code || data2.region || 'SP',
-                country: data2.country_code || 'BR'
+                country: data2.country_code || 'BR',
+                neighborhood: '',
+                latitude: data2.latitude || null,
+                longitude: data2.longitude || null,
+                precision: 'ip'
             };
             sessionStorage.setItem('forlife_visitor_location', JSON.stringify(loc2));
             return loc2;
         }
     } catch (e) {}
 
-    const defaultLoc = { city: 'Campinas e Região', region: 'SP', country: 'BR' };
+    const defaultLoc = { city: 'Campinas e Região', region: 'SP', country: 'BR', neighborhood: '', latitude: null, longitude: null, precision: 'default' };
     sessionStorage.setItem('forlife_visitor_location', JSON.stringify(defaultLoc));
     return defaultLoc;
+}
+
+// Estado e Telemetria de Engajamento
+let dwellStartTime = Date.now();
+let accumulatedDwellTimeMs = 0;
+let isDwellTabActive = true;
+let currentMaxScrollDepth = 0;
+
+function getActiveDwellSeconds() {
+    let elapsed = accumulatedDwellTimeMs;
+    if (isDwellTabActive) {
+        elapsed += (Date.now() - dwellStartTime);
+    }
+    return Math.max(1, Math.floor(elapsed / 1000));
+}
+
+function syncDwellAndScrollToStorage() {
+    try {
+        const visitId = sessionStorage.getItem('forlife_current_visit_id');
+        const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+        const visit = visitId ? trafficLog.find(v => v.id === visitId) : trafficLog[0];
+        if (visit) {
+            visit.dwell_seconds = getActiveDwellSeconds();
+            if (currentMaxScrollDepth > (visit.scroll_depth || 0)) {
+                visit.scroll_depth = currentMaxScrollDepth;
+            }
+            localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+        }
+    } catch (e) {}
+}
+
+function initDwellTimeTracker() {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            if (isDwellTabActive) {
+                accumulatedDwellTimeMs += (Date.now() - dwellStartTime);
+                isDwellTabActive = false;
+            }
+        } else {
+            if (!isDwellTabActive) {
+                dwellStartTime = Date.now();
+                isDwellTabActive = true;
+            }
+        }
+        syncDwellAndScrollToStorage();
+    });
+
+    window.addEventListener('beforeunload', syncDwellAndScrollToStorage);
+    window.addEventListener('pagehide', syncDwellAndScrollToStorage);
+    setInterval(syncDwellAndScrollToStorage, 4000);
+}
+
+function initScrollDepthTracker() {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                try {
+                    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    if (scrollHeight > 50) {
+                        const pct = Math.round((window.scrollY / scrollHeight) * 100);
+                        let milestone = 0;
+                        if (pct >= 85) milestone = 100;
+                        else if (pct >= 65) milestone = 75;
+                        else if (pct >= 40) milestone = 50;
+                        else if (pct >= 15) milestone = 25;
+
+                        if (milestone > currentMaxScrollDepth) {
+                            currentMaxScrollDepth = milestone;
+                            syncDwellAndScrollToStorage();
+                        }
+                    }
+                } catch (e) {}
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+}
+
+function trackElementClick(elementLabel) {
+    if (!elementLabel) return;
+    try {
+        const visitId = sessionStorage.getItem('forlife_current_visit_id');
+        const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
+        const visit = visitId ? trafficLog.find(v => v.id === visitId) : trafficLog[0];
+        if (visit) {
+            if (!Array.isArray(visit.clicked_elements)) visit.clicked_elements = [];
+            visit.clicked_elements.push({
+                element: elementLabel,
+                second: getActiveDwellSeconds()
+            });
+            visit.last_clicked_element = elementLabel;
+            visit.clicks_count = (visit.clicks_count || 0) + 1;
+            visit.dwell_seconds = getActiveDwellSeconds();
+            if (currentMaxScrollDepth > (visit.scroll_depth || 0)) {
+                visit.scroll_depth = currentMaxScrollDepth;
+            }
+            localStorage.setItem('forlife_traffic_log', JSON.stringify(trafficLog));
+        }
+
+        // Contador Global de Heatmap
+        const heatmap = JSON.parse(localStorage.getItem('forlife_heatmap_counts')) || {};
+        heatmap[elementLabel] = (heatmap[elementLabel] || 0) + 1;
+        localStorage.setItem('forlife_heatmap_counts', JSON.stringify(heatmap));
+    } catch (e) {}
+}
+
+function initHeatmapTracker() {
+    document.addEventListener('click', (e) => {
+        try {
+            // 1. Elementos com atributo específico
+            const explicit = e.target.closest('[data-track-element]');
+            if (explicit) {
+                const label = explicit.getAttribute('data-track-element');
+                trackElementClick(label);
+                if (label.includes('CTA') || label.includes('Loja') || label.includes('Voucher')) {
+                    tryAcquireGpsLocation();
+                }
+                return;
+            }
+
+            // 2. Botões CTA da página
+            const ctaBtn = e.target.closest('.btn-voucher-action, .btn-submit-voucher, a[href="#voucher"]');
+            if (ctaBtn) {
+                const text = ctaBtn.textContent.trim().replace(/\s+/g, ' ').substring(0, 30);
+                trackElementClick(`CTA: ${text || 'Gerar Voucher'}`);
+                tryAcquireGpsLocation();
+                return;
+            }
+
+            // 3. Abas e botões de Tecnologia
+            const techBtn = e.target.closest('.tech-accordion-btn, .tech-card, .technology-card');
+            if (techBtn) {
+                const h3 = techBtn.querySelector('h3, h4, span') || techBtn;
+                const text = h3.textContent.trim().substring(0, 30);
+                trackElementClick(`Tecnologia: ${text || 'Lente'}`);
+                return;
+            }
+
+            // 4. WhatsApp
+            const whatsBtn = e.target.closest('.btn-whatsapp-share, a[href*="whatsapp"], a[href*="wa.me"]');
+            if (whatsBtn) {
+                trackElementClick('WhatsApp: Contato / Resgate');
+                return;
+            }
+
+            // 5. Comparadores / Sliders
+            const slider = e.target.closest('.comparison-slider, .slider-handle, .image-compare-wrapper');
+            if (slider) {
+                trackElementClick('Interativo: Comparador de Lentes');
+                return;
+            }
+
+            // 6. FAQ
+            const faq = e.target.closest('.faq-item, .faq-question');
+            if (faq) {
+                const qText = faq.textContent.trim().substring(0, 35);
+                trackElementClick(`FAQ: ${qText}`);
+                return;
+            }
+
+            // 7. Seletor de Loja
+            const store = e.target.closest('#selected-store, .store-card, .store-option');
+            if (store) {
+                trackElementClick('Lojas: Seleção de Unidade');
+                tryAcquireGpsLocation();
+                return;
+            }
+        } catch (err) {}
+    }, true);
 }
 
 async function initTrafficTracker() {
@@ -170,12 +411,21 @@ async function initTrafficTracker() {
             content: utm.content,
             term: utm.term,
             city: loc.city,
+            neighborhood: loc.neighborhood || '',
             region: loc.region,
             country: loc.country,
+            latitude: loc.latitude || null,
+            longitude: loc.longitude || null,
+            precision: loc.precision || 'ip',
             device: device,
             page_url: window.location.href,
             converted: false,
-            voucher_code: null
+            voucher_code: null,
+            dwell_seconds: 0,
+            scroll_depth: 0,
+            clicks_count: 0,
+            last_clicked_element: null,
+            clicked_elements: []
         };
 
         sessionStorage.setItem('forlife_current_visit_id', visitId);
@@ -220,11 +470,13 @@ function markVisitConverted(voucherCode) {
     try {
         const visitId = sessionStorage.getItem('forlife_current_visit_id');
         const trafficLog = JSON.parse(localStorage.getItem('forlife_traffic_log')) || [];
-        if (visitId) {
-            const visit = trafficLog.find(v => v.id === visitId);
-            if (visit) {
-                visit.converted = true;
-                visit.voucher_code = voucherCode;
+        const visit = visitId ? trafficLog.find(v => v.id === visitId) : trafficLog[0];
+        if (visit) {
+            visit.converted = true;
+            visit.voucher_code = voucherCode;
+            visit.dwell_seconds = getActiveDwellSeconds();
+            if (currentMaxScrollDepth > (visit.scroll_depth || 0)) {
+                visit.scroll_depth = currentMaxScrollDepth;
             }
         } else if (trafficLog.length > 0) {
             trafficLog[0].converted = true;
@@ -713,6 +965,10 @@ async function handleVoucherSubmit(e) {
     const hasUtm = utm.source && utm.source !== 'Direto / Orgânico';
     const utmInfo = hasUtm ? `${utm.source}${utm.campaign ? ' / ' + utm.campaign : ''}` : '';
 
+    const visitorLoc = (() => {
+        try { return JSON.parse(sessionStorage.getItem('forlife_visitor_location') || '{}'); } catch(e) { return {}; }
+    })();
+
     const leadData = {
         date: todayFormatted,
         name: name,
@@ -732,7 +988,12 @@ async function handleVoucherSubmit(e) {
         osNumber: '',
         utmSource: utm.source || 'Direto',
         utmCampaign: utm.campaign || 'Geral',
-        utmMedium: utm.medium || ''
+        utmMedium: utm.medium || '',
+        dwellSeconds: getActiveDwellSeconds(),
+        scrollDepth: currentMaxScrollDepth,
+        neighborhood: visitorLoc.neighborhood || '',
+        latitude: visitorLoc.latitude || null,
+        longitude: visitorLoc.longitude || null
     };
 
     // 1. Gravar no Supabase (Tabela forlife_leads)

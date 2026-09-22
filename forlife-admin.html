@@ -835,16 +835,21 @@
 
         .traffic-grid-analytics {
             display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 20px;
-            margin-bottom: 26px;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .traffic-subcard {
             background: #FFFFFF;
             border: 1px solid var(--gray-border);
             border-radius: var(--radius-sm);
-            padding: 18px;
+            padding: 16px 18px;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .traffic-subcard h4 {
@@ -862,8 +867,10 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 240px;
+            max-height: 250px;
             overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
         }
 
         .ranking-item {
@@ -871,13 +878,45 @@
             flex-direction: column;
             gap: 4px;
             font-size: 12px;
+            min-width: 0;
+            width: 100%;
         }
 
         .ranking-item-header {
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            gap: 8px;
             font-weight: 700;
             color: var(--text-dark);
+            min-width: 0;
+            width: 100%;
+        }
+
+        .ranking-item-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking-item-title span,
+        .ranking-item-title strong {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking-item-stats {
+            flex-shrink: 0;
+            white-space: nowrap;
+            font-size: 11px;
+            color: var(--text-dark);
+            text-align: right;
         }
 
         .ranking-bar-bg {
@@ -885,6 +924,7 @@
             background: #E2E8F0;
             border-radius: 4px;
             overflow: hidden;
+            width: 100%;
         }
 
         .ranking-bar-fill {
@@ -896,6 +936,43 @@
 
         .ranking-bar-fill.tiktok {
             background: linear-gradient(90deg, #010101, #FE2C55);
+        }
+
+        /* CARDS DE ENGAJAMENTO E MAPA DE CALOR */
+        .heatmap-card {
+            background: #FFFFFF;
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px 20px;
+            max-height: 260px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+        }
+
+        .heatmap-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            min-width: 0;
+        }
+
+        .heatmap-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F59E0B, #EF4444);
+            border-radius: 4px;
+            transition: width 0.4s ease;
         }
 
         /* GERADOR DE LINKS UTM */
@@ -1458,15 +1535,47 @@
                         </div>
                     </div>
 
-                    <!-- Banner de Filtro Cruzado Ativo (Quando clica em uma campanha) -->
-                    <div class="traffic-active-filter-badge" id="traffic-active-filter-badge">
-                        <span><i class="fas fa-filter" style="color: var(--royal-blue); margin-right: 6px;"></i> Filtrando cidades e cliques pela campanha: <strong id="traffic-filtered-campaign-name"></strong></span>
-                        <button type="button" class="btn-clear-campaign-filter" id="btn-clear-campaign-filter"><i class="fas fa-times"></i> Limpar Filtro</button>
+                    <!-- Linha de Métricas de Engajamento & Telemetria -->
+                    <div class="traffic-metrics-row" style="margin-bottom: 20px;">
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-stopwatch" style="color: #6366F1;"></i> Tempo Médio na LP</div>
+                            <div class="traffic-metric-number" id="traffic-avg-dwell" style="color: #6366F1;">0s</div>
+                            <div class="traffic-metric-sub" id="traffic-dwell-sub">Dwell Time em tela ativa</div>
+                        </div>
+
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-arrows-alt-v" style="color: #0EA5E9;"></i> Profundidade de Scroll</div>
+                            <div class="traffic-metric-number" id="traffic-avg-scroll" style="color: #0EA5E9;">0%</div>
+                            <div class="traffic-metric-sub" id="traffic-scroll-sub">Média de rolagem vertical</div>
+                        </div>
+
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-fire" style="color: #F59E0B;"></i> Hotspot Mais Clicado</div>
+                            <div class="traffic-metric-number" id="traffic-top-element" style="font-size: 16px; font-weight: 800; color: #D97706; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">--</div>
+                            <div class="traffic-metric-sub" id="traffic-top-element-sub">Zona com maior interação</div>
+                        </div>
+
+                        <div class="traffic-metric-card">
+                            <div class="traffic-metric-label"><i class="fas fa-crosshairs" style="color: #10B981;"></i> Precisão Geográfica</div>
+                            <div class="traffic-metric-number" id="traffic-gps-precision" style="color: #10B981;">0</div>
+                            <div class="traffic-metric-sub" id="traffic-gps-sub">Bairro / GPS de alta precisão</div>
+                        </div>
                     </div>
 
-                    <!-- Grids Analíticos: Cidades / Regiões e Campanhas -->
+                    <!-- Grids Analíticos: Campanhas (Esquerda) e Cidades / Regiões (Direita) -->
                     <div class="traffic-grid-analytics">
-                        <!-- Coluna 1: Cidades / Regiões com Mais Acessos -->
+                        <!-- Coluna 1 (Esquerda): Campanhas & Origens -->
+                        <div class="traffic-subcard">
+                            <h4>
+                                <span><i class="fas fa-tags" style="color: var(--royal-blue); margin-right: 6px;"></i> Desempenho por Campanha</span>
+                                <span id="traffic-campaigns-count" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 ativas</span>
+                            </h4>
+                            <ul class="ranking-list" id="traffic-campaigns-list">
+                                <li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhuma campanha detectada ainda.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Coluna 2 (Direita): Cidades & Regiões com Mais Acessos -->
                         <div class="traffic-subcard">
                             <h4>
                                 <span><i class="fas fa-map-marker-alt" style="color: #EF4444; margin-right: 6px;"></i> Cidades & Regiões dos Visitantes</span>
@@ -1476,16 +1585,18 @@
                                 <li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso registrado ainda.</li>
                             </ul>
                         </div>
+                    </div>
 
-                        <!-- Coluna 2: Campanhas & Origens -->
-                        <div class="traffic-subcard">
-                            <h4>
-                                <span><i class="fas fa-tags" style="color: var(--royal-blue); margin-right: 6px;"></i> Desempenho por Campanha</span>
-                                <span id="traffic-campaigns-count" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 ativas</span>
+                    <!-- Widget: Mapa de Calor & Engajamento na LP -->
+                    <div class="heatmap-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                            <h4 style="font-size: 14px; font-weight: 800; color: var(--navy-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-fire-alt" style="color: #EF4444;"></i> Mapa de Calor: Onde os Visitantes Mais Clicam na LP
                             </h4>
-                            <ul class="ranking-list" id="traffic-campaigns-list">
-                                <li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhuma campanha detectada ainda.</li>
-                            </ul>
+                            <span id="traffic-heatmap-total-clicks" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 interações mapeadas</span>
+                        </div>
+                        <div class="heatmap-grid" id="traffic-heatmap-list">
+                            <div style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhuma interação registrada ainda.</div>
                         </div>
                     </div>
 
@@ -1581,14 +1692,16 @@
                                         <th>Data / Hora</th>
                                         <th>Origem</th>
                                         <th>Campanha</th>
-                                        <th>Cidade / Estado</th>
+                                        <th>Cidade / Bairro</th>
+                                        <th>Tempo de Tela</th>
+                                        <th>Última Interação</th>
                                         <th>Dispositivo</th>
                                         <th style="text-align: center;">Voucher</th>
                                     </tr>
                                 </thead>
                                 <tbody id="traffic-recent-body">
                                     <tr>
-                                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
+                                        <td colspan="8" style="text-align: center; padding: 25px; color: var(--text-muted);">
                                              Nenhum acesso registrado ainda.
                                         </td>
                                     </tr>
@@ -2623,7 +2736,8 @@
             trafficCurrentPage = 1;
             const campSelect = document.getElementById('traffic-filter-campaign');
             if (campSelect) campSelect.value = selectedTrafficCampaign;
-            renderTrafficDashboard(allTrafficLogs);
+            const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+            renderTrafficFeedTable(periodLogs);
         };
 
         window.clearCampaignFilter = function() {
@@ -2631,13 +2745,22 @@
             trafficCurrentPage = 1;
             const campSelect = document.getElementById('traffic-filter-campaign');
             if (campSelect) campSelect.value = 'all';
-            renderTrafficDashboard(allTrafficLogs);
+            const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+            renderTrafficFeedTable(periodLogs);
         };
+
+        function formatDwellTime(sec) {
+            if (!sec || isNaN(sec) || sec <= 0) return '0s';
+            if (sec < 60) return `${sec}s`;
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return s > 0 ? `${m}m ${s}s` : `${m}m`;
+        }
 
         function renderTrafficDashboard(logs) {
             const periodLogs = getPeriodFilteredLogs(logs);
 
-            // Cards de Métricas Principais
+            // 1. Cards de Métricas Principais de Tráfego
             const totalClicks = periodLogs.length;
             const tiktokClicks = periodLogs.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
             const otherClicks = totalClicks - tiktokClicks;
@@ -2659,29 +2782,115 @@
             const convRateEl = document.getElementById('traffic-conversion-rate');
             if (convRateEl) convRateEl.textContent = `Taxa de Conversão: ${convRate}%`;
 
-            // Badge de Filtro Ativo
-            const badgeEl = document.getElementById('traffic-active-filter-badge');
-            const badgeNameEl = document.getElementById('traffic-filtered-campaign-name');
-            if (badgeEl && badgeNameEl) {
-                if (selectedTrafficCampaign !== 'all') {
-                    badgeEl.style.display = 'flex';
-                    badgeNameEl.textContent = selectedTrafficCampaign;
+            // 2. Métricas Avançadas de Telemetria (Dwell Time, Scroll, Hotspot, GPS/Bairro)
+            const dwellLogs = periodLogs.filter(l => (typeof l.dwell_seconds === 'number' && l.dwell_seconds > 0) || (typeof l.dwell_time === 'number' && l.dwell_time > 0));
+            const totalDwellSecs = dwellLogs.reduce((acc, l) => acc + (l.dwell_seconds || l.dwell_time || 0), 0);
+            const avgDwellSecs = dwellLogs.length > 0 ? Math.round(totalDwellSecs / dwellLogs.length) : 0;
+
+            const avgDwellEl = document.getElementById('traffic-avg-dwell');
+            const dwellSubEl = document.getElementById('traffic-dwell-sub');
+            if (avgDwellEl) avgDwellEl.textContent = formatDwellTime(avgDwellSecs);
+            if (dwellSubEl) dwellSubEl.textContent = dwellLogs.length > 0 ? `${dwellLogs.length} sessões ativas` : 'Aguardando telemetria';
+
+            const scrollLogs = periodLogs.filter(l => typeof l.scroll_depth === 'number' && l.scroll_depth > 0);
+            const totalScroll = scrollLogs.reduce((acc, l) => acc + l.scroll_depth, 0);
+            const avgScroll = scrollLogs.length > 0 ? Math.round(totalScroll / scrollLogs.length) : 0;
+
+            const avgScrollEl = document.getElementById('traffic-avg-scroll');
+            const scrollSubEl = document.getElementById('traffic-scroll-sub');
+            if (avgScrollEl) avgScrollEl.textContent = `${avgScroll}%`;
+            if (scrollSubEl) scrollSubEl.textContent = scrollLogs.length > 0 ? `${scrollLogs.length} leituras de scroll` : 'Aguardando rolagem';
+
+            // Mapa de Calor e Hotspot Mais Clicado
+            const heatmapCounts = JSON.parse(localStorage.getItem('forlife_heatmap_counts')) || {};
+            periodLogs.forEach(l => {
+                if (Array.isArray(l.clicked_elements)) {
+                    l.clicked_elements.forEach(c => {
+                        const k = typeof c === 'string' ? c : (c.element || '');
+                        if (k) heatmapCounts[k] = (heatmapCounts[k] || 0) + 1;
+                    });
+                } else if (l.last_clicked_element) {
+                    heatmapCounts[l.last_clicked_element] = (heatmapCounts[l.last_clicked_element] || 0) + 1;
+                }
+            });
+
+            const sortedHeatmap = Object.entries(heatmapCounts).sort((a, b) => b[1] - a[1]);
+            const topElementEl = document.getElementById('traffic-top-element');
+            const topElementSubEl = document.getElementById('traffic-top-element-sub');
+            if (topElementEl) {
+                if (sortedHeatmap.length > 0) {
+                    topElementEl.textContent = sortedHeatmap[0][0];
+                    topElementEl.title = sortedHeatmap[0][0];
+                    if (topElementSubEl) topElementSubEl.textContent = `${sortedHeatmap[0][1]} cliques registrados`;
                 } else {
-                    badgeEl.style.display = 'none';
+                    topElementEl.textContent = 'Aguardando';
+                    if (topElementSubEl) topElementSubEl.textContent = 'Sem cliques no período';
                 }
             }
 
-            // Popular Dropdown de Campanhas no Feed
+            // Precisão GPS / Bairro
+            const gpsLogs = periodLogs.filter(l => l.neighborhood || l.precision === 'gps' || (l.latitude && l.longitude));
+            const gpsEl = document.getElementById('traffic-gps-precision');
+            const gpsSubEl = document.getElementById('traffic-gps-sub');
+            if (gpsEl) gpsEl.textContent = gpsLogs.length;
+            if (gpsSubEl) {
+                const gpsPct = totalClicks > 0 ? Math.round((gpsLogs.length / totalClicks) * 100) : 0;
+                gpsSubEl.textContent = `${gpsPct}% de alta precisão`;
+            }
+
+            // 3. Dropdown de Campanhas para a Tabela
             populateCampaignDropdown(periodLogs);
 
-            // 1. Ranking de Cidades & Regiões (Filtradas pela Campanha Selecionada, se houver)
-            renderTrafficCities(periodLogs);
-
-            // 2. Ranking de Campanhas (Com destaque visual da campanha selecionada)
+            // 4. Coluna 1 (Esquerda): Ranking de Campanhas (Independente, sem filtro de clique)
             renderTrafficCampaigns(periodLogs);
 
-            // 3. Tabela do Feed de Cliques com Paginação
+            // 5. Coluna 2 (Direita): Ranking de Cidades & Regiões (Independente, exibindo Bairros)
+            renderTrafficCities(periodLogs);
+
+            // 6. Widget de Mapa de Calor na LP
+            renderHeatmapBreakdown(sortedHeatmap);
+
+            // 7. Tabela do Feed de Cliques com Paginação
             renderTrafficFeedTable(periodLogs);
+        }
+
+        function renderHeatmapBreakdown(sortedHeatmap) {
+            const listEl = document.getElementById('traffic-heatmap-list');
+            const totalEl = document.getElementById('traffic-heatmap-total-clicks');
+            if (!listEl) return;
+
+            const totalInteractions = sortedHeatmap.reduce((acc, curr) => acc + curr[1], 0);
+            if (totalEl) totalEl.textContent = `${totalInteractions} ${totalInteractions === 1 ? 'interação mapeada' : 'interações mapeadas'}`;
+
+            if (sortedHeatmap.length === 0) {
+                listEl.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; font-style: italic; padding: 10px 0;">Nenhuma interação com botões ou seções mapeada ainda.</div>';
+                return;
+            }
+
+            const maxClicks = sortedHeatmap[0][1] || 1;
+            listEl.innerHTML = '';
+
+            sortedHeatmap.slice(0, 8).forEach(([label, count]) => {
+                const pct = Math.round((count / maxClicks) * 100);
+                const overallPct = totalInteractions > 0 ? Math.round((count / totalInteractions) * 100) : 0;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'heatmap-item';
+                itemDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; min-width: 0;">
+                        <span style="font-weight: 700; color: var(--navy-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;" title="${escapeHtml(label)}">
+                            <i class="fas fa-mouse-pointer" style="font-size: 10px; color: #F59E0B; margin-right: 4px;"></i>${escapeHtml(label)}
+                        </span>
+                        <span style="font-size: 11px; color: var(--text-muted); white-space: nowrap;">
+                            <strong style="color: var(--navy-primary);">${count}</strong> (${overallPct}%)
+                        </span>
+                    </div>
+                    <div style="background: #E2E8F0; border-radius: 4px; height: 7px; overflow: hidden; width: 100%;">
+                        <div class="heatmap-bar-fill" style="width: ${pct}%;"></div>
+                    </div>
+                `;
+                listEl.appendChild(itemDiv);
+            });
         }
 
         function populateCampaignDropdown(periodLogs) {
@@ -2701,54 +2910,6 @@
                 optionsHtml += `<option value="${escapeHtml(camp)}" ${isSelected}>${escapeHtml(camp)} (${count})</option>`;
             });
             campSelect.innerHTML = optionsHtml;
-        }
-
-        function renderTrafficCities(periodLogs) {
-            // Se houver campanha selecionada, filtra cidades apenas para essa campanha
-            const logsForCities = (selectedTrafficCampaign !== 'all')
-                ? periodLogs.filter(l => (l.campaign || 'Geral').trim() === selectedTrafficCampaign)
-                : periodLogs;
-
-            const cityCounts = {};
-            logsForCities.forEach(l => {
-                let city = (l.city || '').trim();
-                let region = (l.region || '').trim();
-                let label = city ? `${city} (${region || 'SP'})` : 'Região de Campinas';
-                cityCounts[label] = (cityCounts[label] || 0) + 1;
-            });
-
-            const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]);
-            const citiesList = document.getElementById('traffic-cities-list');
-            const uniqueCitiesEl = document.getElementById('traffic-unique-cities');
-
-            if (uniqueCitiesEl) {
-                const suffix = (selectedTrafficCampaign !== 'all') ? ' (filtradas)' : '';
-                uniqueCitiesEl.textContent = `${sortedCities.length} ${sortedCities.length === 1 ? 'cidade' : 'cidades'}${suffix}`;
-            }
-
-            if (citiesList) {
-                if (sortedCities.length === 0) {
-                    citiesList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso para esta campanha no período.</li>';
-                } else {
-                    citiesList.innerHTML = '';
-                    const maxCount = sortedCities[0][1] || 1;
-                    sortedCities.slice(0, 15).forEach(([cityName, count]) => {
-                        const pct = Math.round((count / maxCount) * 100);
-                        const li = document.createElement('li');
-                        li.className = 'ranking-item';
-                        li.innerHTML = `
-                            <div class="ranking-item-header">
-                                <span><i class="fas fa-map-marker-alt" style="font-size: 10px; color: #EF4444; margin-right: 4px;"></i> ${escapeHtml(cityName)}</span>
-                                <span><strong>${count}</strong> ${count === 1 ? 'visita' : 'visitas'}</span>
-                            </div>
-                            <div class="ranking-bar-bg">
-                                <div class="ranking-bar-fill" style="width: ${pct}%;"></div>
-                            </div>
-                        `;
-                        citiesList.appendChild(li);
-                    });
-                }
-            }
         }
 
         function renderTrafficCampaigns(periodLogs) {
@@ -2773,30 +2934,25 @@
                 } else {
                     campsList.innerHTML = '';
                     const maxCamp = sortedCamps[0].clicks || 1;
-                    sortedCamps.slice(0, 20).forEach(camp => {
+                    sortedCamps.slice(0, 15).forEach(camp => {
                         const pct = Math.round((camp.clicks / maxCamp) * 100);
                         const isTiktok = camp.source.includes('tiktok');
                         const isInstagram = camp.source.includes('instagram');
                         const isFacebook = camp.source.includes('facebook');
                         const badgeClass = isTiktok ? 'tiktok' : (isInstagram || isFacebook ? 'facebook' : 'direto');
-                        const isCurrentActive = (selectedTrafficCampaign === camp.campaign);
 
                         const li = document.createElement('li');
-                        li.className = `ranking-item clickable ${isCurrentActive ? 'active-filter' : ''}`;
-                        li.setAttribute('title', isCurrentActive ? 'Clique para desmarcar filtro' : `Clique para filtrar cidades e cliques de "${camp.campaign}"`);
-                        li.onclick = () => setCampaignFilter(camp.campaign);
-
+                        li.className = 'ranking-item';
                         li.innerHTML = `
                             <div class="ranking-item-header">
-                                <span>
+                                <span class="ranking-item-title" title="${escapeHtml(camp.campaign)}">
                                     <span class="badge-source ${badgeClass}" style="margin-right: 4px; font-size: 10px; padding: 1px 5px;">
                                         ${isTiktok ? '<i class="fab fa-tiktok"></i>' : ''} ${escapeHtml(camp.source.toUpperCase())}
                                     </span>
                                     <strong>${escapeHtml(camp.campaign)}</strong>
-                                    ${isCurrentActive ? '<i class="fas fa-check-circle" style="color: var(--royal-blue); margin-left: 4px;"></i>' : ''}
                                 </span>
-                                <span>
-                                    <strong>${camp.clicks}</strong> cliques 
+                                <span class="ranking-item-stats">
+                                    <strong>${camp.clicks}</strong> clicks 
                                     ${camp.converted > 0 ? `<span style="color: #10B981; font-size: 11px;">(${camp.converted} conv.)</span>` : ''}
                                 </span>
                             </div>
@@ -2810,9 +2966,74 @@
             }
         }
 
+        function renderTrafficCities(periodLogs) {
+            // Cidades e Regiões são independentes (sem filtro cruzado de clique em campanhas)
+            const cityCounts = {};
+            periodLogs.forEach(l => {
+                let city = (l.city || '').trim();
+                let region = (l.region || '').trim();
+                let neighborhood = (l.neighborhood || '').trim();
+
+                let label = '';
+                if (neighborhood && city) {
+                    label = `${city} - ${neighborhood} (${region || 'SP'})`;
+                } else if (city) {
+                    label = `${city} (${region || 'SP'})`;
+                } else {
+                    label = 'Região de Campinas (SP)';
+                }
+
+                if (!cityCounts[label]) {
+                    cityCounts[label] = { count: 0, hasGps: false };
+                }
+                cityCounts[label].count++;
+                if (neighborhood || l.precision === 'gps' || (l.latitude && l.longitude)) {
+                    cityCounts[label].hasGps = true;
+                }
+            });
+
+            const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1].count - a[1].count);
+            const citiesList = document.getElementById('traffic-cities-list');
+            const uniqueCitiesEl = document.getElementById('traffic-unique-cities');
+
+            if (uniqueCitiesEl) {
+                uniqueCitiesEl.textContent = `${sortedCities.length} ${sortedCities.length === 1 ? 'localização' : 'localizações'}`;
+            }
+
+            if (citiesList) {
+                if (sortedCities.length === 0) {
+                    citiesList.innerHTML = '<li style="color: var(--text-muted); font-size: 12px; font-style: italic;">Nenhum acesso registrado no período.</li>';
+                } else {
+                    citiesList.innerHTML = '';
+                    const maxCount = sortedCities[0][1].count || 1;
+                    sortedCities.slice(0, 15).forEach(([locationName, data]) => {
+                        const pct = Math.round((data.count / maxCount) * 100);
+                        const li = document.createElement('li');
+                        li.className = 'ranking-item';
+                        li.innerHTML = `
+                            <div class="ranking-item-header">
+                                <span class="ranking-item-title" title="${escapeHtml(locationName)}">
+                                    <i class="fas fa-map-marker-alt" style="font-size: 10px; color: #EF4444; margin-right: 4px;"></i>
+                                    ${escapeHtml(locationName)}
+                                    ${data.hasGps ? '<span class="badge-gps" title="Geolocalização de alta precisão"><i class="fas fa-crosshairs"></i> GPS</span>' : ''}
+                                </span>
+                                <span class="ranking-item-stats">
+                                    <strong>${data.count}</strong> ${data.count === 1 ? 'visita' : 'visitas'}
+                                </span>
+                            </div>
+                            <div class="ranking-bar-bg">
+                                <div class="ranking-bar-fill" style="width: ${pct}%;"></div>
+                            </div>
+                        `;
+                        citiesList.appendChild(li);
+                    });
+                }
+            }
+        }
+
         function getFeedFilteredLogs(periodLogs) {
             return periodLogs.filter(item => {
-                // Filtro de Campanha
+                // Filtro de Campanha (selecionado no dropdown da tabela)
                 if (selectedTrafficCampaign !== 'all') {
                     if ((item.campaign || 'Geral').trim() !== selectedTrafficCampaign) return false;
                 }
@@ -2829,12 +3050,14 @@
                 if (trafficSearchQuery) {
                     const q = trafficSearchQuery.toLowerCase();
                     const matchCity = (item.city || '').toLowerCase().includes(q);
+                    const matchNeighborhood = (item.neighborhood || '').toLowerCase().includes(q);
                     const matchRegion = (item.region || '').toLowerCase().includes(q);
                     const matchCamp = (item.campaign || '').toLowerCase().includes(q);
                     const matchId = (item.utm_id || '').toLowerCase().includes(q);
                     const matchSrc = (item.source || '').toLowerCase().includes(q);
                     const matchVoucher = (item.voucher_code || '').toLowerCase().includes(q);
-                    if (!matchCity && !matchRegion && !matchCamp && !matchId && !matchSrc && !matchVoucher) {
+                    const matchAction = (item.last_clicked_element || '').toLowerCase().includes(q);
+                    if (!matchCity && !matchNeighborhood && !matchRegion && !matchCamp && !matchId && !matchSrc && !matchVoucher && !matchAction) {
                         return false;
                     }
                 }
@@ -2858,7 +3081,7 @@
             const tbody = document.getElementById('traffic-recent-body');
             if (tbody) {
                 if (totalCount === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Nenhum clique encontrado com os filtros selecionados.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 25px; color: var(--text-muted);">Nenhum clique encontrado com os filtros selecionados.</td></tr>';
                 } else {
                     tbody.innerHTML = '';
                     pageItems.forEach(item => {
@@ -2874,19 +3097,42 @@
                         else if (src.includes('google')) { badgeClass = 'google'; badgeIcon = '<i class="fab fa-google"></i> '; }
                         else if (src.includes('whatsapp')) { badgeClass = 'whatsapp'; badgeIcon = '<i class="fab fa-whatsapp"></i> '; }
 
+                        // Localização com Bairro e GPS
+                        let locationHtml = escapeHtml(item.city || 'Campinas');
+                        if (item.neighborhood) {
+                            locationHtml = `<strong>${escapeHtml(item.neighborhood)}</strong><br><span style="font-size: 11px; color: var(--text-muted);">${escapeHtml(item.city || 'Campinas')} (${escapeHtml(item.region || 'SP')})</span>`;
+                        } else if (item.region) {
+                            locationHtml += ` <span style="font-size: 11px; color: var(--text-muted);">(${escapeHtml(item.region)})</span>`;
+                        }
+                        if (item.precision === 'gps' || (item.latitude && item.longitude)) {
+                            locationHtml += ` <span class="badge-gps" title="Lat: ${item.latitude || ''}, Lon: ${item.longitude || ''}"><i class="fas fa-crosshairs"></i> GPS</span>`;
+                        }
+
+                        // Tempo de Tela
+                        const dwellSecs = item.dwell_seconds || item.dwell_time || 0;
+                        const dwellDisplay = dwellSecs > 0 ? `<i class="fas fa-stopwatch" style="color: #6366F1; font-size: 10px; margin-right: 3px;"></i>${formatDwellTime(dwellSecs)}` : '<span style="color: #94A3B8; font-size: 11px;">--</span>';
+                        const scrollDisplay = item.scroll_depth ? `<br><span style="font-size: 10px; color: var(--text-muted);"><i class="fas fa-arrows-alt-v" style="font-size: 9px;"></i> ${item.scroll_depth}% tela</span>` : '';
+
+                        // Última Interação / Ação
+                        let interactionText = item.last_clicked_element || '--';
+                        if (interactionText.length > 28) interactionText = interactionText.substring(0, 26) + '...';
+                        const interactionDisplay = `<span style="font-size: 11px; color: var(--navy-primary);" title="${escapeHtml(item.last_clicked_element || '')}"><i class="fas fa-mouse-pointer" style="font-size: 9px; color: #F59E0B; margin-right: 3px;"></i>${escapeHtml(interactionText)}</span>`;
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td style="font-size: 11px; color: var(--text-muted);">${escapeHtml(dateFormatted)}</td>
+                            <td style="font-size: 11px; color: var(--text-muted); white-space: nowrap;">${escapeHtml(dateFormatted)}</td>
                             <td><span class="badge-source ${badgeClass}">${badgeIcon}${escapeHtml(src.toUpperCase())}</span></td>
-                            <td style="font-weight: 700; color: var(--navy-primary);">
+                            <td style="font-weight: 700; color: var(--navy-primary); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(item.campaign || 'Geral')}">
                                 ${escapeHtml(item.campaign || 'Geral')}
                                 ${item.utm_id ? `<br><span style="font-size: 10px; color: var(--text-muted); font-weight: normal; font-family: monospace;">ID: ${escapeHtml(item.utm_id)}</span>` : ''}
                             </td>
-                            <td>${escapeHtml(item.city || 'Campinas')} ${item.region ? `(${escapeHtml(item.region)})` : ''}</td>
-                            <td style="font-size: 11px; color: var(--text-muted);">
+                            <td>${locationHtml}</td>
+                            <td style="font-size: 11px; font-weight: 600; white-space: nowrap;">${dwellDisplay}${scrollDisplay}</td>
+                            <td>${interactionDisplay}</td>
+                            <td style="font-size: 11px; color: var(--text-muted); white-space: nowrap;">
                                 <i class="${item.device === 'Mobile' ? 'fas fa-mobile-alt' : 'fas fa-desktop'}"></i> ${escapeHtml(item.device || 'Mobile')}
                             </td>
-                            <td style="text-align: center;">
+                            <td style="text-align: center; white-space: nowrap;">
                                 ${item.converted 
                                     ? `<span class="badge-status" style="color: #10B981; font-weight: 800;"><i class="fas fa-check"></i> ${escapeHtml(item.voucher_code || 'Voucher')}</span>` 
                                     : '<span style="color: #94A3B8; font-size: 11px;">Visualizou</span>'}
@@ -2924,7 +3170,8 @@
                 campSelect.addEventListener('change', (e) => {
                     selectedTrafficCampaign = e.target.value;
                     trafficCurrentPage = 1;
-                    renderTrafficDashboard(allTrafficLogs);
+                    const periodLogs = getPeriodFilteredLogs(allTrafficLogs);
+                    renderTrafficFeedTable(periodLogs);
                 });
             }
 
@@ -2992,11 +3239,6 @@
                 });
             }
 
-            const clearFilterBtn = document.getElementById('btn-clear-campaign-filter');
-            if (clearFilterBtn) {
-                clearFilterBtn.addEventListener('click', clearCampaignFilter);
-            }
-
             // Botões de Exportação PDF
             const pdfFilteredBtn = document.getElementById('btn-traffic-pdf-filtered');
             if (pdfFilteredBtn) {
@@ -3029,7 +3271,7 @@
                 // Cabeçalho Oficial
                 doc.setFontSize(15);
                 doc.setTextColor(0, 44, 91);
-                doc.text("ÓPTICAS CONCEIÇÃO - RELATÓRIO DE TRÁFEGO E AUDITORIA DE ANÚNCIOS", 14, 15);
+                doc.text("ÓPTICAS CONCEIÇÃO - RELATÓRIO DE TRÁFEGO, TELEMETRIA E AUDITORIA", 14, 15);
 
                 doc.setFontSize(10);
                 doc.setTextColor(100, 116, 139);
@@ -3041,10 +3283,13 @@
                 const tiktokClicks = logsArray.filter(l => (l.source || '').toLowerCase().includes('tiktok')).length;
                 const vouchersConverted = logsArray.filter(l => l.converted).length;
                 const convRate = totalClicks > 0 ? ((vouchersConverted / totalClicks) * 100).toFixed(1) : '0';
+                
+                const dwellLogs = logsArray.filter(l => (l.dwell_seconds || l.dwell_time || 0) > 0);
+                const avgDwell = dwellLogs.length > 0 ? Math.round(dwellLogs.reduce((acc, l) => acc + (l.dwell_seconds || l.dwell_time || 0), 0) / dwellLogs.length) : 0;
 
                 doc.setFontSize(9);
                 doc.setTextColor(30, 41, 59);
-                doc.text(`Total de Acessos: ${totalClicks}  |  Cliques TikTok: ${tiktokClicks}  |  Vouchers Gerados: ${vouchersConverted}  |  Taxa de Conversão: ${convRate}%`, 14, 28);
+                doc.text(`Total de Acessos: ${totalClicks}  |  TikTok: ${tiktokClicks}  |  Vouchers: ${vouchersConverted}  |  Conv: ${convRate}%  |  Tempo Médio: ${formatDwellTime(avgDwell)}`, 14, 28);
 
                 // Montagem da Tabela
                 const tableData = logsArray.map(item => {
@@ -3055,15 +3300,17 @@
                     const src = (item.source || 'DIRETO').toUpperCase();
                     const camp = item.campaign || 'Geral';
                     const utmId = item.utm_id || '-';
-                    const cityReg = `${item.city || 'Campinas'}${item.region ? ' (' + item.region + ')' : ''}`;
+                    const neighborhood = item.neighborhood ? ` [${item.neighborhood}]` : '';
+                    const cityReg = `${item.city || 'Campinas'}${neighborhood}${item.region ? ' (' + item.region + ')' : ''}`;
+                    const dwell = formatDwellTime(item.dwell_seconds || item.dwell_time || 0);
                     const dev = item.device || 'Mobile';
                     const status = item.converted ? `VOUCHER: ${item.voucher_code || 'Sim'}` : 'Visualizou';
 
-                    return [dateFormatted, src, camp, utmId, cityReg, dev, status];
+                    return [dateFormatted, src, camp, utmId, cityReg, dwell, dev, status];
                 });
 
                 doc.autoTable({
-                    head: [['Data / Hora', 'Origem', 'Campanha', 'ID Anúncio', 'Cidade / Estado', 'Dispositivo', 'Conversão']],
+                    head: [['Data / Hora', 'Origem', 'Campanha', 'ID Anúncio', 'Cidade / Bairro', 'Tempo Tela', 'Dispositivo', 'Conversão']],
                     body: tableData,
                     startY: 32,
                     theme: 'grid',
@@ -3090,6 +3337,7 @@
                 alert('Ocorreu um erro ao gerar o PDF. Verifique o console.');
             }
         }
+
 
         // ==========================================
         // GERADOR DE LINKS COM UTM
