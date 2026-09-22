@@ -100,6 +100,10 @@ body {
     border: 1px solid var(--gray-border);
 }
 
+.mobile-break {
+    display: none;
+}
+
 .section-title {
     font-size: 34px;
     font-weight: 800;
@@ -1721,6 +1725,9 @@ body {
    OTIMIZAÇÃO MOBILE BANNER 1 (ABOVE THE FOLD / SEM SCROLL)
    ========================================== */
 @media (max-width: 768px) {
+    .mobile-break {
+        display: block;
+    }
     .header-forlife {
         padding: 8px 0;
     }
@@ -1729,7 +1736,7 @@ body {
         max-width: 80vw;
     }
     .banner-combo {
-        padding: 18px 0 35px; /* Subiu ~47px (> 1cm) eliminando respiros vazios */
+        padding: 16px 0 35px; /* Subiu mais de 1 cm */
     }
     .banner-combo .container {
         padding: 0 14px;
@@ -1737,7 +1744,7 @@ body {
     .banner-combo .section-title {
         font-size: 21px;
         margin-bottom: 4px;
-        line-height: 1.22;
+        line-height: 1.25;
         letter-spacing: -0.3px;
     }
     .banner-combo .section-subtitle {
@@ -1750,20 +1757,31 @@ body {
         padding: 16px 14px;
         border-radius: 14px;
     }
-    .combo-card-badge {
-        top: 10px;
-        right: 10px;
-        font-size: 10px;
-        padding: 3px 9px;
-    }
     .combo-grid {
         gap: 12px;
     }
     .combo-info h3 {
-        font-size: 15.5px;
-        margin-bottom: 8px;
-        padding-right: 100px; /* Não sobrepõe a badge no mobile */
+        font-size: 16px;
+        margin-bottom: 6px;
+        padding-right: 0; /* Totalmente limpo sem sobreposição */
         line-height: 1.3;
+    }
+    /* Tag Combo Especial acima dos 4 bullets no mobile */
+    .combo-card-badge {
+        position: static !important;
+        display: inline-flex !important;
+        align-items: center;
+        width: fit-content;
+        margin: 2px 0 9px 0 !important;
+        font-size: 11px !important;
+        font-weight: 800;
+        padding: 4px 12px !important;
+        border-radius: var(--radius-full);
+        background: var(--royal-blue) !important;
+        color: #FFFFFF !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px var(--royal-blue-glow) !important;
     }
     .combo-features {
         gap: 5px;
