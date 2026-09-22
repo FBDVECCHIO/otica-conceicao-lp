@@ -657,7 +657,7 @@ function updatePricingUI() {
     if (!addonsHtml) {
         addonsHtml = `
             <div class="summary-line" style="opacity: 0.75; font-style: italic;">
-                <span>Nenhuma tecnologia adicional (Combo Tradicional)</span>
+                <span>Nenhuma tecnologia adicional (Combo Especial)</span>
                 <span>R$ 0,00</span>
             </div>`;
     }
@@ -1114,7 +1114,7 @@ async function handleVoucherSubmit(e) {
     const storePhone = '5519978056552';
     const addonsText = addonsArray.length > 0 
         ? addonsArray.map(a => `  • ${a.name} (+ R$ ${formatMoney(a.price)})`).join('\n')
-        : '  • Combo Tradicional (Sem adicionais)';
+        : '  • Combo Especial (Sem adicionais)';
 
     const utmNotice = hasUtm 
         ? `🎯 *Origem:* Anúncio ${utm.source.toUpperCase()}${utm.campaign ? ' (' + utm.campaign + ')' : ''}\n` 
@@ -1128,7 +1128,7 @@ async function handleVoucherSubmit(e) {
 `🏪 *Loja Escolhida:* ${store}\n` +
 `📞 *WhatsApp:* ${phone}\n\n` +
 utmNotice +
-`👓 *Combo:* Óculos Completo (Armação + Lentes Multifocais HD)\n` +
+`👓 *Combo:* Multifocal Digital Di Capri + Armação\n` +
 `💰 *Valor Combo Base:* R$ ${formatMoney(forlifeConfig.comboPrice)}\n\n` +
 `⚡ *Tecnologia:*\n${addonsText}\n\n` +
 `💵 *Total:* R$ ${formatMoney(totalPrice)} (em até ${forlifeConfig.installments}x de R$ ${formatMoney(totalPrice / forlifeConfig.installments)} sem juros)\n` +

@@ -1138,7 +1138,7 @@ body {
    BANNER EXTRA: TIRA-DÚVIDAS / FAQ (Fundo Cinza)
    ========================================== */
 .banner-faq {
-    background-color: var(--gray-bg);
+    background-color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1209,7 +1209,7 @@ body {
    BANNER EXTRA: AVALIAÇÕES POSITIVAS (Fundo Branco)
    ========================================== */
 .banner-avaliacoes {
-    background-color: #FFFFFF;
+    background-color: var(--gray-bg);
     padding: 85px 0;
 }
 
@@ -1221,7 +1221,7 @@ body {
 }
 
 .review-card {
-    background: var(--gray-bg);
+    background: #FFFFFF;
     border: 1px solid var(--gray-border);
     border-radius: var(--radius-md);
     padding: 26px;
@@ -1287,7 +1287,7 @@ body {
    BANNER 5: CONTATOS & COMO CHEGAR (Fundo Cinza Claro)
    ========================================== */
 .banner-localizacao {
-    background-color: var(--gray-bg);
+    background-color: #FFFFFF;
     padding: 85px 0;
 }
 
@@ -1306,7 +1306,7 @@ body {
 }
 
 .contact-info-card {
-    background: #FFFFFF;
+    background: var(--gray-bg);
     border: 1px solid var(--gray-border);
     border-radius: var(--radius-md);
     padding: 22px;
@@ -1544,4 +1544,114 @@ body {
         padding: 3px 10px;
         font-size: 10px;
     }
+}
+
+
+/* ==========================================
+   VALOR PARCELADO EM DESTAQUE PRINCIPAL
+   ========================================== */
+.pricing-installment-primary {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    margin: 4px 0 2px;
+}
+
+.pricing-inst-prefix {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy-primary);
+}
+
+.pricing-inst-val-main {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--royal-blue);
+    line-height: 1;
+    letter-spacing: -0.5px;
+}
+
+.pricing-installment-tag-box {
+    margin-bottom: 12px;
+}
+
+.pricing-installment-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 12px;
+    border-radius: var(--radius-full);
+}
+
+.pricing-cash-secondary {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+}
+
+.pricing-cash-secondary span {
+    font-weight: 800;
+    color: var(--navy-primary);
+}
+
+/* ==========================================
+   BANNER 3: HISTÓRIA DA CONCEIÇÃO - LIGHT MODE
+   ========================================== */
+.banner-autoridade.light-mode {
+    background: #FFFFFF;
+    color: var(--text-dark);
+    padding: 75px 0 85px;
+    border-top: 1px solid var(--gray-border);
+}
+
+.banner-autoridade.light-mode .autoridade-content h2 {
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 20px;
+    letter-spacing: -0.6px;
+    color: var(--navy-primary);
+}
+
+.banner-autoridade.light-mode .autoridade-content h2 span {
+    color: var(--royal-blue);
+}
+
+.banner-autoridade.light-mode .stat-box {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius-md);
+    padding: 24px 18px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.banner-autoridade.light-mode .stat-box:hover {
+    background: #FFFFFF;
+    transform: translateY(-3px);
+    border-color: var(--royal-blue);
+    box-shadow: var(--shadow-md);
+}
+
+.banner-autoridade.light-mode .stat-number {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--royal-blue);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.banner-autoridade.light-mode .stat-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #475569;
 }

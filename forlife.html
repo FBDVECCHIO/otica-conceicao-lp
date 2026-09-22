@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combo ForLife | Ópticas Conceição - Armação + Multifocais HD</title>
+    <title>Multifocal Digital Di Capri + Armação | Ópticas Conceição</title>
     
     <!-- Meta SEO & Open Graph -->
     <meta name="description" content="Combo Óculos Completo: Armação + Lentes Multifocais Digitais HD por apenas R$ 297,00 ou 10x de R$ 29,70 sem juros nas Ópticas Conceição. 78 anos de tradição em Campinas.">
@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Estilos Customizados ForLife (Navy, Cinza e Branco) -->
-    <link rel="stylesheet" href="/forlife/style.css?v=20260918a">
+    <link rel="stylesheet" href="/forlife/style.css?v=20260922c">
 </head>
 <body>
 
@@ -49,85 +49,53 @@
         </div>
     </header>
 
-    <!-- BANNER 1: AUTORIDADE - 75 ANOS (Fundo Navy Blue) -->
-    <section class="banner-autoridade" id="autoridade">
-        <div class="container">
-            <div class="autoridade-content">
-                <span class="section-tag white">
-                    <i class="fas fa-award"></i> Tradição & Confiança Desde 1948
-                </span>
-                <h1>Há <span>78 anos</span> cuidando da saúde visual de Campinas e região</h1>
-
-                <!-- Cards com Estatísticas de Autoridade -->
-                <div class="autoridade-stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-number">78 Anos</div>
-                        <div class="stat-label">De história, tradição e precisão técnica</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">+100 Mil</div>
-                        <div class="stat-label">Clientes atendidos com adaptação garantida</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label">Laboratório próprio de montagem e calibração</div>
-                    </div>
-                </div>
-
-                <!-- CTA Banner 1: Gerar Voucher + Vouchers Disponíveis -->
-                <div class="voucher-cta-group">
-                    <a href="#voucher" class="btn-voucher-action btn-white btn-trigger-traditional" data-track-element="CTA Topo (Hero)">
-                        <i class="fas fa-ticket-alt"></i> Gerar meu Voucher
-                    </a>
-                    <div class="voucher-scarcity-badge on-dark">
-                        <span class="scarcity-pulse-dot"></span>
-                        <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- BANNER 2: COMBO ÓCULOS COMPLETO R$ 297 (Fundo Branco) -->
+    <!-- BANNER 1: PREÇO - MULTIFOCAL DIGITAL DI CAPRI + ARMAÇÃO (Fundo Branco) -->
     <section class="banner-combo" id="combo">
         <div class="container">
             <div class="text-center">
-                <span class="section-tag navy">
-                    <i class="fas fa-glasses"></i> Oferta Especial ForLife
-                </span>
-                <h2 class="section-title">Óculos Completo</h2>
+                <h1 class="section-title">Multifocal Digital Di Capri + Armação</h1>
                 <p class="section-subtitle text-muted">
-                    Armação + Lentes Multifocais HD
+                    Lentes Multifocais Digitais Di Capri
                 </p>
             </div>
 
             <!-- Card Destaque do Combo -->
             <div class="combo-card">
-                <div class="combo-card-badge">Combo Tradicional</div>
+                <div class="combo-card-badge">Combo Especial</div>
                 <div class="combo-grid">
                     <div class="combo-info">
-                        <h3>Armação + Lentes Multifocais HD</h3>
+                        <h3>Lentes Multifocais Digitais Di Capri</h3>
                         <p class="combo-desc">
                             Estrutura moderna e resistente combinada com lentes digitais de alta resolução geométrica, desenhadas para uma transição suave entre perto, meia-distância e longe.
                         </p>
                         
                         <ul class="combo-features">
                             <li><i class="fas fa-check-circle"></i> Armação de grau inclusa à sua escolha no mostruário</li>
-                            <li><i class="fas fa-check-circle"></i> Lentes Multifocais Digitais HD (Alta Resolução)</li>
+                            <li><i class="fas fa-check-circle"></i> Lentes Multifocais Digitais Di Capri</li>
                             <li><i class="fas fa-check-circle"></i> Amplo campo de visão com rápida adaptação</li>
                             <li><i class="fas fa-check-circle"></i> Ajuste e conferência técnica personalizada na entrega</li>
                         </ul>
                     </div>
 
                     <div class="combo-pricing-box">
-                        <div class="pricing-title">Valor Promocional</div>
-                        <div class="pricing-cash" id="combo-cash-price">R$ 297,00</div>
-                        <div class="pricing-installments">
-                            em até <span id="combo-inst-count">10</span>x de <span id="combo-inst-val">R$ 29,70</span> sem juros
+                        <div class="pricing-title">Valor Especial do Combo</div>
+
+                        <!-- Valor Principal em Destaque: Parcelado -->
+                        <div class="pricing-installment-primary">
+                            <span class="pricing-inst-prefix"><span id="combo-inst-count">10</span>x de</span>
+                            <span class="pricing-inst-val-main" id="combo-inst-val">R$ 29,70</span>
+                        </div>
+                        <div class="pricing-installment-tag-box">
+                            <span class="pricing-installment-tag"><i class="fas fa-check"></i> Sem juros no cartão</span>
+                        </div>
+
+                        <!-- Valor Menor Secundário: Total à vista -->
+                        <div class="pricing-cash-secondary">
+                            ou <span id="combo-cash-price">R$ 297,00</span> à vista
                         </div>
                         
-                        <!-- CTA Banner 2: Gerar Voucher Direto -->
-                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta R$ 297" style="width: 100%;">
+                        <!-- CTA Banner 1: Gerar Voucher Direto -->
+                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta Combo Especial" style="width: 100%;">
                             <i class="fas fa-ticket-alt"></i> Gerar meu Voucher
                         </a>
                         <div style="margin-top: 12px;">
@@ -142,7 +110,7 @@
         </div>
     </section>
 
-    <!-- BANNER 3: ADICIONAIS DE TECNOLOGIA ÀS LENTES (Fundo Cinza Claro) -->
+    <!-- BANNER 2: TECNOLOGIAS ADICIONAIS ÀS LENTES (Fundo Cinza Claro) -->
     <section class="banner-tecnologias" id="tecnologias">
         <div class="container">
             <div class="text-center">
@@ -342,6 +310,47 @@
         </div>
     </section>
 
+    <!-- BANNER 3: HISTÓRIA DA CONCEIÇÃO - 78 ANOS (Fundo Branco) -->
+    <section class="banner-autoridade light-mode" id="autoridade">
+        <div class="container">
+            <div class="autoridade-content">
+                <span class="section-tag navy">
+                    <i class="fas fa-award"></i> Tradição & Confiança Desde 1948
+                </span>
+                <h2 class="section-title">Há <span>78 anos</span> cuidando da saúde visual de Campinas e região</h2>
+
+                <!-- Cards com Estatísticas de Autoridade -->
+                <div class="autoridade-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">78 Anos</div>
+                        <div class="stat-label">De história, tradição e precisão técnica</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">+100 Mil</div>
+                        <div class="stat-label">Clientes atendidos com adaptação garantida</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Laboratório próprio de montagem e calibração</div>
+                    </div>
+                </div>
+
+                <!-- CTA Banner 3: Gerar Voucher + Vouchers Disponíveis -->
+                <div class="voucher-cta-group">
+                    <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA História Conceição">
+                        <i class="fas fa-ticket-alt"></i> Gerar meu Voucher
+                    </a>
+                    <div class="voucher-scarcity-badge on-light">
+                        <span class="scarcity-pulse-dot"></span>
+                        <span><strong class="scarcity-number">18</strong> Vouchers Disponíveis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
     <!-- BANNER 4: GERAR VOUCHER & RESUMO (Fundo Navy Blue) -->
     <section class="banner-voucher" id="voucher">
         <div class="container">
@@ -358,7 +367,7 @@
                     <h3 class="summary-title"><i class="fas fa-receipt"></i> Resumo do seu Pedido</h3>
                     
                     <div class="summary-line">
-                        <span>Combo ForLife (Armação + Multifocais HD)</span>
+                        <span>Combo Especial (Multifocal Di Capri + Armação)</span>
                         <span id="summary-combo-price">R$ 297,00</span>
                     </div>
 
@@ -822,6 +831,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Script de Comportamento ForLife -->
-    <script src="/forlife/app.js?v=20260922b"></script>
+    <script src="/forlife/app.js?v=20260922c"></script>
 </body>
 </html>
