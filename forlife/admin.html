@@ -1375,7 +1375,10 @@
                         </div>
 
                         <div style="margin-top: 10px;">
-                            <input type="text" id="utm-preview-output" readonly class="cfg-input" style="width: 100%; font-family: monospace; font-size: 12px; background: #FFFFFF; color: var(--navy-primary);" value="https://lp.opticaconceicao.com.br/forlife?utm_source=tiktok&utm_medium=paid&utm_id=__CAMPAIGN_ID__&utm_campaign=combo_forlife_tiktok">
+                            <input type="text" id="utm-preview-output" readonly class="cfg-input" style="width: 100%; font-family: monospace; font-size: 12px; background: #FFFFFF; color: var(--navy-primary);" value="https://lp.opticaconceicao.com.br/forlife?utm_source=tiktok&utm_medium=paid&utm_id=__CAMPAIGN_ID__&utm_campaign=__CAMPAIGN_NAME__">
+                        </div>
+                        <div id="utm-channel-hint" style="font-size: 12px; color: var(--navy-primary); background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 10px 12px; margin-top: 8px; line-height: 1.5;">
+                            <i class="fab fa-tiktok" style="color: #FE2C55; margin-right: 4px;"></i> <strong>TikTok Ads:</strong> Cole este link diretamente no campo <em>"URL do Site" (Website URL)</em> do anúncio. As tags <code>__CAMPAIGN_ID__</code> e <code>__CAMPAIGN_NAME__</code> serão preenchidas automaticamente pelo TikTok com o ID e o Nome reais do anúncio a cada clique!
                         </div>
                     </div>
 
@@ -2541,7 +2544,10 @@
                         tr.innerHTML = `
                             <td style="font-size: 11px; color: var(--text-muted);">${escapeHtml(dateFormatted)}</td>
                             <td><span class="badge-source ${badgeClass}">${badgeIcon}${escapeHtml(src.toUpperCase())}</span></td>
-                            <td style="font-weight: 700; color: var(--navy-primary);">${escapeHtml(item.campaign || 'Geral')}</td>
+                            <td style="font-weight: 700; color: var(--navy-primary);">
+                                ${escapeHtml(item.campaign || 'Geral')}
+                                ${item.utm_id ? `<br><span style="font-size: 10px; color: var(--text-muted); font-weight: normal; font-family: monospace;">ID: ${escapeHtml(item.utm_id)}</span>` : ''}
+                            </td>
                             <td>${escapeHtml(item.city || 'Campinas')} ${item.region ? `(${escapeHtml(item.region)})` : ''}</td>
                             <td style="font-size: 11px; color: var(--text-muted);">
                                 <i class="${item.device === 'Mobile' ? 'fas fa-mobile-alt' : 'fas fa-desktop'}"></i> ${escapeHtml(item.device || 'Mobile')}
@@ -2566,16 +2572,50 @@
             const campaignInput = document.getElementById('utm-gen-campaign');
             const idInput = document.getElementById('utm-gen-id');
             const outputInput = document.getElementById('utm-preview-output');
+            const hintEl = document.getElementById('utm-channel-hint');
             const copyBtn = document.getElementById('btn-copy-utm-link');
 
             if (!sourceSelect || !outputInput) return;
+
+            const channelPresets = {
+                tiktok: {
+                    campaign: '__CAMPAIGN_NAME__',
+                    id: '__CAMPAIGN_ID__',
+                    hint: '<i class="fab fa-tiktok" style="color: #FE2C55; margin-right: 4px;"></i> <strong>TikTok Ads:</strong> Cole este link no campo <em>"URL do Site" (Website URL)</em> do anúncio. As tags <code>__CAMPAIGN_ID__</code> e <code>__CAMPAIGN_NAME__</code> são preenchidas dinamicamente pelo TikTok no momento do clique!'
+                },
+                instagram: {
+                    campaign: '{{campaign.name}}',
+                    id: '{{campaign.id}}',
+                    hint: '<i class="fab fa-instagram" style="color: #E1306C; margin-right: 4px;"></i> <strong>Instagram Ads (Meta):</strong> Cole este link no campo <em>URL do Site</em> ou em <em>Parâmetros de URL</em> no Gerenciador da Meta. O Meta preencherá <code>{{campaign.name}}</code> e <code>{{campaign.id}}</code> automaticamente.'
+                },
+                facebook: {
+                    campaign: '{{campaign.name}}',
+                    id: '{{campaign.id}}',
+                    hint: '<i class="fab fa-facebook" style="color: #1877F2; margin-right: 4px;"></i> <strong>Facebook Ads (Meta):</strong> Cole no Gerenciador de Anúncios. O Meta preencherá <code>{{campaign.name}}</code> e <code>{{campaign.id}}</code> a cada exibição.'
+                },
+                google: {
+                    campaign: '{campaignid}',
+                    id: '{creative}',
+                    hint: '<i class="fab fa-google" style="color: #EA4335; margin-right: 4px;"></i> <strong>Google Ads:</strong> Cole na <em>URL Final</em> ou <em>Modelo de Acompanhamento</em>. O Google substituirá <code>{campaignid}</code> e <code>{creative}</code> via ValueTrack.'
+                },
+                whatsapp: {
+                    campaign: 'bio_instagram',
+                    id: 'link_bio',
+                    hint: '<i class="fab fa-whatsapp" style="color: #25D366; margin-right: 4px;"></i> <strong>WhatsApp / Link da Bio:</strong> Link fixo ideal para fixar na Bio do Instagram ou disparar em mensagens e status.'
+                },
+                influencer: {
+                    campaign: 'parceria_influencer',
+                    id: 'stories_arrasta',
+                    hint: '<i class="fas fa-user-friends" style="color: #8B5CF6; margin-right: 4px;"></i> <strong>Influenciador / Parceria:</strong> Substitua o nome da campanha pelo nome do parceiro para medir quantas visitas e vouchers ele gerou.'
+                }
+            };
 
             function updateUtmUrl() {
                 const baseUrl = 'https://lp.opticaconceicao.com.br/forlife';
                 const src = sourceSelect.value || 'tiktok';
                 const medium = (src === 'whatsapp' || src === 'influencer') ? 'social' : 'paid';
-                const camp = encodeURIComponent((campaignInput.value || 'combo_forlife').trim().toLowerCase().replace(/\s+/g, '_'));
-                const adId = encodeURIComponent((idInput.value || '').trim());
+                let camp = (campaignInput.value || '__CAMPAIGN_NAME__').trim();
+                let adId = (idInput.value || '').trim();
 
                 let finalUrl = `${baseUrl}?utm_source=${src}&utm_medium=${medium}&utm_campaign=${camp}`;
                 if (adId) {
@@ -2584,7 +2624,16 @@
                 outputInput.value = finalUrl;
             }
 
-            sourceSelect.addEventListener('change', updateUtmUrl);
+            sourceSelect.addEventListener('change', () => {
+                const preset = channelPresets[sourceSelect.value];
+                if (preset) {
+                    campaignInput.value = preset.campaign;
+                    idInput.value = preset.id;
+                    if (hintEl) hintEl.innerHTML = preset.hint;
+                }
+                updateUtmUrl();
+            });
+
             campaignInput.addEventListener('input', updateUtmUrl);
             idInput.addEventListener('input', updateUtmUrl);
 
