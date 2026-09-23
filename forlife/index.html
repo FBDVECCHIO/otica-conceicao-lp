@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Estilos Customizados ForLife (Navy, Cinza e Branco) -->
-    <link rel="stylesheet" href="/forlife/style.css?v=20260922i">
+    <link rel="stylesheet" href="/forlife/style.css?v=20260923b">
 </head>
 <body>
 
@@ -46,6 +46,7 @@
             <a href="/forlife" class="header-logo-link" title="Ópticas Conceição - Desde 1948">
                 <img src="/assets/images/logo_branco_clean.png?v=20260905h" alt="Ópticas Conceição Logo">
             </a>
+            <span class="header-promo-title">Lote promocional!</span>
         </div>
     </header>
 
@@ -90,9 +91,14 @@
                             ou <span id="combo-cash-price">R$ 297,00</span> à vista
                         </div>
                         
-                        <!-- CTA Banner 1: Gerar Voucher Direto -->
-                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta Combo Especial" style="width: 100%;">
-                            <i class="fas fa-ticket-alt"></i> Gerar meu Cupom
+                        <!-- CTA Banner 1 WhatsApp 1-Clique em Destaque -->
+                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20cupom" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-highlight" data-track-element="CTA WhatsApp 1-Clique Banner 1">
+                            <i class="fab fa-whatsapp"></i> Resgatar Cupom pelo WhatsApp em 1 Clique
+                        </a>
+
+                        <!-- CTA Secundário no Site -->
+                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta Combo Especial" style="width: 100%; margin-top: 10px; background: rgba(0, 44, 91, 0.08); color: var(--navy-primary); box-shadow: none; border: 1.5px solid var(--navy-primary);">
+                            <i class="fas fa-ticket-alt"></i> Ou Gerar Cupom no Formulário
                         </a>
                         <div style="margin-top: 12px;">
                             <div class="voucher-scarcity-badge on-light">
@@ -359,30 +365,30 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="client-email">E-mail *</label>
-                                <input type="email" id="client-email" class="form-input" placeholder="seuemail@exemplo.com" required>
+                                <label for="client-email">E-mail (Opcional)</label>
+                                <input type="email" id="client-email" class="form-input" placeholder="seuemail@exemplo.com">
                             </div>
 
                             <div class="form-group">
-                                <label for="client-city">Cidade / Região *</label>
-                                <input type="text" id="client-city" class="form-input" placeholder="Ex: Campinas" required minlength="2">
+                                <label for="client-city">Cidade / Região (Opcional)</label>
+                                <input type="text" id="client-city" class="form-input" placeholder="Ex: Campinas">
                             </div>
 
                             <div class="form-group">
-                                <label for="client-store">Escolha a loja:</label>
-                                <select id="client-store" class="form-input" data-track-element="Seletor Loja de Retirada" required style="cursor: pointer; background-color: #FFFFFF; font-weight: 600;">
-                                    <option value="" disabled selected>Selecione a loja onde quer ir...</option>
+                                <label for="client-store">Escolha a loja (Opcional):</label>
+                                <select id="client-store" class="form-input" data-track-element="Seletor Loja de Retirada" style="cursor: pointer; background-color: #FFFFFF; font-weight: 600;">
+                                    <option value="" selected>Selecione a loja onde quer ir (ou combine no WhatsApp)...</option>
                                     <!-- Preenchido dinamicamente via app.js com lojas cadastradas no ADM -->
                                 </select>
                             </div>
 
                             <!-- CHECKBOXES DE RECEITA MÉDICA (OPÇÕES EXCLUSIVAS) -->
                             <div class="form-group">
-                                <label style="margin-bottom: 8px;">Sua receita:</label>
+                                <label style="margin-bottom: 8px;">Sua receita (Opcional):</label>
                                 <div class="recipe-selection-box">
                                     <!-- Opção 1: Possuo receita -->
                                     <label class="recipe-option-card" id="card-recipe-have">
-                                        <input type="radio" name="recipe_status" id="recipe-option-have" value="have" required>
+                                        <input type="radio" name="recipe_status" id="recipe-option-have" value="have">
                                         <span class="recipe-option-text">Possuo receita</span>
                                     </label>
 
@@ -400,7 +406,7 @@
 
                                     <!-- Opção 2: Preciso atualizar -->
                                     <label class="recipe-option-card" id="card-recipe-need">
-                                        <input type="radio" name="recipe_status" id="recipe-option-need" value="need" required>
+                                        <input type="radio" name="recipe_status" id="recipe-option-need" value="need">
                                         <span class="recipe-option-text">Preciso atualizar</span>
                                     </label>
                                 </div>
@@ -827,6 +833,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Script de Comportamento ForLife -->
-    <script src="/forlife/app.js?v=20260922f"></script>
+    <script src="/forlife/app.js?v=20260923b"></script>
 </body>
 </html>

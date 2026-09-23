@@ -901,16 +901,9 @@ function populateStoresDropdown() {
 function validateForm() {
     const name = document.getElementById('client-name')?.value.trim() || '';
     const phone = (document.getElementById('client-phone')?.value || '').replace(/\D/g, '');
-    const city = document.getElementById('client-city')?.value.trim() || '';
-    const email = document.getElementById('client-email')?.value.trim() || '';
-    const store = document.getElementById('client-store')?.value.trim() || '';
-    
-    const radioHave = document.getElementById('recipe-option-have')?.checked;
-    const radioNeed = document.getElementById('recipe-option-need')?.checked;
-    const hasRecipeChoice = radioHave || radioNeed;
 
     const submitBtn = document.getElementById('btn-submit-voucher');
-    const isValid = name.length >= 3 && phone.length >= 10 && city.length >= 2 && email.includes('@') && hasRecipeChoice && store.length > 0;
+    const isValid = name.length >= 3 && phone.length >= 10;
 
     if (submitBtn) {
         submitBtn.disabled = !isValid;
@@ -968,12 +961,13 @@ async function handleVoucherSubmit(e) {
 
     const name = document.getElementById('client-name').value.trim();
     const phone = document.getElementById('client-phone').value.trim();
-    const email = document.getElementById('client-email').value.trim();
-    const city = document.getElementById('client-city').value.trim();
-    const store = document.getElementById('client-store')?.value.trim() || '';
+    const email = document.getElementById('client-email')?.value.trim() || '';
+    const city = document.getElementById('client-city')?.value.trim() || 'Campinas e Região';
+    const store = document.getElementById('client-store')?.value.trim() || 'A combinar no WhatsApp';
     
-    const hasPrescription = document.getElementById('recipe-option-have').checked;
-    const recipeStatusText = hasPrescription ? 'Possuo receita' : 'Preciso atualizar';
+    const hasPrescription = document.getElementById('recipe-option-have')?.checked;
+    const needPrescription = document.getElementById('recipe-option-need')?.checked;
+    const recipeStatusText = hasPrescription ? 'Possuo receita' : (needPrescription ? 'Preciso atualizar' : 'A combinar no WhatsApp');
 
     // Garantir que a imagem da receita esteja processada caso o envio seja rápido
     const fileInputEl = document.getElementById('prescription-file');
