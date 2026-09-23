@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#002C5B">
+    <title>LP Studio & Multi-Manager | Ópticas Conceição</title>
+
+    <!-- Google Fonts: Outfit (300, 400, 500, 600, 700, 800, 900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase JS v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- jsPDF 2.5.1 & jsPDF AutoTable 3.5.31 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- CSS do Hub Studio -->
+    <link rel="stylesheet" href="/assets/hub.css">
+
+    <!-- JS do Hub Studio -->
+    <script src="/assets/hub.js" defer></script>
+</head>
+<body class="hub-body">
+
+    <!-- ========================================================
+         HEADER GLOBAL DO STUDIO & MULTI-MANAGER
+         ======================================================== -->
+    <header class="hub-header">
+        <div class="hub-header-left">
+            <div class="hub-brand">
+                <img src="assets/images/logo_branco_clean.png" alt="Ópticas Conceição" class="hub-brand-logo" onerror="this.onerror=null; this.src='assets/images/logo_branco.png';">
+                <span class="hub-platform-badge">LP STUDIO &amp; MULTI-MANAGER</span>
+            </div>
+
+            <div class="hub-lp-control">
+                <div class="lp-select-wrapper">
+                    <i class="fas fa-layer-group select-icon"></i>
+                    <select id="lp-selector" class="lp-select" aria-label="Seletor de Landing Pages">
+                        <option value="forlife" selected>ForLife Multifocal Di Capri (/forlife)</option>
+                        <option value="fila">Óculos Completo FILA (/)</option>
+                        <option value="varilux">Varilux Comfort Max (/varilux)</option>
+                        <option value="zeiss">Zeiss SmartLife Digital (/zeiss)</option>
+                        <option value="new_lp">➕ Criar Nova Landing Page...</option>
+                    </select>
+                </div>
+                <span id="lp-status-badge" class="lp-badge active">
+                    <span class="pulse-dot"></span>
+                    <span class="badge-text">Ativa em Produção</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="hub-header-right">
+            <a id="btn-open-lp-external" href="/forlife/index.html" target="_blank" class="btn-top-action" title="Abrir LP em Nova Aba">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Abrir LP</span>
+            </a>
+            <button id="btn-reload-iframe" class="btn-top-action" title="Recarregar Visualizador">
+                <i class="fas fa-sync-alt"></i>
+                <span>Recarregar</span>
+            </button>
+            <button id="btn-create-lp-quick" class="btn-top-action btn-primary-top" title="Criar Nova Landing Page">
+                <i class="fas fa-plus"></i>
+                <span>Nova LP</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ========================================================
+         BARRA DE NAVEGAÇÃO POR ABAS
+         ======================================================== -->
+    <nav class="hub-tabs" aria-label="Abas de Gestão">
+        <button class="tab-btn active" data-tab="tab-preview" id="tab-btn-preview">
+            <i class="fas fa-desktop"></i>
+            <span>Visualizador Interativo</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-leads" id="tab-btn-leads">
+            <i class="fas fa-users"></i>
+            <span>Leads (<span id="tab-leads-count">0</span>)</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-cms" id="tab-btn-cms">
+            <i class="fas fa-sliders-h"></i>
+            <span>Configurações (CMS)</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-traffic" id="tab-btn-traffic">
+            <i class="fas fa-chart-line"></i>
+            <span>Tráfego &amp; Inteligência</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-catalog" id="tab-btn-catalog">
+            <i class="fas fa-th-large"></i>
+            <span>Catálogo de LPs</span>
+        </button>
+    </nav>
+
+    <!-- ========================================================
+         CONTAINER PRINCIPAL DAS TELAS / ABAS
+         ======================================================== -->
+    <main class="hub-main-container">
+
+        <!-- ====================================================
+             ABA 1: VISUALIZADOR INTERATIVO
+             ==================================================== -->
+        <section id="tab-preview" class="hub-tab-panel active">
+            <!-- Toolbar de Viewports & Resolução -->
+            <div class="preview-toolbar">
+                <div class="viewport-buttons-group">
+                    <button class="btn-vp active" data-viewport="desktop" id="btn-view-desktop" title="Visualização Desktop">
+                        <i class="fas fa-desktop"></i>
+                        <span>Desktop (1440px)</span>
+                    </button>
+                    <button class="btn-vp" data-viewport="laptop" id="btn-view-laptop" title="Visualização Notebook / Laptop">
+                        <i class="fas fa-laptop"></i>
+                        <span>Laptop (1024px)</span>
+                    </button>
+                    <button class="btn-vp" data-viewport="tablet" id="btn-view-tablet" title="Visualização Tablet">
+                        <i class="fas fa-tablet-alt"></i>
+                        <span>Tablet (768px)</span>
+                    </button>
+                    <button class="btn-vp" data-viewport="mobile" id="btn-view-mobile" title="Visualização Smartphone">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile (390px)</span>
+                    </button>
+                </div>
+
+                <div class="preview-meta-info">
+                    <span class="preview-label">Rota Ativa:</span>
+                    <span id="preview-url-display" class="preview-url-tag">/forlife</span>
+                    <span class="preview-label">Resolução:</span>
+                    <span id="preview-resolution-display" class="preview-res-tag">1440 x 900 px</span>
+                </div>
+            </div>
+
+            <!-- Palco do Visualizador Interativo com Moldura Realista -->
+            <div class="preview-stage-container">
+                <div class="device-mockup-wrapper viewport-desktop" id="device-wrapper">
+                    <!-- Barra de Topo do Navegador Emulado -->
+                    <div class="device-chrome-bar">
+                        <div class="chrome-controls">
+                            <span class="chrome-dot dot-close"></span>
+                            <span class="chrome-dot dot-minimize"></span>
+                            <span class="chrome-dot dot-expand"></span>
+                        </div>
+                        <div class="chrome-address-bar">
+                            <i class="fas fa-lock chrome-lock-icon"></i>
+                            <span class="chrome-host">lp.opticasconceicao.com.br</span>
+                            <span class="chrome-path" id="chrome-address-path">/forlife</span>
+                        </div>
+                        <div class="chrome-actions">
+                            <button class="chrome-action-btn" id="chrome-reload-btn" title="Atualizar Prévia">
+                                <i class="fas fa-redo-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Container do Iframe Emulado -->
+                    <div class="preview-frame-container">
+                        <iframe id="preview-iframe" src="/forlife/index.html" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             ABA 2: GESTÃO AVANÇADA DE LEADS
+             ==================================================== -->
+        <section id="tab-leads" class="hub-tab-panel">
+            <!-- 4 Cards de Métricas Principais -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon-box navy">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Total de Cupons</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="metric-total-leads">0</span>
+                            <span class="metric-pill positive"><i class="fas fa-arrow-up"></i> +14%</span>
+                        </div>
+                        <span class="metric-subtext">Leads gerados no período</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box royal">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Faturamento Previsto</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="metric-total-revenue">R$ 0,00</span>
+                            <span class="metric-pill info"><i class="fas fa-chart-line"></i> Pipeline</span>
+                        </div>
+                        <span class="metric-subtext">Valor estimado de conversões</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Vendas Concluídas</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="metric-total-sales">0</span>
+                            <span class="metric-pill success"><i class="fas fa-shopping-bag"></i> Convertidos</span>
+                        </div>
+                        <span class="metric-subtext">Cupons validados em loja</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box gold">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Ticket Médio Estimado</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="metric-avg-ticket">R$ 0,00</span>
+                            <span class="metric-pill warning"><i class="fas fa-gem"></i> Premium</span>
+                        </div>
+                        <span class="metric-subtext">Média por pedido gerado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card com Tabela de Leads e Ferramentas de Filtro -->
+            <div class="hub-card table-manager-card">
+                <!-- Barra de Ferramentas / Filtros -->
+                <div class="table-toolbar">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="search-leads" placeholder="Buscar por cliente, cupom, WhatsApp ou vendedor..." autocomplete="off">
+                    </div>
+
+                    <div class="filters-group">
+                        <div class="filter-select-wrapper">
+                            <select id="filter-store" aria-label="Filtrar por Unidade / Loja">
+                                <option value="">Todas as Lojas</option>
+                                <option value="Loja 01 - Matriz Centro">Loja 01 - Matriz Centro</option>
+                                <option value="Loja 02 - Shopping Iguatemi">Loja 02 - Shopping Iguatemi</option>
+                                <option value="Loja 03 - Shopping Dom Pedro">Loja 03 - Shopping Dom Pedro</option>
+                                <option value="Loja 04 - Cambuí Conceito">Loja 04 - Cambuí Conceito</option>
+                                <option value="Loja 05 - Taquaral">Loja 05 - Taquaral</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-select-wrapper">
+                            <select id="filter-seller" aria-label="Filtrar por Consultor / Vendedor">
+                                <option value="">Todos os Vendedores</option>
+                                <option value="Carlos Silva">Carlos Silva</option>
+                                <option value="Mariana Santos">Mariana Santos</option>
+                                <option value="Beatriz Oliveira">Beatriz Oliveira</option>
+                                <option value="Lucas Fernandes">Lucas Fernandes</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-select-wrapper">
+                            <select id="filter-status" aria-label="Filtrar por Status">
+                                <option value="">Todos os Status</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Contatado">Contatado</option>
+                                <option value="Agendado">Agendado</option>
+                                <option value="Venda Concluída">Venda Concluída</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+
+                        <div class="actions-buttons-wrapper">
+                            <button id="btn-pdf-selected" class="btn-action btn-pdf" title="Exportar leads marcados para PDF">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF Selecionados</span>
+                            </button>
+                            <button id="btn-pdf-all" class="btn-action btn-pdf-all" title="Gerar relatório analítico completo">
+                                <i class="fas fa-file-export"></i>
+                                <span>Relatório Completo</span>
+                            </button>
+                            <button id="btn-refresh-leads" class="btn-action btn-refresh" title="Atualizar base de dados">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Atualizar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Leads -->
+                <div class="table-responsive">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 44px; text-align: center;">
+                                    <input type="checkbox" id="select-all-leads" title="Selecionar Todos">
+                                </th>
+                                <th>Cupom / Data</th>
+                                <th>Cliente</th>
+                                <th>WhatsApp</th>
+                                <th>Loja / Vendedor</th>
+                                <th>Tratamentos / Lente</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Valor</th>
+                                <th style="text-align: center; width: 140px;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-table-body">
+                            <!-- Inserido dinamicamente via JS -->
+                            <tr class="table-loading-row">
+                                <td colspan="9">
+                                    <div class="table-state-box">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>Carregando leads da base de dados...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Rodapé da Tabela com Paginação & Resumo -->
+                <div class="table-footer">
+                    <div class="table-summary-text">
+                        Mostrando <strong id="visible-leads-count">0</strong> de <strong id="total-registered-leads">0</strong> leads cadastrados
+                    </div>
+                    <div class="table-pagination" id="leads-pagination">
+                        <!-- Paginação dinâmica -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             ABA 3: CONFIGURAÇÕES DA LP (CMS)
+             ==================================================== -->
+        <section id="tab-cms" class="hub-tab-panel">
+            <div class="cms-grid-layout">
+                <!-- Coluna 1: Gestão de Preços & Oferta Principal -->
+                <div class="hub-card cms-pricing-card">
+                    <div class="card-header">
+                        <div class="card-header-icon"><i class="fas fa-tags"></i></div>
+                        <div>
+                            <h3>Preços do Combo &amp; Adicionais</h3>
+                            <p>Valores exibidos dinamicamente na Landing Page selecionada</p>
+                        </div>
+                    </div>
+
+                    <form id="cms-config-form" class="cms-form">
+                        <div class="form-group">
+                            <label for="cms-combo-price">
+                                Preço Base do Combo (Armação + Lentes)
+                                <span class="help-text">Valor à vista em R$</span>
+                            </label>
+                            <div class="input-currency-wrapper">
+                                <span class="currency-prefix">R$</span>
+                                <input type="number" id="cms-combo-price" step="0.01" min="0" placeholder="297.00" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cms-installments">
+                                Parcelamento Máximo Sem Juros
+                                <span class="help-text">Número de vezes para cálculo de parcelas</span>
+                            </label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-credit-card input-inner-icon"></i>
+                                <input type="number" id="cms-installments" min="1" max="24" placeholder="10" required>
+                            </div>
+                        </div>
+
+                        <div class="addons-section">
+                            <h4 class="addons-heading">Upgrades de Tecnologia em Lentes</h4>
+
+                            <div class="form-group">
+                                <label for="cms-antirreflexo">
+                                    Adicional: Antirreflexo Premium
+                                    <span class="help-text">Acréscimo ao combo em R$</span>
+                                </label>
+                                <div class="input-currency-wrapper">
+                                    <span class="currency-prefix">R$</span>
+                                    <input type="number" id="cms-antirreflexo" step="0.01" min="0" placeholder="100.00" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cms-bluecut">
+                                    Adicional: BlueCut (Filtro Luz Azul)
+                                    <span class="help-text">Acréscimo ao combo em R$</span>
+                                </label>
+                                <div class="input-currency-wrapper">
+                                    <span class="currency-prefix">R$</span>
+                                    <input type="number" id="cms-bluecut" step="0.01" min="0" placeholder="100.00" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cms-fotossensivel">
+                                    Adicional: Lente Fotossensível (Escurece ao Sol)
+                                    <span class="help-text">Acréscimo ao combo em R$</span>
+                                </label>
+                                <div class="input-currency-wrapper">
+                                    <span class="currency-prefix">R$</span>
+                                    <input type="number" id="cms-fotossensivel" step="0.01" min="0" placeholder="150.00" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-action-footer">
+                            <button type="submit" id="btn-save-cms" class="btn-primary-hub">
+                                <i class="fas fa-save"></i>
+                                <span>Salvar Alterações CMS</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Coluna 2: Gestão de Vendedores e Unidades -->
+                <div class="hub-card cms-team-card">
+                    <div class="card-header">
+                        <div class="card-header-icon"><i class="fas fa-users-cog"></i></div>
+                        <div>
+                            <h3>Equipe &amp; Unidades Físicas</h3>
+                            <p>Controle de vendedores ativos e lojas participantes</p>
+                        </div>
+                    </div>
+
+                    <!-- Gerenciador de Vendedores -->
+                    <div class="cms-subblock">
+                        <div class="subblock-header">
+                            <h4><i class="fas fa-user-tie"></i> Gerenciador de Consultores / Vendedores</h4>
+                        </div>
+                        <div class="quick-add-group">
+                            <input type="text" id="new-seller-name" placeholder="Nome do novo consultor..." autocomplete="off">
+                            <button id="btn-add-seller" class="btn-secondary-hub">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Adicionar</span>
+                            </button>
+                        </div>
+                        <div id="sellers-list" class="tag-chips-container">
+                            <span class="chip-item">Carlos Silva <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Mariana Santos <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Beatriz Oliveira <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Lucas Fernandes <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                        </div>
+                    </div>
+
+                    <!-- Gerenciador de Lojas -->
+                    <div class="cms-subblock">
+                        <div class="subblock-header">
+                            <h4><i class="fas fa-store-alt"></i> Gerenciador de Lojas e Pontos de Atendimento</h4>
+                        </div>
+                        <div class="quick-add-group">
+                            <input type="text" id="new-store-name" placeholder="Nome da unidade (ex: Loja 06 - Barão Geraldo)..." autocomplete="off">
+                            <button id="btn-add-store" class="btn-secondary-hub">
+                                <i class="fas fa-plus"></i>
+                                <span>Adicionar</span>
+                            </button>
+                        </div>
+                        <div id="stores-list" class="tag-chips-container">
+                            <span class="chip-item">Loja 01 - Matriz Centro <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Loja 02 - Shopping Iguatemi <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Loja 03 - Shopping Dom Pedro <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Loja 04 - Cambuí Conceito <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                            <span class="chip-item">Loja 05 - Taquaral <button class="chip-remove" title="Remover"><i class="fas fa-times"></i></button></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 3: Gerador de Parâmetros UTM e Rastreamento -->
+                <div class="hub-card cms-utm-card">
+                    <div class="card-header">
+                        <div class="card-header-icon"><i class="fas fa-link"></i></div>
+                        <div>
+                            <h3>Gerador Inteligente de UTMs</h3>
+                            <p>Crie links rastreados para campanhas no Meta Ads, Google e WhatsApp</p>
+                        </div>
+                    </div>
+
+                    <div class="utm-builder-form">
+                        <div class="form-group">
+                            <label for="utm-source">Origem da Campanha (utm_source)</label>
+                            <input type="text" id="utm-source" placeholder="ex: meta_ads, instagram, google, whatsapp">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="utm-medium">Mídia / Canal (utm_medium)</label>
+                            <input type="text" id="utm-medium" placeholder="ex: stories, feed, cpc, reels, bio">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="utm-campaign">Nome da Campanha (utm_campaign)</label>
+                            <input type="text" id="utm-campaign" placeholder="ex: forlife_di_capri_abril">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="utm-content">Conteúdo / Criativo (utm_content)</label>
+                            <input type="text" id="utm-content" placeholder="ex: video_depoimento_dr_armando">
+                        </div>
+
+                        <div class="utm-preview-box">
+                            <label for="utm-preview-url">Link Completo com Rastreamento:</label>
+                            <div class="copy-url-wrapper">
+                                <input type="text" id="utm-preview-url" readonly value="https://lp.opticasconceicao.com.br/forlife?utm_source=instagram&amp;utm_medium=stories&amp;utm_campaign=forlife_abril">
+                                <button id="btn-copy-utm" class="btn-copy" title="Copiar URL para área de transferência">
+                                    <i class="fas fa-copy"></i>
+                                    <span>Copiar Link</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             ABA 4: TRÁFEGO & INTELIGÊNCIA
+             ==================================================== -->
+        <section id="tab-traffic" class="hub-tab-panel">
+            <!-- Cards de Métricas de Performance -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon-box royal">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Sessões Totais</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="traffic-total-sessions">2.840</span>
+                            <span class="metric-pill positive"><i class="fas fa-arrow-up"></i> +18.2%</span>
+                        </div>
+                        <span class="metric-subtext">Visualizações da Landing Page</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box green">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Taxa de Retenção</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="traffic-retention-rate">68.4%</span>
+                            <span class="metric-pill success"><i class="fas fa-check"></i> Saudável</span>
+                        </div>
+                        <span class="metric-subtext">Tempo &gt; 30 segundos no site</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box gold">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Taxa de Conversão</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="traffic-conversion-rate">12.8%</span>
+                            <span class="metric-pill positive"><i class="fas fa-bolt"></i> +3.1%</span>
+                        </div>
+                        <span class="metric-subtext">Sessões convertidas em cupom</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon-box navy">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-title">Dwell Time Médio</span>
+                        <div class="metric-value-wrapper">
+                            <span class="metric-number" id="traffic-dwell-time">2m 45s</span>
+                            <span class="metric-pill info"><i class="fas fa-clock"></i> Excelente</span>
+                        </div>
+                        <span class="metric-subtext">Tempo médio de navegação</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rankings e Análise de Tráfego -->
+            <div class="traffic-analytics-grid">
+                <!-- Ranking de Campanhas -->
+                <div class="hub-card ranking-card">
+                    <div class="card-header">
+                        <div class="card-header-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div>
+                            <h3>Ranking de Campanhas &amp; Canais</h3>
+                            <p>Desempenho por UTM Campaign e Origem</p>
+                        </div>
+                    </div>
+                    <div id="traffic-campaigns-list" class="ranking-items-list">
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-instagram"></i> meta_forlife_di_capri_stories</span>
+                                <span class="item-stat">1.120 sessões (39.4%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 78%; background: linear-gradient(90deg, #1E40AF, #2563EB);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-facebook"></i> meta_forlife_feed_video</span>
+                                <span class="item-stat">740 sessões (26.1%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 52%; background: linear-gradient(90deg, #2563EB, #60A5FA);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-google"></i> google_search_multifocal_campinas</span>
+                                <span class="item-stat">590 sessões (20.8%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 41%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-whatsapp"></i> whatsapp_disparo_reengajamento</span>
+                                <span class="item-stat">390 sessões (13.7%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 28%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ranking de Cidades / Regiões -->
+                <div class="hub-card ranking-card">
+                    <div class="card-header">
+                        <div class="card-header-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <h3>Ranking de Cidades &amp; Regiões</h3>
+                            <p>Origem geográfica dos visitantes nas LPs</p>
+                        </div>
+                    </div>
+                    <div id="traffic-cities-list" class="ranking-items-list">
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Campinas - SP</span>
+                                <span class="item-stat">1.620 sessões (57%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 85%; background: linear-gradient(90deg, #002C5B, #1E40AF);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Valinhos - SP</span>
+                                <span class="item-stat">460 sessões (16%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 44%; background: linear-gradient(90deg, #1E40AF, #3B82F6);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Vinhedo - SP</span>
+                                <span class="item-stat">310 sessões (11%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 32%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Sumaré &amp; Hortolândia - SP</span>
+                                <span class="item-stat">270 sessões (9.5%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 26%; background: linear-gradient(90deg, #F59E0B, #D97706);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Engajamento e Heatmap / Profundidade de Scroll -->
+            <div class="hub-card heatmap-section-card">
+                <div class="card-header">
+                    <div class="card-header-icon"><i class="fas fa-fire-alt"></i></div>
+                    <div>
+                        <h3>Engajamento por Seção &amp; Heatmap de Rolagem (Scroll Depth)</h3>
+                        <p>Percentual de visitantes que visualizaram cada bloco da Landing Page</p>
+                    </div>
+                </div>
+
+                <div class="scroll-depth-grid">
+                    <div class="depth-bar-wrapper">
+                        <div class="depth-indicator-top">
+                            <span class="depth-level"><i class="fas fa-level-down-alt"></i> Topo &amp; Hero (0% - 25%)</span>
+                            <span class="depth-pct positive">98.2% de alcance</span>
+                        </div>
+                        <div class="depth-track">
+                            <div class="depth-fill" style="width: 98.2%; background: #10B981;"></div>
+                        </div>
+                        <span class="depth-desc">Impacto visual imediato, logotipo e promessa principal do combo</span>
+                    </div>
+
+                    <div class="depth-bar-wrapper">
+                        <div class="depth-indicator-top">
+                            <span class="depth-level"><i class="fas fa-level-down-alt"></i> Vitrine de Armações (25% - 50%)</span>
+                            <span class="depth-pct positive">86.4% de alcance</span>
+                        </div>
+                        <div class="depth-track">
+                            <div class="depth-fill" style="width: 86.4%; background: #2563EB;"></div>
+                        </div>
+                        <span class="depth-desc">Catálogo de modelos, cores e filtros interativos de armações</span>
+                    </div>
+
+                    <div class="depth-bar-wrapper">
+                        <div class="depth-indicator-top">
+                            <span class="depth-level"><i class="fas fa-level-down-alt"></i> Comparativo de Lentes (50% - 75%)</span>
+                            <span class="depth-pct info">71.8% de alcance</span>
+                        </div>
+                        <div class="depth-track">
+                            <div class="depth-fill" style="width: 71.8%; background: #3B82F6;"></div>
+                        </div>
+                        <span class="depth-desc">Tecnologia Multifocal Di Capri, BlueCut e Antirreflexo</span>
+                    </div>
+
+                    <div class="depth-bar-wrapper">
+                        <div class="depth-indicator-top">
+                            <span class="depth-level"><i class="fas fa-level-down-alt"></i> Formulário do Cupom &amp; FAQ (75% - 100%)</span>
+                            <span class="depth-pct warning">54.9% de alcance</span>
+                        </div>
+                        <div class="depth-track">
+                            <div class="depth-fill" style="width: 54.9%; background: #F59E0B;"></div>
+                        </div>
+                        <span class="depth-desc">Área de conversão direta, selos de garantia e depoimentos reais</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             ABA 5: CATÁLOGO DE LANDING PAGES
+             ==================================================== -->
+        <section id="tab-catalog" class="hub-tab-panel">
+            <div class="catalog-header-bar">
+                <div>
+                    <h2>Catálogo Central de Landing Pages</h2>
+                    <p>Monitore, edite e crie novas páginas comerciais do ecossistema Ópticas Conceição</p>
+                </div>
+                <button id="btn-open-create-lp-modal" class="btn-primary-hub">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Criar Nova Landing Page</span>
+                </button>
+            </div>
+
+            <!-- Grid de Cards de LPs -->
+            <div id="lp-catalog-grid" class="lp-catalog-grid">
+                <!-- Card 1: ForLife Multifocal -->
+                <div class="lp-card active-card" data-lp-id="forlife">
+                    <div class="lp-card-header">
+                        <span class="lp-tag live">● Ativa em Produção</span>
+                        <div class="lp-card-actions">
+                            <a href="/forlife/index.html" target="_blank" class="card-btn-action" title="Abrir página"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="lp-card-body">
+                        <div class="lp-badge-type">Multifocal Di Capri</div>
+                        <h3 class="lp-title">ForLife Multifocal Di Capri</h3>
+                        <p class="lp-slug">Rota: <code>/forlife</code></p>
+                        <div class="lp-stats-row">
+                            <div class="stat-pill">
+                                <span class="label">Preço Combo</span>
+                                <span class="val">R$ 297,00</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Leads</span>
+                                <span class="val">482</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Conversão</span>
+                                <span class="val text-success">14.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lp-card-footer">
+                        <button class="btn-select-lp btn-switch-forlife" data-switch-lp="forlife" onclick="if(window.switchLandingPage){window.switchLandingPage('forlife');}">
+                            <i class="fas fa-edit"></i>
+                            <span>Gerenciar no Studio</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Óculos Completo FILA -->
+                <div class="lp-card" data-lp-id="fila">
+                    <div class="lp-card-header">
+                        <span class="lp-tag live">● Ativa em Produção</span>
+                        <div class="lp-card-actions">
+                            <a href="/" target="_blank" class="card-btn-action" title="Abrir página"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="lp-card-body">
+                        <div class="lp-badge-type">Esportivo &amp; Casual</div>
+                        <h3 class="lp-title">Óculos Completo FILA</h3>
+                        <p class="lp-slug">Rota: <code>/</code></p>
+                        <div class="lp-stats-row">
+                            <div class="stat-pill">
+                                <span class="label">Preço Combo</span>
+                                <span class="val">R$ 299,00</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Leads</span>
+                                <span class="val">615</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Conversão</span>
+                                <span class="val text-success">16.8%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lp-card-footer">
+                        <button class="btn-select-lp" data-switch-lp="fila" onclick="if(window.switchLandingPage){window.switchLandingPage('fila');}">
+                            <i class="fas fa-edit"></i>
+                            <span>Gerenciar no Studio</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Varilux Comfort Max -->
+                <div class="lp-card" data-lp-id="varilux">
+                    <div class="lp-card-header">
+                        <span class="lp-tag draft">● Em Preparação</span>
+                        <div class="lp-card-actions">
+                            <a href="/varilux" target="_blank" class="card-btn-action" title="Abrir página"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="lp-card-body">
+                        <div class="lp-badge-type">Essilor Varilux</div>
+                        <h3 class="lp-title">Varilux Comfort Max</h3>
+                        <p class="lp-slug">Rota: <code>/varilux</code></p>
+                        <div class="lp-stats-row">
+                            <div class="stat-pill">
+                                <span class="label">Preço Combo</span>
+                                <span class="val">R$ 680,00</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Leads</span>
+                                <span class="val">94</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Conversão</span>
+                                <span class="val text-warning">9.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lp-card-footer">
+                        <button class="btn-select-lp" data-switch-lp="varilux" onclick="if(window.switchLandingPage){window.switchLandingPage('varilux');}">
+                            <i class="fas fa-edit"></i>
+                            <span>Gerenciar no Studio</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 4: Zeiss SmartLife Digital -->
+                <div class="lp-card" data-lp-id="zeiss">
+                    <div class="lp-card-header">
+                        <span class="lp-tag draft">● Em Preparação</span>
+                        <div class="lp-card-actions">
+                            <a href="/zeiss" target="_blank" class="card-btn-action" title="Abrir página"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="lp-card-body">
+                        <div class="lp-badge-type">Zeiss Vision Care</div>
+                        <h3 class="lp-title">Zeiss SmartLife Digital</h3>
+                        <p class="lp-slug">Rota: <code>/zeiss</code></p>
+                        <div class="lp-stats-row">
+                            <div class="stat-pill">
+                                <span class="label">Preço Combo</span>
+                                <span class="val">R$ 790,00</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Leads</span>
+                                <span class="val">53</span>
+                            </div>
+                            <div class="stat-pill">
+                                <span class="label">Conversão</span>
+                                <span class="val text-warning">8.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lp-card-footer">
+                        <button class="btn-select-lp" data-switch-lp="zeiss" onclick="if(window.switchLandingPage){window.switchLandingPage('zeiss');}">
+                            <i class="fas fa-edit"></i>
+                            <span>Gerenciar no Studio</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================
+         MODAL DE CRIAÇÃO DE NOVA LANDING PAGE
+         ======================================================== -->
+    <div id="modal-create-lp" class="hub-modal-backdrop" aria-hidden="true" role="dialog">
+        <div class="hub-modal-card">
+            <div class="hub-modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon"><i class="fas fa-magic"></i></div>
+                    <div>
+                        <h3>Criar Nova Landing Page</h3>
+                        <p>Adicione uma nova página promocional com templates otimizados</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-modal" class="modal-close-btn" title="Fechar Janela">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="form-create-lp" class="hub-modal-form">
+                <div class="form-group">
+                    <label for="new-lp-name">
+                        Nome Comercial da Landing Page
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" id="new-lp-name" placeholder="ex: Ray-Ban Aviador Completo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-lp-slug">
+                        Slug da URL (Caminho da rota)
+                        <span class="required">*</span>
+                    </label>
+                    <div class="slug-input-wrapper">
+                        <span class="slug-prefix">lp.opticasconceicao.com.br/</span>
+                        <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-z0-9\-_]+" title="Apenas letras minúsculas, números e traços">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-lp-template">
+                        Template Base de Design
+                        <span class="required">*</span>
+                    </label>
+                    <div class="filter-select-wrapper">
+                        <select id="new-lp-template" required>
+                            <option value="forlife" selected>Template ForLife Multifocal (Design Navy Clean &amp; Moderno)</option>
+                            <option value="fila">Template FILA Sport (Design Bold Esportivo Dinâmico)</option>
+                            <option value="premium">Template Luxo Conceição (Design Gold &amp; Alta Óptica)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-lp-price">
+                        Preço Base do Combo Inicial (R$)
+                    </label>
+                    <div class="input-currency-wrapper">
+                        <span class="currency-prefix">R$</span>
+                        <input type="number" id="new-lp-price" step="0.01" min="0" placeholder="349.00">
+                    </div>
+                </div>
+
+                <div class="modal-actions-footer">
+                    <button type="button" class="btn-cancel-modal" id="btn-cancel-create-lp">Cancelar</button>
+                    <button type="submit" class="btn-submit-modal">
+                        <i class="fas fa-rocket"></i>
+                        <span>Criar Landing Page</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Container de Notificações Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+</body>
+</html>

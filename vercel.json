@@ -2,6 +2,10 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/hub", "destination": "/hub.html" },
+    { "source": "/hub/", "destination": "/hub.html" },
+    { "source": "/admin", "destination": "/hub.html" },
+    { "source": "/admin/", "destination": "/hub.html" },
     { "source": "/forlife", "destination": "/forlife/index.html" },
     { "source": "/forlife/", "destination": "/forlife/index.html" },
     { "source": "/forlife/admin", "destination": "/forlife/admin.html" }
