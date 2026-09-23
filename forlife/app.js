@@ -1117,6 +1117,7 @@ async function handleVoucherSubmit(e) {
     const messageText = 
 `Olá, Ópticas Conceição! Acabei de gerar meu cupom exclusivo ForLife no site.\n\n` +
 `🎫 *Código do Cupom:* ${voucherCode}\n` +
+`⏰ *Cupom válido por 7 dias!*\n` +
 `👤 *Nome:* ${name}\n` +
 `📍 *Cidade:* ${city}\n` +
 `🏪 *Loja Escolhida:* ${store}\n` +
@@ -1127,6 +1128,7 @@ utmNotice +
 `⚡ *Tecnologia:*\n${addonsText}\n\n` +
 `💵 *Total:* R$ ${formatMoney(totalPrice)} (em até ${forlifeConfig.installments}x de R$ ${formatMoney(totalPrice / forlifeConfig.installments)} sem juros)\n` +
 `📋 *Situação da Receita:* ${recipeStatusText}\n\n` +
+`⏰ *Cupom válido por 7 dias!*\n` +
 `Gostaria de garantir as condições do meu cupom e agendar meu atendimento!`;
 
     const whatsappBtn = document.getElementById('btn-whatsapp-voucher');

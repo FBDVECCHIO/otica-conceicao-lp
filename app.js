@@ -496,6 +496,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 const messageText = `Olá Ópticas Conceição! Acabei de gerar meu cupom no site.\n\n` + 
                                     `🎫 *Código:* ${voucherCode}\n` +
+                                    `⏰ *Cupom válido por 7 dias!*\n` +
                                     `👤 *Nome:* ${name}\n` +
                                     `📍 *Cidade:* ${city}\n` +
                                     `📞 *WhatsApp:* ${phone}\n` +
@@ -503,6 +504,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     `👓 *Aro Fila:* ${comboState.frame.name} (R$ ${comboState.frame.price},00)\n` +
                                     `👁️ *Lente:* ${comboState.lens.name} (Adicional: R$ ${comboState.lens.price},00)\n` +
                                     `💰 *Total Combo:* R$ ${totalCalculado},00\n\n` +
+                                    `⏰ *Cupom válido por 7 dias!*\n` +
                                     `Gostaria de agendar o meu atendimento!`;
                 
                 whatsappBtn.href = `https://api.whatsapp.com/send?phone=${storePhone}&text=${encodeURIComponent(messageText)}`;
