@@ -1787,9 +1787,22 @@ body {
     .header-forlife {
         padding: 27px 0; /* Altura aumentada em 1 cm (+38px) mantendo o logo no tamanho atual */
     }
+    .header-container {
+        gap: 12px;
+        flex-wrap: nowrap;
+        justify-content: center;
+    }
+    .header-promo-title {
+        font-size: 20px !important;
+        letter-spacing: -0.3px;
+        line-height: 1.1;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
     .header-logo-link img {
         height: 34px;
         max-width: 80vw;
+        flex-shrink: 0;
     }
     .banner-combo {
         padding: 16px 0 35px; /* Subiu mais de 1 cm */
