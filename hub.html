@@ -11,8 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome 6.4.0 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome 6.5.1 Oficial -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Lucide Icons (Apple Design System Icons) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Supabase JS v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -439,17 +441,22 @@
                     <table class="leads-table">
                         <thead>
                             <tr>
-                                <th style="width: 44px; text-align: center;">
+                                <th style="width: 36px; text-align: center;"><i class="fas fa-info-circle" title="Detalhes"></i></th>
+                                <th style="width: 85px;">Data</th>
+                                <th>Cliente</th>
+                                <th style="width: 44px; text-align: center;">Whats</th>
+                                <th style="width: 85px;">Combo</th>
+                                <th>Adicionais</th>
+                                <th style="width: 85px; text-align: center;">Receita</th>
+                                <th style="width: 130px;">Loja Atribuída</th>
+                                <th style="width: 110px;">Vendedor</th>
+                                <th style="width: 85px;">Valor Venda</th>
+                                <th style="width: 75px;">Nº OS</th>
+                                <th style="width: 100px;">Status</th>
+                                <th style="width: 40px; text-align: center;">
                                     <input type="checkbox" id="select-all-leads" title="Selecionar Todos">
                                 </th>
-                                <th>Cupom / Data</th>
-                                <th>Cliente</th>
-                                <th>WhatsApp</th>
-                                <th>Loja / Vendedor</th>
-                                <th>Tratamentos / Lente</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Valor</th>
-                                <th style="text-align: center; width: 140px;">Ações</th>
+                                <th style="width: 105px; text-align: center;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="leads-table-body">
@@ -466,13 +473,51 @@
                     </table>
                 </div>
 
+                <!-- Totalizador da Tabela de Leads -->
+                <div class="leads-totalizer-bar">
+                    <div class="totalizer-item">
+                        <span class="tot-label"><i class="fas fa-users"></i> Total de Leads:</span>
+                        <strong class="tot-val" id="tot-leads-count">0</strong>
+                    </div>
+                    <div class="totalizer-item">
+                        <span class="tot-label"><i class="fas fa-check-circle"></i> Vendas Concluídas:</span>
+                        <strong class="tot-val text-success" id="tot-sales-value">R$ 0,00</strong>
+                    </div>
+                    <div class="totalizer-item">
+                        <span class="tot-label"><i class="fas fa-gem"></i> Ticket Médio Real:</span>
+                        <strong class="tot-val text-primary" id="tot-ticket-medio">R$ 0,00</strong>
+                    </div>
+                    <div class="totalizer-item">
+                        <span class="tot-label"><i class="fas fa-chart-line"></i> Pipeline Previsto:</span>
+                        <strong class="tot-val text-muted" id="tot-pipeline-value">R$ 0,00</strong>
+                    </div>
+                </div>
+
                 <!-- Rodapé da Tabela com Paginação & Resumo -->
                 <div class="table-footer">
                     <div class="table-summary-text">
                         Mostrando <strong id="visible-leads-count">0</strong> de <strong id="total-registered-leads">0</strong> leads cadastrados
                     </div>
-                    <div class="table-pagination" id="leads-pagination">
-                        <!-- Paginação dinâmica -->
+                    <div class="pagination-controls-wrapper">
+                        <div class="page-size-picker">
+                            <label for="leads-page-size"><i class="fas fa-list-ol"></i> Exibir:</label>
+                            <select id="leads-page-size" class="page-size-select">
+                                <option value="10" selected>10 por página</option>
+                                <option value="25">25 por página</option>
+                                <option value="50">50 por página</option>
+                                <option value="100">100 por página</option>
+                                <option value="all">Todas</option>
+                            </select>
+                        </div>
+                        <div class="table-pagination" id="leads-pagination">
+                            <button type="button" id="btn-page-prev" class="btn-page-nav" disabled>
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <span id="page-indicator" class="page-indicator">Página 1 de 1</span>
+                            <button type="button" id="btn-page-next" class="btn-page-nav" disabled>
+                                Próxima <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1108,6 +1153,7 @@
                                 <th style="text-align:right;">Faturamento Total</th>
                                 <th style="text-align:right;">Investimento Mídia</th>
                                 <th style="text-align:center;">ROI Est.</th>
+                                <th style="text-align:center; width:90px;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="comparison-table-body">

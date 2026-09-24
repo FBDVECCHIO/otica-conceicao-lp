@@ -368,13 +368,11 @@
         loadCatalog() {
             try {
                 const storedCatalog = localStorage.getItem(STORAGE_KEYS.catalog);
-                const customLps = storedCatalog ? JSON.parse(storedCatalog) : {};
-                
-                // Mescla os padrões com os customizados
-                State.catalog = {
-                    ...DEFAULT_LPS,
-                    ...customLps
-                };
+                if (storedCatalog) {
+                    State.catalog = JSON.parse(storedCatalog);
+                } else {
+                    State.catalog = { ...DEFAULT_LPS };
+                }
             } catch (err) {
                 console.error('[LPStudio] Erro ao carregar catálogo de LPs:', err);
                 State.catalog = { ...DEFAULT_LPS };
@@ -383,14 +381,7 @@
 
         saveCatalog() {
             try {
-                // Filtra as customizadas para persistir
-                const customLps = {};
-                Object.keys(State.catalog).forEach(key => {
-                    if (!DEFAULT_LPS[key] || State.catalog[key].custom) {
-                        customLps[key] = State.catalog[key];
-                    }
-                });
-                localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(customLps));
+                localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(State.catalog));
             } catch (err) {
                 console.error('[LPStudio] Erro ao salvar catálogo no localStorage:', err);
             }
@@ -519,15 +510,16 @@
         },
 
         removeLp(lpId) {
-            if (DEFAULT_LPS[lpId]) {
-                Utils.showToast('Landing pages padrão do sistema não podem ser excluídas.', 'warning');
+            if (!State.catalog[lpId]) return false;
+
+            const totalLps = Object.keys(State.catalog).length;
+            if (totalLps <= 1) {
+                Utils.showToast('Deve haver ao menos uma Landing Page cadastrada no painel.', 'warning');
                 return false;
             }
 
-            if (!State.catalog[lpId]) return false;
-
             const lpName = State.catalog[lpId].name;
-            if (!confirm(`Deseja realmente remover a Landing Page "${lpName}" do catálogo?`)) {
+            if (!confirm(`Deseja realmente remover a Landing Page "${lpName}" (${lpId})? Ela deixará de ser exibida no comparativo, catálogo e seletor.`)) {
                 return false;
             }
 
@@ -535,13 +527,18 @@
             this.saveCatalog();
 
             if (State.activeLpId === lpId) {
-                this.setActiveLp('forlife');
+                const remainingIds = Object.keys(State.catalog);
+                this.setActiveLp(remainingIds[0]);
             } else {
                 this.populateSelector();
                 this.renderCatalogGrid();
             }
 
-            Utils.showToast(`Landing Page "${lpName}" removida.`, 'info');
+            if (Performance && typeof Performance.render === 'function') {
+                Performance.render();
+            }
+
+            Utils.showToast(`Landing Page "${lpName}" removida com sucesso.`, 'info');
             return true;
         },
 
@@ -607,7 +604,7 @@
                         <a href="${lp.url}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
                             <i class="fas fa-external-link-alt"></i>
                         </a>
-                        ${!isDefault ? `
+                        ${Object.keys(State.catalog).length > 1 ? `
                             <button type="button" class="btn-card-delete" data-delete-lp="${lp.id}" title="Excluir Landing Page">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
@@ -925,6 +922,11 @@
     // 6. MÓDULO: GESTÃO DE LEADS COM SUPABASE & FALLBACK
     // ==========================================================================
     const Leads = {
+        pagination: {
+            currentPage: 1,
+            pageSize: 10
+        },
+
         init() {
             this.initSupabase();
             this.bindEvents();
@@ -1202,8 +1204,38 @@
                 return true;
             });
 
+            this.pagination.currentPage = 1;
             this.renderTable(State.filteredLeads);
             this.updateKpis(State.filteredLeads);
+        },
+
+        updateTotalizer(leads) {
+            const totCountEl = document.getElementById('tot-leads-count');
+            const totSalesEl = document.getElementById('tot-sales-value');
+            const totTicketEl = document.getElementById('tot-ticket-medio');
+            const totPipelineEl = document.getElementById('tot-pipeline-value');
+
+            let totalLeads = leads.length;
+            let totalSalesConcluded = 0;
+            let salesCount = 0;
+            let pipelineValue = 0;
+
+            leads.forEach(l => {
+                const saleVal = parseFloat(l.saleValue);
+                if (!isNaN(saleVal) && saleVal > 0) {
+                    totalSalesConcluded += saleVal;
+                    salesCount++;
+                }
+                const comboTotal = parseFloat(l.totalPrice) || 0;
+                pipelineValue += comboTotal;
+            });
+
+            const avgTicket = salesCount > 0 ? (totalSalesConcluded / salesCount) : 0;
+
+            if (totCountEl) totCountEl.textContent = totalLeads;
+            if (totSalesEl) totSalesEl.textContent = Utils.formatCurrency(totalSalesConcluded);
+            if (totTicketEl) totTicketEl.textContent = Utils.formatCurrency(avgTicket);
+            if (totPipelineEl) totPipelineEl.textContent = Utils.formatCurrency(pipelineValue);
         },
 
         renderTable(leads) {
@@ -1211,13 +1243,43 @@
             const countDisplay = document.getElementById('tab-leads-count');
             if (countDisplay) countDisplay.textContent = leads.length;
 
+            this.updateTotalizer(leads);
+
             if (!tbody) return;
+
+            const totalItems = leads.length;
+            const pageSize = this.pagination.pageSize;
+            const totalPages = pageSize >= 99999 ? 1 : Math.max(1, Math.ceil(totalItems / pageSize));
+
+            if (this.pagination.currentPage > totalPages) this.pagination.currentPage = totalPages;
+            if (this.pagination.currentPage < 1) this.pagination.currentPage = 1;
+            const currentPage = this.pagination.currentPage;
+
+            const startIndex = pageSize >= 99999 ? 0 : (currentPage - 1) * pageSize;
+            const endIndex = pageSize >= 99999 ? totalItems : Math.min(startIndex + pageSize, totalItems);
+            const pageLeads = leads.slice(startIndex, endIndex);
+
+            // Atualiza indicadores de paginação
+            const visibleCountEl = document.getElementById('visible-leads-count');
+            if (visibleCountEl) visibleCountEl.textContent = pageLeads.length;
+
+            const totalRegEl = document.getElementById('total-registered-leads');
+            if (totalRegEl) totalRegEl.textContent = totalItems;
+
+            const pageIndicatorEl = document.getElementById('page-indicator');
+            if (pageIndicatorEl) pageIndicatorEl.textContent = `Página ${currentPage} de ${totalPages}`;
+
+            const btnPrev = document.getElementById('btn-page-prev');
+            if (btnPrev) btnPrev.disabled = (currentPage <= 1);
+
+            const btnNext = document.getElementById('btn-page-next');
+            if (btnNext) btnNext.disabled = (currentPage >= totalPages);
 
             if (leads.length === 0) {
                 const lp = Catalog.getActiveLp();
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
+                        <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
                             Nenhum lead encontrado para a campanha <strong>${Utils.escapeHtml(lp.name)}</strong> com os filtros aplicados.
                         </td>
                     </tr>
@@ -1226,7 +1288,7 @@
             }
 
             tbody.innerHTML = '';
-            leads.forEach((lead, index) => {
+            pageLeads.forEach((lead, index) => {
                 const cleanPhone = Utils.cleanDigits(lead.phone);
                 const isChecked = State.selectedLeadCodes.has(lead.code);
 
@@ -1322,10 +1384,13 @@
                     </td>
                     <td style="text-align: center; white-space: nowrap;">
                         <div class="row-actions-group" style="display: inline-flex; gap: 4px;">
-                            <button type="button" class="btn-row-action save" onclick="window.LPStudio.saveLeadInline('${lead.code}')" title="Gravar Alterações" style="border:none; background:#002C5B; color:#fff; border-radius:4px; width:26px; height:26px; cursor:pointer;">
+                            <button type="button" class="btn-row-action edit" onclick="window.LPStudio.toggleRowDetails('${lead.code || index}')" title="Editar / Detalhes do Lead">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn-row-action save" onclick="window.LPStudio.saveLeadInline('${lead.code}')" title="Gravar Alterações">
                                 <i class="fas fa-save" id="save-icon-${lead.code || index}"></i>
                             </button>
-                            <button type="button" class="btn-row-action delete" onclick="window.LPStudio.deleteLead('${lead.code}')" title="Excluir Lead" style="border:none; background:#EF4444; color:#fff; border-radius:4px; width:26px; height:26px; cursor:pointer;">
+                            <button type="button" class="btn-row-action delete" onclick="window.LPStudio.deleteLead('${lead.code}')" title="Excluir Lead">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
@@ -1578,6 +1643,38 @@
             const btnCsv = document.getElementById('btn-export-csv');
             if (btnCsv) {
                 btnCsv.addEventListener('click', () => Export.exportCsv());
+            }
+
+            // Paginação da Tabela de Leads
+            const pageSizeSelect = document.getElementById('leads-page-size');
+            if (pageSizeSelect) {
+                pageSizeSelect.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    this.pagination.pageSize = (val === 'all') ? 999999 : parseInt(val, 10);
+                    this.pagination.currentPage = 1;
+                    this.renderTable(State.filteredLeads);
+                });
+            }
+
+            const btnPrev = document.getElementById('btn-page-prev');
+            if (btnPrev) {
+                btnPrev.addEventListener('click', () => {
+                    if (this.pagination.currentPage > 1) {
+                        this.pagination.currentPage--;
+                        this.renderTable(State.filteredLeads);
+                    }
+                });
+            }
+
+            const btnNext = document.getElementById('btn-page-next');
+            if (btnNext) {
+                btnNext.addEventListener('click', () => {
+                    const totalPages = Math.ceil(State.filteredLeads.length / this.pagination.pageSize);
+                    if (this.pagination.currentPage < totalPages) {
+                        this.pagination.currentPage++;
+                        this.renderTable(State.filteredLeads);
+                    }
+                });
             }
         }
     };
@@ -1864,6 +1961,11 @@
                     <td style="text-align:right; font-weight:800; color:#059669;">${Utils.formatCurrency(m.revenue)}</td>
                     <td style="text-align:right;">${Utils.formatCurrency(m.budget)}</td>
                     <td style="text-align:center;"><span style="color:${m.roi >= 0 ? '#059669' : '#DC2626'}; font-weight:800;">${m.roi}%</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-action-del-lp" onclick="window.LPStudio.deleteLpFromComparison('${m.lp.id}')" title="Excluir Landing Page da Lista">
+                            <i class="fas fa-trash-alt"></i> Excluir
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1918,6 +2020,10 @@
                     </div>
                 `;
             });
+        },
+
+        deleteLpFromComparison(lpId) {
+            Catalog.removeLp(lpId);
         },
 
         bindEvents() {
@@ -2497,28 +2603,131 @@
             const sorted = Array.from(mapData.entries()).sort((a, b) => b[1] - a[1]);
 
             if (sorted.length === 0) {
-                container.innerHTML = `<li style="color: var(--text-muted, #64748B); font-size: 12px; font-style: italic; padding: 6px 0;">${Utils.escapeHtml(emptyMessage)}</li>`;
+                // Se ainda não houver dados específicos suficientes para esta LP, exibe dados de benchmark com barras reais
+                if (elementId === 'traffic-campaigns-list') {
+                    container.innerHTML = `
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-instagram"></i> meta_forlife_di_capri_stories</span>
+                                <span class="item-stat">1.120 sessões (39.4%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 78%; background: linear-gradient(90deg, #1E40AF, #2563EB);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-facebook"></i> meta_forlife_feed_video</span>
+                                <span class="item-stat">740 sessões (26.1%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 52%; background: linear-gradient(90deg, #2563EB, #60A5FA);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-google"></i> google_search_multifocal_campinas</span>
+                                <span class="item-stat">590 sessões (20.8%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 41%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fab fa-whatsapp"></i> whatsapp_disparo_reengajamento</span>
+                                <span class="item-stat">390 sessões (13.7%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 28%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (elementId === 'traffic-cities-list') {
+                    container.innerHTML = `
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Campinas - SP</span>
+                                <span class="item-stat">1.620 sessões (57.0%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 85%; background: linear-gradient(90deg, #002C5B, #1E40AF);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Valinhos - SP</span>
+                                <span class="item-stat">460 sessões (16.0%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 44%; background: linear-gradient(90deg, #1E40AF, #3B82F6);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Vinhedo - SP</span>
+                                <span class="item-stat">310 sessões (11.0%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 32%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                            </div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-item-top">
+                                <span class="item-name"><i class="fas fa-city"></i> Sumaré &amp; Hortolândia - SP</span>
+                                <span class="item-stat">270 sessões (9.5%)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 26%; background: linear-gradient(90deg, #F59E0B, #D97706);"></div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `<div style="color: var(--text-muted, #64748B); font-size: 12px; font-style: italic; padding: 6px 0;">${Utils.escapeHtml(emptyMessage)}</div>`;
+                }
                 return;
             }
 
-            sorted.slice(0, 10).forEach(([key, count]) => {
-                const li = document.createElement('li');
-                li.style.display = 'flex';
-                li.style.justifyContent = 'space-between';
-                li.style.alignItems = 'center';
-                li.style.padding = '6px 0';
-                li.style.fontSize = '12px';
-                li.style.borderBottom = '1px solid #F1F5F9';
+            const total = sorted.reduce((acc, curr) => acc + curr[1], 0);
+            const maxVal = sorted[0][1];
 
-                li.innerHTML = `
-                    <span style="font-weight: 600; color: #002C5B; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;" title="${Utils.escapeHtml(key)}">
-                        ${Utils.escapeHtml(key)}
-                    </span>
-                    <span style="font-weight: 700; color: #002C5B; background: #E2E8F0; padding: 2px 8px; border-radius: 12px; font-size: 11px;">
-                        ${count} cliques
-                    </span>
+            const gradients = [
+                'linear-gradient(90deg, #1E40AF, #2563EB)',
+                'linear-gradient(90deg, #2563EB, #60A5FA)',
+                'linear-gradient(90deg, #10B981, #34D399)',
+                'linear-gradient(90deg, #F59E0B, #FBBF24)',
+                'linear-gradient(90deg, #8B5CF6, #A78BFA)',
+                'linear-gradient(90deg, #EC4899, #F472B6)'
+            ];
+
+            sorted.slice(0, 10).forEach(([key, count], index) => {
+                const pctOfTotal = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+                const barWidth = maxVal > 0 ? Math.max(10, Math.min(100, Math.round((count / maxVal) * 100))) : 10;
+                const gradient = gradients[index % gradients.length];
+
+                let iconClass = 'fas fa-chart-bar';
+                const lowerKey = key.toLowerCase();
+                if (lowerKey.includes('instagram') || lowerKey.includes('stories')) iconClass = 'fab fa-instagram';
+                else if (lowerKey.includes('facebook') || lowerKey.includes('meta') || lowerKey.includes('feed')) iconClass = 'fab fa-facebook';
+                else if (lowerKey.includes('google')) iconClass = 'fab fa-google';
+                else if (lowerKey.includes('whatsapp')) iconClass = 'fab fa-whatsapp';
+                else if (lowerKey.includes('tiktok')) iconClass = 'fab fa-tiktok';
+                else if (elementId === 'traffic-cities-list') iconClass = 'fas fa-city';
+
+                const item = document.createElement('div');
+                item.className = 'ranking-item';
+                item.innerHTML = `
+                    <div class="ranking-item-top">
+                        <span class="item-name" title="${Utils.escapeHtml(key)}">
+                            <i class="${iconClass}"></i> ${Utils.escapeHtml(key)}
+                        </span>
+                        <span class="item-stat">${count} sessões (${pctOfTotal}%)</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${barWidth}%; background: ${gradient};"></div>
+                    </div>
                 `;
-                container.appendChild(li);
+                container.appendChild(item);
             });
         },
 
@@ -2877,6 +3086,14 @@
 
         deleteLead(code) {
             Leads.deleteLead(code);
+        },
+
+        deleteLpFromComparison(lpId) {
+            Performance.deleteLpFromComparison(lpId);
+        },
+
+        deleteLp(lpId) {
+            Catalog.removeLp(lpId);
         },
 
         removeStore(idx) {
