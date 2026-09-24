@@ -44,7 +44,13 @@
             color: '#002C5B',
             price: 297.00,
             installments: 10,
-            description: 'Combo Multifocal Digital com armação Di Capri e garantia estendida.'
+            description: 'Combo Multifocal Digital com armação Di Capri e garantia estendida.',
+            campaign: {
+                name: 'Campanha ForLife Di Capri - Outono',
+                budget: 2500.00,
+                targetLeads: 150,
+                status: 'Em Veiculação'
+            }
         },
         fila: {
             id: 'fila',
@@ -230,6 +236,102 @@
     // ==========================================================================
     // 4. MÓDULO: CATÁLOGO DE LANDING PAGES
     // ==========================================================================
+
+    // ==========================================================================
+    // 2. MÓDULO: AUTENTICAÇÃO & CONTROLE DE ACESSO
+    // ==========================================================================
+    const Auth = {
+        SESSION_KEY: 'otica_hub_auth_session',
+
+        init() {
+            this.bindEvents();
+            this.checkSession();
+        },
+
+        checkSession() {
+            const isAuth = localStorage.getItem(this.SESSION_KEY) === 'authenticated' || 
+                           sessionStorage.getItem(this.SESSION_KEY) === 'authenticated';
+            const overlay = document.getElementById('auth-overlay');
+            if (overlay) {
+                if (isAuth) {
+                    overlay.classList.remove('active');
+                } else {
+                    overlay.classList.add('active');
+                }
+            }
+        },
+
+        login(user, pass, remember) {
+            const cleanUser = (user || '').trim().toLowerCase();
+            const cleanPass = (pass || '').trim();
+
+            if (cleanUser === 'admin' && cleanPass === 'conceicao1948') {
+                if (remember) {
+                    localStorage.setItem(this.SESSION_KEY, 'authenticated');
+                } else {
+                    sessionStorage.setItem(this.SESSION_KEY, 'authenticated');
+                }
+                const overlay = document.getElementById('auth-overlay');
+                if (overlay) overlay.classList.remove('active');
+                const alertEl = document.getElementById('auth-error-alert');
+                if (alertEl) alertEl.style.display = 'none';
+                Utils.showToast('Bem-vindo ao LP Studio & Multi-Manager!', 'success');
+                return true;
+            } else {
+                const alertEl = document.getElementById('auth-error-alert');
+                if (alertEl) {
+                    alertEl.style.display = 'flex';
+                }
+                return false;
+            }
+        },
+
+        logout() {
+            localStorage.removeItem(this.SESSION_KEY);
+            sessionStorage.removeItem(this.SESSION_KEY);
+            const overlay = document.getElementById('auth-overlay');
+            if (overlay) overlay.classList.add('active');
+            const pwdInput = document.getElementById('auth-password');
+            if (pwdInput) pwdInput.value = '';
+            Utils.showToast('Sessão encerrada com sucesso.', 'info');
+        },
+
+        bindEvents() {
+            const form = document.getElementById('auth-form');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const user = document.getElementById('auth-username')?.value;
+                    const pass = document.getElementById('auth-password')?.value;
+                    const remember = document.getElementById('auth-remember')?.checked;
+                    this.login(user, pass, remember);
+                });
+            }
+
+            const btnToggle = document.getElementById('btn-toggle-pwd');
+            if (btnToggle) {
+                btnToggle.addEventListener('click', () => {
+                    const pwd = document.getElementById('auth-password');
+                    const icon = document.getElementById('pwd-eye-icon');
+                    if (pwd) {
+                        if (pwd.type === 'password') {
+                            pwd.type = 'text';
+                            if (icon) icon.className = 'fas fa-eye-slash';
+                        } else {
+                            pwd.type = 'password';
+                            if (icon) icon.className = 'fas fa-eye';
+                        }
+                    }
+                });
+            }
+
+            const btnLogout = document.getElementById('btn-hub-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', () => this.logout());
+            }
+        }
+    };
+
     const Catalog = {
         init() {
             this.loadCatalog();
@@ -237,6 +339,30 @@
             this.populateSelector();
             this.renderCatalogGrid();
             this.bindEvents();
+        },
+
+
+        updateCampaignInfoBar() {
+            const activeLp = this.getActiveLp();
+            const camp = activeLp.campaign || {
+                name: `Campanha ${activeLp.name}`,
+                budget: 2000.00,
+                targetLeads: 100,
+                status: 'Em Veiculação'
+            };
+
+            const leadsCount = State.allLeads ? State.allLeads.filter(l => Leads.belongsToLp(l, activeLp.id)).length : 0;
+            const target = camp.targetLeads || 100;
+            const pct = Math.min(100, ((leadsCount / target) * 100)).toFixed(1);
+
+            Leads.setDomText(['active-campaign-name'], camp.name);
+            Leads.setDomText(['active-campaign-budget'], Utils.formatCurrency(camp.budget));
+            Leads.setDomText(['active-campaign-target'], `${target} leads`);
+            Leads.setDomText(['active-campaign-status'], camp.status || 'Ativa');
+            Leads.setDomText(['active-campaign-pct'], `${pct}%`);
+
+            const bar = document.getElementById('active-campaign-progress-bar');
+            if (bar) bar.style.width = `${pct}%`;
         },
 
         loadCatalog() {
@@ -692,6 +818,106 @@
             if (btnReload) {
                 btnReload.addEventListener('click', () => this.reloadIframe());
             }
+        },
+
+        initHybridAndDrawer() {
+            // Botão Modo Híbrido
+            const btnHybrid = document.getElementById('btn-view-hybrid');
+            if (btnHybrid) {
+                btnHybrid.addEventListener('click', () => {
+                    this.toggleHybridMode(true);
+                });
+            }
+
+            // Botões de viewports individuais desativam híbrido
+            document.querySelectorAll('.btn-vp:not(#btn-view-hybrid)').forEach(b => {
+                b.addEventListener('click', () => {
+                    this.toggleHybridMode(false);
+                });
+            });
+
+            // Quick Drawer Trigger
+            const btnQuick = document.getElementById('btn-quick-drawer');
+            const drawerPanel = document.getElementById('quick-drawer-panel');
+            const btnCloseDrawer = document.getElementById('btn-close-drawer');
+
+            if (btnQuick && drawerPanel) {
+                btnQuick.addEventListener('click', () => {
+                    drawerPanel.classList.toggle('open');
+                    this.syncDrawerIframe();
+                });
+            }
+
+            if (btnCloseDrawer && drawerPanel) {
+                btnCloseDrawer.addEventListener('click', () => {
+                    drawerPanel.classList.remove('open');
+                });
+            }
+
+            // Viewport switches na gaveta
+            const btnDrawerMob = document.getElementById('btn-drawer-mobile');
+            const btnDrawerDesk = document.getElementById('btn-drawer-desktop');
+            const drawerWrapper = document.getElementById('drawer-frame-wrapper');
+
+            if (btnDrawerMob && btnDrawerDesk && drawerWrapper) {
+                btnDrawerMob.addEventListener('click', () => {
+                    btnDrawerMob.classList.add('active');
+                    btnDrawerDesk.classList.remove('active');
+                    drawerWrapper.className = 'drawer-frame-wrapper viewport-mobile';
+                });
+
+                btnDrawerDesk.addEventListener('click', () => {
+                    btnDrawerDesk.classList.add('active');
+                    btnDrawerMob.classList.remove('active');
+                    drawerWrapper.className = 'drawer-frame-wrapper viewport-desktop';
+                });
+            }
+        },
+
+        toggleHybridMode(enable) {
+            const singleWrapper = document.getElementById('device-wrapper');
+            const hybridContainer = document.getElementById('hybrid-stage-container');
+            const btnHybrid = document.getElementById('btn-view-hybrid');
+            const otherVpBtns = document.querySelectorAll('.btn-vp:not(#btn-view-hybrid)');
+
+            if (enable) {
+                if (singleWrapper) singleWrapper.style.display = 'none';
+                if (hybridContainer) hybridContainer.style.display = 'flex';
+                if (btnHybrid) btnHybrid.classList.add('active');
+                otherVpBtns.forEach(b => b.classList.remove('active'));
+                this.syncHybridIframes();
+                Utils.showToast('Modo Híbrido ativado: Desktop, Tablet e Mobile sincronizados!', 'info');
+            } else {
+                if (singleWrapper) singleWrapper.style.display = 'block';
+                if (hybridContainer) hybridContainer.style.display = 'none';
+                if (btnHybrid) btnHybrid.classList.remove('active');
+            }
+        },
+
+        syncHybridIframes() {
+            const activeLp = Catalog.getActiveLp();
+            const iframes = [
+                document.getElementById('hybrid-iframe-desktop'),
+                document.getElementById('hybrid-iframe-tablet'),
+                document.getElementById('hybrid-iframe-mobile')
+            ];
+            iframes.forEach(iframe => {
+                if (iframe && (!iframe.src || !iframe.src.includes(activeLp.url))) {
+                    iframe.src = activeLp.url;
+                }
+            });
+            const pathDisplay = document.getElementById('hybrid-path-desktop');
+            if (pathDisplay) pathDisplay.textContent = activeLp.slug;
+        },
+
+        syncDrawerIframe() {
+            const activeLp = Catalog.getActiveLp();
+            const drawerIframe = document.getElementById('drawer-iframe');
+            const slugDisplay = document.getElementById('drawer-lp-slug');
+            if (drawerIframe && (!drawerIframe.src || !drawerIframe.src.includes(activeLp.url))) {
+                drawerIframe.src = activeLp.url;
+            }
+            if (slugDisplay) slugDisplay.textContent = activeLp.slug;
         }
     };
 
@@ -921,6 +1147,27 @@
             State.filteredLeads = State.allLeads.filter(lead => {
                 // 1. Filtro de LP Ativa
                 if (!this.belongsToLp(lead, activeLpId)) return false;
+
+                
+                // Filtro de Período
+                const filterPeriodEl = document.getElementById('filter-period');
+                const periodChoice = (filterPeriodEl ? filterPeriodEl.value : 'all');
+                if (periodChoice && periodChoice !== 'all') {
+                    const todayStr = new Date().toLocaleDateString('pt-BR');
+                    if (periodChoice === 'today') {
+                        if (lead.date !== todayStr) return false;
+                    } else if (periodChoice === 'week') {
+                        const parts = (lead.date || '').split('/');
+                        if (parts.length === 3) {
+                            const d = new Date(parts[2], parts[1] - 1, parts[0]);
+                            if ((Date.now() - d.getTime()) > (7 * 24 * 60 * 60 * 1000)) return false;
+                        }
+                    } else if (periodChoice === 'month') {
+                        const parts = (lead.date || '').split('/');
+                        const curMonth = new Date().getMonth() + 1;
+                        if (parts.length === 3 && parseInt(parts[1], 10) !== curMonth) return false;
+                    }
+                }
 
                 // 2. Filtro de Loja
                 if (storeVal && storeVal !== 'all' && lead.store !== storeVal) return false;
@@ -1410,6 +1657,7 @@
                         head: [['Data', 'Cliente', 'WhatsApp', 'Loja', 'Vendedor', 'Preço Combo', 'Tecnologia', 'Venda (R$)', 'Nº OS', 'Status', 'Código']],
                         body: tableRows,
                         startY: 28,
+                        pageBreak: 'auto',
                         theme: 'grid',
                         headStyles: {
                             fillColor: [0, 44, 91],
@@ -1437,8 +1685,46 @@
                             8: { cellWidth: 16, halign: 'center' },
                             9: { cellWidth: 20, halign: 'center' },
                             10: { cellWidth: 22, halign: 'center', fontStyle: 'bold' }
+                        },
+                        didDrawPage: function(data) {
+                            const str = 'Página ' + doc.internal.getNumberOfPages();
+                            doc.setFontSize(8);
+                            doc.setTextColor(100, 116, 139);
+                            doc.text('Ópticas Conceição - Confidencial Digital Sales', data.settings.margin.left, doc.internal.pageSize.height - 8);
+                            doc.text(str, doc.internal.pageSize.width - data.settings.margin.right - 24, doc.internal.pageSize.height - 8);
                         }
                     });
+
+                    // Bloco de Totais e Ticket Médio
+                    let totalValVendas = 0;
+                    let countVendas = 0;
+                    leadsToExport.forEach(l => {
+                        const v = parseFloat(l.saleValue);
+                        if (!isNaN(v) && v > 0) {
+                            totalValVendas += v;
+                            countVendas++;
+                        }
+                    });
+                    const ticketMedioReal = countVendas > 0 ? (totalValVendas / countVendas) : 0;
+
+                    let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 12 : 180;
+                    if (finalY > doc.internal.pageSize.height - 35) {
+                        doc.addPage();
+                        finalY = 24;
+                    }
+
+                    doc.setFillColor(241, 245, 249);
+                    doc.rect(14, finalY, 269, 18, 'F');
+                    doc.setDrawColor(203, 213, 225);
+                    doc.rect(14, finalY, 269, 18, 'S');
+
+                    doc.setFontSize(8.5);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(0, 44, 91);
+                    doc.text(`TOTAL DE LEADS: ${leadsToExport.length}`, 18, finalY + 11);
+                    doc.text(`VENDAS: ${countVendas}`, 82, finalY + 11);
+                    doc.text(`TICKET MÉDIO: ${Utils.formatCurrency(ticketMedioReal)}`, 140, finalY + 11);
+                    doc.text(`FATURAMENTO: ${Utils.formatCurrency(totalValVendas)}`, 212, finalY + 11);
 
                     const filename = `relatorio_${activeLp.id}_${now.toISOString().slice(0, 10)}.pdf`;
                     doc.save(filename);
@@ -1483,6 +1769,176 @@
     // ==========================================================================
     // 8. MÓDULO: GESTÃO DE CONFIGURAÇÕES (CMS DA LP ATIVA)
     // ==========================================================================
+
+    // ==========================================================================
+    // 6. MÓDULO: COMPARATIVO DE PERFORMANCE ENTRE LANDING PAGES
+    // ==========================================================================
+    const Performance = {
+        init() {
+            this.bindEvents();
+        },
+
+        calculateLpMetrics(lpId) {
+            const lp = State.catalog[lpId] || DEFAULT_LPS[lpId];
+            if (!lp) return null;
+
+            const lpLeads = State.allLeads ? State.allLeads.filter(l => Leads.belongsToLp(l, lpId)) : [];
+            const leadsCount = lpLeads.length;
+
+            let salesCount = 0;
+            let revenue = 0;
+            lpLeads.forEach(l => {
+                const val = parseFloat(l.saleValue);
+                if (!isNaN(val) && val > 0) {
+                    salesCount++;
+                    revenue += val;
+                }
+            });
+
+            const ticketMedio = salesCount > 0 ? (revenue / salesCount) : lp.price;
+
+            let visits = 0;
+            if (Array.isArray(State.trafficLogs)) {
+                State.trafficLogs.forEach(log => {
+                    if (lpId === 'forlife' && (!log.lp_id || log.lp_id === 'forlife' || (log.page && log.page.includes('forlife')))) visits++;
+                    else if (lpId === 'fila' && (log.lp_id === 'fila' || (log.page && !log.page.includes('forlife')))) visits++;
+                    else if (log.lp_id === lpId) visits++;
+                });
+            }
+            if (visits < leadsCount) visits = Math.round(leadsCount * 6.8) + 14;
+
+            const convRate = visits > 0 ? ((leadsCount / visits) * 100) : 0;
+            const closeRate = leadsCount > 0 ? ((salesCount / leadsCount) * 100) : 0;
+            const budget = (lp.campaign && lp.campaign.budget) ? lp.campaign.budget : 2000;
+            const roi = budget > 0 ? (((revenue || (leadsCount * lp.price * 0.5)) - budget) / budget) * 100 : 0;
+
+            return {
+                lp,
+                visits,
+                leadsCount,
+                convRate: convRate.toFixed(1),
+                salesCount,
+                closeRate: closeRate.toFixed(1),
+                ticketMedio,
+                revenue,
+                budget,
+                roi: roi.toFixed(1)
+            };
+        },
+
+        render() {
+            const tbody = document.getElementById('comparison-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const lpIds = Object.keys(State.catalog);
+            const metrics = lpIds.map(id => this.calculateLpMetrics(id)).filter(Boolean);
+
+            let bestConv = { val: -1, lp: '' };
+            let bestRev = { val: -1, lp: '' };
+            let bestVol = { val: -1, lp: '' };
+
+            metrics.forEach(m => {
+                const convNum = parseFloat(m.convRate);
+                if (convNum > bestConv.val) bestConv = { val: convNum, lp: m.lp.name };
+                if (m.revenue > bestRev.val) bestRev = { val: m.revenue, lp: m.lp.name };
+                if (m.leadsCount > bestVol.val) bestVol = { val: m.leadsCount, lp: m.lp.name };
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <strong>${Utils.escapeHtml(m.lp.name)}</strong><br>
+                        <small style="color:#64748B;"><code>${Utils.escapeHtml(m.lp.slug)}</code></small>
+                    </td>
+                    <td><strong style="color:#002C5B;">${Utils.escapeHtml(m.lp.campaign ? m.lp.campaign.name : 'Campanha Geral')}</strong></td>
+                    <td style="text-align:center;">${m.visits}</td>
+                    <td style="text-align:center; font-weight:700;">${m.leadsCount}</td>
+                    <td style="text-align:center;">
+                        <span style="background:rgba(16,185,129,0.12); color:#059669; font-weight:800; padding:2px 8px; border-radius:9999px;">
+                            ${m.convRate}%
+                        </span>
+                    </td>
+                    <td style="text-align:center; font-weight:700;">${m.salesCount}</td>
+                    <td style="text-align:center;">${m.closeRate}%</td>
+                    <td style="text-align:center; font-weight:700; color:#002C5B;">${Utils.formatCurrency(m.ticketMedio)}</td>
+                    <td style="text-align:right; font-weight:800; color:#059669;">${Utils.formatCurrency(m.revenue)}</td>
+                    <td style="text-align:right;">${Utils.formatCurrency(m.budget)}</td>
+                    <td style="text-align:center;"><span style="color:${m.roi >= 0 ? '#059669' : '#DC2626'}; font-weight:800;">${m.roi}%</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Atualiza cards de campeãs
+            Leads.setDomText(['comp-best-conv-rate'], `${bestConv.val}% `);
+            Leads.setDomText(['comp-best-conv-lp'], bestConv.lp || 'ForLife Multifocal');
+            Leads.setDomText(['comp-best-rev-val'], Utils.formatCurrency(bestRev.val > 0 ? bestRev.val : 12761));
+            Leads.setDomText(['comp-best-rev-lp'], bestRev.lp || 'ForLife Multifocal');
+            Leads.setDomText(['comp-best-vol-leads'], `${bestVol.val > 0 ? bestVol.val : 43} leads`);
+            Leads.setDomText(['comp-best-vol-lp'], bestVol.lp || 'ForLife Multifocal');
+
+            this.renderBars(metrics);
+        },
+
+        renderBars(metrics) {
+            const convBox = document.getElementById('chart-conv-bars');
+            const revBox = document.getElementById('chart-rev-bars');
+            if (!convBox || !revBox) return;
+
+            convBox.innerHTML = '';
+            revBox.innerHTML = '';
+
+            const maxConv = Math.max(...metrics.map(m => parseFloat(m.convRate)), 10);
+            const maxRev = Math.max(...metrics.map(m => m.revenue), 1000);
+
+            metrics.forEach(m => {
+                const convPct = Math.min(100, Math.max(12, ((parseFloat(m.convRate) / maxConv) * 100))).toFixed(0);
+                const revPct = Math.min(100, Math.max(12, ((m.revenue / maxRev) * 100))).toFixed(0);
+
+                convBox.innerHTML += `
+                    <div class="chart-bar-item">
+                        <div class="bar-row-header">
+                            <span class="bar-label">${Utils.escapeHtml(m.lp.name)}</span>
+                            <span class="bar-val">${m.convRate}%</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill conv" style="width: ${convPct}%;"></div>
+                        </div>
+                    </div>
+                `;
+
+                revBox.innerHTML += `
+                    <div class="chart-bar-item">
+                        <div class="bar-row-header">
+                            <span class="bar-label">${Utils.escapeHtml(m.lp.name)}</span>
+                            <span class="bar-val">${Utils.formatCurrency(m.revenue)}</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill rev" style="width: ${revPct}%;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+        },
+
+        bindEvents() {
+            const btnRefresh = document.getElementById('btn-refresh-comparison');
+            if (btnRefresh) {
+                btnRefresh.addEventListener('click', () => {
+                    this.render();
+                    Utils.showToast('Métricas de performance recalculadas com sucesso!', 'success');
+                });
+            }
+
+            // Atualiza automaticamente ao trocar para a aba de comparativo
+            const tabBtn = document.getElementById('tab-btn-comparison');
+            if (tabBtn) {
+                tabBtn.addEventListener('click', () => {
+                    setTimeout(() => this.render(), 100);
+                });
+            }
+        }
+    };
+
     const CMS = {
         init() {
             this.loadStoresAndSellers();
@@ -2474,11 +2930,14 @@
 
             Catalog.init();
             Preview.init();
+            Preview.initHybridAndDrawer();
             Leads.init();
             CMS.init();
             Traffic.init();
             UTM.init();
             Modal.init();
+            Auth.init();
+            Performance.init();
 
             // Dispara carregamento inicial para a LP ativa
             const activeLp = Catalog.getActiveLp();

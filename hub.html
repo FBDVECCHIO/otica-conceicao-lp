@@ -28,6 +28,60 @@
     <script src="/assets/hub.js" defer></script>
 </head>
 <body class="hub-body">
+    <!-- ========================================================
+         TELA DE BLOQUEIO & AUTENTICAÇÃO (LOGIN GATE)
+         ======================================================== -->
+    <div id="auth-overlay" class="auth-overlay active">
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <div class="auth-logo-box">
+                    <img src="assets/images/logo_branco_clean.png" alt="Ópticas Conceição" onerror="this.onerror=null; this.src='assets/images/logo_branco.png';">
+                </div>
+                <span class="auth-security-badge"><i class="fas fa-lock"></i> Acesso Restrito</span>
+                <h2 class="auth-title">LP Studio &amp; Multi-Manager</h2>
+                <p class="auth-subtitle">Gestão Unificada de Landing Pages, Campanhas &amp; Digital Sales</p>
+            </div>
+            
+            <form id="auth-form" class="auth-form" autocomplete="on">
+                <div id="auth-error-alert" class="auth-error-alert" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="auth-error-text">Credenciais incorretas. Verifique usuário e senha.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="auth-username"><i class="fas fa-user-shield"></i> Usuário Autorizado</label>
+                    <input type="text" id="auth-username" class="auth-input" placeholder="Digite seu usuário" required autocomplete="username" value="admin">
+                </div>
+
+                <div class="form-group">
+                    <label for="auth-password"><i class="fas fa-key"></i> Senha de Acesso</label>
+                    <div class="auth-pwd-wrapper">
+                        <input type="password" id="auth-password" class="auth-input" placeholder="Digite sua senha" required autocomplete="current-password">
+                        <button type="button" id="btn-toggle-pwd" class="btn-toggle-pwd" title="Mostrar/Ocultar Senha">
+                            <i class="fas fa-eye" id="pwd-eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-options-row">
+                    <label class="auth-remember-label">
+                        <input type="checkbox" id="auth-remember" checked>
+                        <span>Manter sessão conectada neste navegador</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="btn-auth-submit" class="btn-auth-submit">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Entrar no LP Studio</span>
+                </button>
+            </form>
+
+            <div class="auth-card-footer">
+                <span>Ópticas Conceição &bull; Desde 1948 &bull; Gestão Digital</span>
+            </div>
+        </div>
+    </div>
+
 
     <!-- ========================================================
          HEADER GLOBAL DO STUDIO & MULTI-MANAGER
@@ -66,12 +120,51 @@
                 <i class="fas fa-sync-alt"></i>
                 <span>Recarregar</span>
             </button>
+            
+            <div class="hub-user-session">
+                <span class="user-session-badge"><i class="fas fa-user-circle"></i> <strong id="session-user-name">admin</strong></span>
+                <button type="button" id="btn-hub-logout" class="btn-top-action btn-logout" title="Sair / Bloquear Sessão">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
             <button id="btn-create-lp-quick" class="btn-top-action btn-primary-top" title="Criar Nova Landing Page">
                 <i class="fas fa-plus"></i>
                 <span>Nova LP</span>
             </button>
         </div>
     </header>
+    <!-- ========================================================
+         BARRA DE CAMPANHA ÚNICA DA LANDING PAGE ATIVA
+         ======================================================== -->
+    <div class="campaign-info-bar" id="campaign-info-bar">
+        <div class="campaign-bar-left">
+            <span class="campaign-tag-icon"><i class="fas fa-bullhorn"></i> Campanha Única:</span>
+            <strong id="active-campaign-name" class="campaign-title">Campanha ForLife Di Capri - Outono</strong>
+            <span class="campaign-status-badge active" id="active-campaign-status">Em Veiculação</span>
+        </div>
+        <div class="campaign-bar-right">
+            <div class="campaign-stat-item">
+                <span class="stat-lbl">Orçamento Mídia:</span>
+                <strong class="stat-val" id="active-campaign-budget">R$ 2.500,00</strong>
+            </div>
+            <div class="campaign-stat-item">
+                <span class="stat-lbl">Meta de Leads:</span>
+                <strong class="stat-val" id="active-campaign-target">150 leads</strong>
+            </div>
+            <div class="campaign-stat-item campaign-progress-box">
+                <span class="stat-lbl">Alcance:</span>
+                <div class="campaign-progress-track">
+                    <div class="campaign-progress-bar" id="active-campaign-progress-bar" style="width: 28.7%;"></div>
+                </div>
+                <span class="stat-pct" id="active-campaign-pct">28.7%</span>
+            </div>
+            <button type="button" class="btn-campaign-config" id="btn-quick-config-campaign" title="Configurar Campanha e Orçamento">
+                <i class="fas fa-sliders-h"></i> Configurar Campanha
+            </button>
+        </div>
+    </div>
+
 
     <!-- ========================================================
          BARRA DE NAVEGAÇÃO POR ABAS
@@ -92,6 +185,11 @@
         <button class="tab-btn" data-tab="tab-traffic" id="tab-btn-traffic">
             <i class="fas fa-chart-line"></i>
             <span>Tráfego &amp; Inteligência</span>
+        </button>
+        
+        <button class="tab-btn" data-tab="tab-comparison" id="tab-btn-comparison">
+            <i class="fas fa-balance-scale"></i>
+            <span>Comparativo de Performance</span>
         </button>
         <button class="tab-btn" data-tab="tab-catalog" id="tab-btn-catalog">
             <i class="fas fa-th-large"></i>
@@ -126,6 +224,10 @@
                     <button class="btn-vp" data-viewport="mobile" id="btn-view-mobile" title="Visualização Smartphone">
                         <i class="fas fa-mobile-alt"></i>
                         <span>Mobile (390px)</span>
+                    </button>
+                    <button class="btn-vp btn-vp-hybrid" data-viewport="hybrid" id="btn-view-hybrid" title="Visualização Híbrida: Desktop + Tablet + Smartphone">
+                        <i class="fas fa-columns"></i>
+                        <span>Modo Híbrido Multi-Telas</span>
                     </button>
                 </div>
 
@@ -162,6 +264,49 @@
                     <!-- Container do Iframe Emulado -->
                     <div class="preview-frame-container">
                         <iframe id="preview-iframe" src="/forlife/index.html" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <!-- Palco do Modo Híbrido (Desktop à esquerda + Tablet & Mobile à direita) -->
+                <div class="hybrid-stage-container" id="hybrid-stage-container" style="display: none;">
+                    <div class="hybrid-col-main">
+                        <div class="device-mockup-wrapper hybrid-desktop-mockup">
+                            <div class="device-chrome-bar">
+                                <div class="chrome-controls">
+                                    <span class="chrome-dot dot-close"></span>
+                                    <span class="chrome-dot dot-minimize"></span>
+                                    <span class="chrome-dot dot-expand"></span>
+                                </div>
+                                <div class="chrome-address-bar">
+                                    <i class="fas fa-desktop"></i>
+                                    <span class="chrome-host">Desktop (1280px) &bull; <span id="hybrid-path-desktop">/forlife</span></span>
+                                </div>
+                            </div>
+                            <div class="preview-frame-container hybrid-frame-container">
+                                <iframe id="hybrid-iframe-desktop" src="/forlife/index.html" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hybrid-col-side">
+                        <!-- Tablet Topo -->
+                        <div class="device-mockup-wrapper hybrid-tablet-mockup">
+                            <div class="device-chrome-bar">
+                                <span class="device-type-tag"><i class="fas fa-tablet-alt"></i> Tablet (768px)</span>
+                            </div>
+                            <div class="preview-frame-container hybrid-frame-container">
+                                <iframe id="hybrid-iframe-tablet" src="/forlife/index.html" frameborder="0"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- Smartphone Base -->
+                        <div class="device-mockup-wrapper hybrid-mobile-mockup">
+                            <div class="device-chrome-bar">
+                                <span class="device-type-tag"><i class="fas fa-mobile-alt"></i> Smartphone (390px)</span>
+                            </div>
+                            <div class="preview-frame-container hybrid-frame-container">
+                                <iframe id="hybrid-iframe-mobile" src="/forlife/index.html" frameborder="0"></iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -895,6 +1040,105 @@
                 </div>
             </div>
         </section>
+    
+        <!-- ====================================================
+             ABA: COMPARATIVO DE PERFORMANCE ENTRE LANDING PAGES
+             ==================================================== -->
+        <section id="tab-comparison" class="hub-tab-panel">
+            <div class="panel-header-with-actions">
+                <div>
+                    <h2 class="panel-section-title"><i class="fas fa-balance-scale"></i> Comparativo de Performance entre Landing Pages</h2>
+                    <p class="panel-section-subtitle">Análise comparativa de conversão, receita gerada, ticket médio e ROI das campanhas ativas</p>
+                </div>
+                <div class="panel-actions-group">
+                    <button type="button" class="btn-crm-action" id="btn-refresh-comparison">
+                        <i class="fas fa-sync-alt"></i> Recalcular Métricas
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3 Cards de Campeãs -->
+            <div class="comparison-highlights-grid">
+                <div class="highlight-card champion-conversion">
+                    <div class="highlight-icon-box"><i class="fas fa-trophy"></i></div>
+                    <div class="highlight-details">
+                        <span class="highlight-label">Melhor Taxa de Conversão</span>
+                        <h3 class="highlight-value" id="comp-best-conv-rate">14.8%</h3>
+                        <span class="highlight-sub" id="comp-best-conv-lp">ForLife Multifocal Di Capri</span>
+                    </div>
+                </div>
+                <div class="highlight-card champion-revenue">
+                    <div class="highlight-icon-box"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="highlight-details">
+                        <span class="highlight-label">Maior Faturamento Gerado</span>
+                        <h3 class="highlight-value" id="comp-best-rev-val">R$ 12.761,00</h3>
+                        <span class="highlight-sub" id="comp-best-rev-lp">ForLife Multifocal Di Capri</span>
+                    </div>
+                </div>
+                <div class="highlight-card champion-volume">
+                    <div class="highlight-icon-box"><i class="fas fa-users"></i></div>
+                    <div class="highlight-details">
+                        <span class="highlight-label">Maior Volume de Leads</span>
+                        <h3 class="highlight-value" id="comp-best-vol-leads">43 leads</h3>
+                        <span class="highlight-sub" id="comp-best-vol-lp">ForLife Multifocal Di Capri</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela Comparativa Consolidada -->
+            <div class="hub-card comparison-table-card">
+                <div class="hub-card-header">
+                    <div class="hub-card-title">
+                        <i class="fas fa-table"></i>
+                        <span>Tabela Geral de Desempenho por Landing Page &amp; Campanha</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="hub-data-table comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Landing Page</th>
+                                <th>Campanha Única</th>
+                                <th style="text-align:center;">Visitantes</th>
+                                <th style="text-align:center;">Leads</th>
+                                <th style="text-align:center;">Conversão %</th>
+                                <th style="text-align:center;">Vendas Concluídas</th>
+                                <th style="text-align:center;">Fechamento %</th>
+                                <th style="text-align:center;">Ticket Médio Real</th>
+                                <th style="text-align:right;">Faturamento Total</th>
+                                <th style="text-align:right;">Investimento Mídia</th>
+                                <th style="text-align:center;">ROI Est.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-table-body">
+                            <!-- Renderizado dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráficos Visuais Comparativos -->
+            <div class="comparison-charts-grid">
+                <div class="hub-card">
+                    <div class="hub-card-header">
+                        <div class="hub-card-title"><i class="fas fa-chart-bar"></i> Taxa de Conversão de Leads (%)</div>
+                    </div>
+                    <div class="chart-bars-list" id="chart-conv-bars">
+                        <!-- Barras comparativas -->
+                    </div>
+                </div>
+
+                <div class="hub-card">
+                    <div class="hub-card-header">
+                        <div class="hub-card-title"><i class="fas fa-hand-holding-usd"></i> Faturamento Concluído (R$)</div>
+                    </div>
+                    <div class="chart-bars-list" id="chart-rev-bars">
+                        <!-- Barras comparativas -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- ========================================================
@@ -935,6 +1179,29 @@
                     </div>
                 </div>
 
+                
+                <div class="form-group">
+                    <label for="new-lp-campaign">
+                        Nome da Campanha Única
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" id="new-lp-campaign" placeholder="ex: Campanha Ray-Ban Verão 2026" required>
+                </div>
+
+                <div class="form-row" style="display:flex; gap:16px;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-budget">Orçamento Mídia (R$)</label>
+                        <div class="input-currency-wrapper">
+                            <span class="currency-prefix">R$</span>
+                            <input type="number" id="new-lp-budget" step="0.01" min="0" placeholder="2000.00">
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-target-leads">Meta de Leads</label>
+                        <input type="number" id="new-lp-target-leads" min="1" placeholder="100">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="new-lp-template">
                         Template Base de Design
@@ -972,6 +1239,43 @@
 
     <!-- Container de Notificações Toast -->
     <div id="toast-container" class="toast-container"></div>
+
+
+    <!-- ========================================================
+         GAVETA LATERAL DE PRÉVIA RÁPIDA (QUICK DRAWER)
+         ======================================================== -->
+    <button type="button" id="btn-quick-drawer" class="btn-quick-drawer" title="Abrir Prévia Rápida da LP">
+        <i class="fas fa-eye"></i>
+        <span>Prévia Rápida</span>
+    </button>
+
+    <aside id="quick-drawer-panel" class="quick-drawer-panel" aria-hidden="true">
+        <div class="drawer-header">
+            <div class="drawer-title-box">
+                <i class="fas fa-mobile-alt"></i>
+                <div>
+                    <h4>Prévia Rápida da LP</h4>
+                    <span id="drawer-lp-slug" class="drawer-slug">/forlife</span>
+                </div>
+            </div>
+            <div class="drawer-controls">
+                <button type="button" class="btn-drawer-vp active" data-drawer-vp="mobile" id="btn-drawer-mobile" title="Visualização Mobile">
+                    <i class="fas fa-mobile-alt"></i>
+                </button>
+                <button type="button" class="btn-drawer-vp" data-drawer-vp="desktop" id="btn-drawer-desktop" title="Visualização Desktop">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button type="button" id="btn-close-drawer" class="btn-close-drawer" title="Fechar Gaveta">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-frame-wrapper viewport-mobile" id="drawer-frame-wrapper">
+                <iframe id="drawer-iframe" src="/forlife/index.html" frameborder="0"></iframe>
+            </div>
+        </div>
+    </aside>
 
 </body>
 </html>
