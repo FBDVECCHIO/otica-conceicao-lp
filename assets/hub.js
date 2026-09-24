@@ -61,7 +61,13 @@
             color: '#001A36',
             price: 199.00,
             installments: 10,
-            description: 'Armação esportiva FILA original com lentes graduadas completas.'
+            description: 'Armação esportiva FILA original com lentes graduadas completas.',
+            campaign: {
+                name: 'Campanha Esportiva FILA Brasil',
+                budget: 1800.00,
+                targetLeads: 120,
+                status: 'Em Veiculação'
+            }
         },
         varilux: {
             id: 'varilux',
@@ -72,7 +78,13 @@
             color: '#0A3D78',
             price: 349.00,
             installments: 10,
-            description: 'Tecnologia Essilor de adaptação postural e ampliação de campo visual.'
+            description: 'Tecnologia Essilor de adaptação postural e ampliação de campo visual.',
+            campaign: {
+                name: 'Campanha Varilux Alta Visão',
+                budget: 3200.00,
+                targetLeads: 80,
+                status: 'Planejamento'
+            }
         },
         zeiss: {
             id: 'zeiss',
@@ -83,7 +95,13 @@
             color: '#0047AB',
             price: 420.00,
             installments: 12,
-            description: 'Lentes de alta precisão alemã com proteção contra luz azul nociva.'
+            description: 'Lentes de alta precisão alemã com proteção contra luz azul nociva.',
+            campaign: {
+                name: 'Campanha Zeiss SmartLife Digital',
+                budget: 4000.00,
+                targetLeads: 90,
+                status: 'Planejamento'
+            }
         }
     };
 
@@ -265,7 +283,7 @@
             const cleanUser = (user || '').trim().toLowerCase();
             const cleanPass = (pass || '').trim();
 
-            if (cleanUser === 'admin' && cleanPass === 'conceicao1948') {
+            if (cleanUser === 'admin' && (cleanPass === 'conceicao1948' || cleanPass === 'conceicao2026')) {
                 if (remember) {
                     localStorage.setItem(this.SESSION_KEY, 'authenticated');
                 } else {
@@ -370,6 +388,12 @@
                 const storedCatalog = localStorage.getItem(STORAGE_KEYS.catalog);
                 if (storedCatalog) {
                     State.catalog = JSON.parse(storedCatalog);
+                    // Garante que LPs padrão tenham seus dados de campanha preservados
+                    Object.keys(DEFAULT_LPS).forEach(k => {
+                        if (State.catalog[k] && !State.catalog[k].campaign && DEFAULT_LPS[k].campaign) {
+                            State.catalog[k].campaign = { ...DEFAULT_LPS[k].campaign };
+                        }
+                    });
                 } else {
                     State.catalog = { ...DEFAULT_LPS };
                 }
@@ -469,7 +493,11 @@
             const activeLp = this.getActiveLp();
             Preview.updateIframe(activeLp);
             Preview.updateUiInfo(activeLp);
+            this.updateCampaignInfoBar();
             CMS.loadLpConfig(lpId);
+            if (typeof CMS.loadCampaignConfig === 'function') {
+                CMS.loadCampaignConfig(lpId);
+            }
             Leads.loadLeads();
             Traffic.loadTraffic();
             UTM.updatePreview();
@@ -1082,6 +1110,7 @@
 
             // 4. Aplica filtros e renderiza
             this.applyFilters();
+            Catalog.updateCampaignInfoBar();
         },
 
         normalizeLead(l) {
@@ -1279,7 +1308,7 @@
                 const lp = Catalog.getActiveLp();
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
+                        <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
                             Nenhum lead encontrado para a campanha <strong>${Utils.escapeHtml(lp.name)}</strong> com os filtros aplicados.
                         </td>
                     </tr>
@@ -1294,7 +1323,7 @@
 
                 // Tecnologias / Adicionais
                 const addonsHtml = (lead.addons && lead.addons.length > 0)
-                    ? lead.addons.map(a => `<span class="badge-addon" style="display:inline-block; background:#EDF2F7; color:#1E293B; padding:2px 6px; border-radius:4px; font-size:11px; margin:1px;">${Utils.escapeHtml(a.name || a)}</span>`).join(' ')
+                    ? lead.addons.map(a => `<span class="badge-addon" style="display:inline-block; background:#EDF2F7; color:#1E293B; padding:1px 5px; border-radius:3px; font-size:10.5px; margin:1px;">${Utils.escapeHtml(a.name || a)}</span>`).join(' ')
                     : '<span style="color:#94A3B8; font-size:11px;">Tradicional</span>';
 
                 // Receita
@@ -1346,8 +1375,8 @@
                             <i class="fas fa-plus" id="icon-expand-${lead.code || index}"></i>
                         </button>
                     </td>
-                    <td style="font-size: 12px; color: var(--text-muted, #64748B); white-space: nowrap;">${Utils.escapeHtml(lead.date)}</td>
-                    <td style="font-weight: 700; color: #002C5B; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${Utils.escapeHtml(lead.name)}">
+                    <td style="font-size: 11.5px; color: var(--text-muted, #64748B); white-space: nowrap;">${Utils.escapeHtml(lead.date)}</td>
+                    <td style="font-weight: 700; color: #002C5B; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${Utils.escapeHtml(lead.name)}">
                         ${Utils.escapeHtml(lead.name)}
                     </td>
                     <td style="text-align: center;">
@@ -1355,27 +1384,29 @@
                             <i class="fab fa-whatsapp"></i>
                         </a>
                     </td>
-                    <td style="font-weight: 800; color: #002C5B; white-space: nowrap;">${Utils.formatCurrency(lead.totalPrice)}</td>
-                    <td>${addonsHtml}</td>
+                    <td style="white-space: nowrap; line-height: 1.2;">
+                        <div style="font-weight: 800; color: #002C5B; font-size: 11.5px;">${Utils.formatCurrency(lead.totalPrice)}</div>
+                        <div style="margin-top: 2px;">${addonsHtml}</div>
+                    </td>
                     <td style="text-align: center;">${recipeHtml}</td>
                     <td>
-                        <select class="table-select" id="input-store-${lead.code || index}" style="font-size:12px; padding:4px; border-radius:4px; border:1px solid #CBD5E1; max-width:130px;">
+                        <select class="table-select" id="input-store-${lead.code || index}" style="font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1; max-width:105px;">
                             ${storeOptions}
                         </select>
                     </td>
                     <td>
-                        <select class="table-select" id="input-seller-${lead.code || index}" style="font-size:12px; padding:4px; border-radius:4px; border:1px solid #CBD5E1; max-width:110px;">
+                        <select class="table-select" id="input-seller-${lead.code || index}" style="font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1; max-width:95px;">
                             ${sellerOptions}
                         </select>
                     </td>
                     <td>
-                        <input type="number" step="0.01" class="table-input" id="input-val-${lead.code || index}" placeholder="R$ 0,00" value="${Utils.escapeHtml(lead.saleValue)}" style="width:75px; font-size:12px; padding:4px; border-radius:4px; border:1px solid #CBD5E1;">
+                        <input type="number" step="0.01" class="table-input" id="input-val-${lead.code || index}" placeholder="R$ 0,00" value="${Utils.escapeHtml(lead.saleValue)}" style="width:65px; font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1;">
                     </td>
                     <td>
-                        <input type="text" class="table-input" id="input-os-${lead.code || index}" placeholder="Nº OS" value="${Utils.escapeHtml(lead.osNumber)}" style="width:65px; font-size:12px; padding:4px; border-radius:4px; border:1px solid #CBD5E1;">
+                        <input type="text" class="table-input" id="input-os-${lead.code || index}" placeholder="Nº OS" value="${Utils.escapeHtml(lead.osNumber)}" style="width:52px; font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1;">
                     </td>
                     <td>
-                        <select class="table-select" id="input-status-${lead.code || index}" style="font-size:12px; padding:4px; border-radius:4px; border:1px solid #CBD5E1; max-width:95px;">
+                        <select class="table-select" id="input-status-${lead.code || index}" style="font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1; max-width:85px;">
                             ${statusOptions}
                         </select>
                     </td>
@@ -1407,7 +1438,7 @@
                 trDetails.style.backgroundColor = '#F8FAFC';
 
                 trDetails.innerHTML = `
-                    <td colspan="14" style="padding: 12px 18px; border-bottom: 2px solid #E2E8F0;">
+                    <td colspan="13" style="padding: 12px 18px; border-bottom: 2px solid #E2E8F0;">
                         <div class="details-content-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 12px;">
                             <div>
                                 <strong style="color:#64748B;">WhatsApp Completo:</strong><br>
@@ -1637,6 +1668,28 @@
             const btnPdfAll = document.getElementById('btn-pdf-all');
             if (btnPdfAll) {
                 btnPdfAll.addEventListener('click', () => Export.exportPdf(false));
+            }
+
+            // Botão de Atualizar / Refresh da Base de Leads
+            const btnRefresh = document.getElementById('btn-refresh-leads');
+            if (btnRefresh) {
+                btnRefresh.addEventListener('click', async () => {
+                    const icon = btnRefresh.querySelector('i');
+                    if (icon) icon.classList.add('fa-spin');
+                    btnRefresh.disabled = true;
+
+                    try {
+                        await this.loadLeads();
+                        Catalog.updateCampaignInfoBar();
+                        Utils.showToast('Base de leads atualizada com sucesso!', 'success');
+                    } catch (err) {
+                        console.error('[LPStudio] Erro ao recarregar leads:', err);
+                        Utils.showToast('Erro ao atualizar leads. Verifique a conexão.', 'error');
+                    } finally {
+                        if (icon) icon.classList.remove('fa-spin');
+                        btnRefresh.disabled = false;
+                    }
+                });
             }
 
             // Exportação CSV
@@ -1943,11 +1996,10 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>
+                    <td style="white-space: nowrap;">
                         <strong>${Utils.escapeHtml(m.lp.name)}</strong><br>
                         <small style="color:#64748B;"><code>${Utils.escapeHtml(m.lp.slug)}</code></small>
                     </td>
-                    <td><strong style="color:#002C5B;">${Utils.escapeHtml(m.lp.campaign ? m.lp.campaign.name : 'Campanha Geral')}</strong></td>
                     <td style="text-align:center;">${m.visits}</td>
                     <td style="text-align:center; font-weight:700;">${m.leadsCount}</td>
                     <td style="text-align:center;">
@@ -1962,8 +2014,8 @@
                     <td style="text-align:right;">${Utils.formatCurrency(m.budget)}</td>
                     <td style="text-align:center;"><span style="color:${m.roi >= 0 ? '#059669' : '#DC2626'}; font-weight:800;">${m.roi}%</span></td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-action-del-lp" onclick="window.LPStudio.deleteLpFromComparison('${m.lp.id}')" title="Excluir Landing Page da Lista">
-                            <i class="fas fa-trash-alt"></i> Excluir
+                        <button type="button" class="btn-action-del-lp btn-icon-only" onclick="window.LPStudio.deleteLpFromComparison('${m.lp.id}')" title="Excluir Landing Page da Lista">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
                 `;
@@ -2078,6 +2130,39 @@
             this.setInputValue('cms-fotossensivel', config.fotossensivel);
         },
 
+        loadCampaignConfig(lpId) {
+            const currentLp = State.catalog[lpId] || Catalog.getActiveLp();
+            const camp = currentLp.campaign || {
+                name: `Campanha ${currentLp.name}`,
+                status: 'Em Veiculação',
+                budget: 2500.00,
+                targetLeads: 150
+            };
+            this.setInputValue('cms-campaign-name', camp.name || '');
+            this.setInputValue('cms-campaign-status', camp.status || 'Em Veiculação');
+            this.setInputValue('cms-campaign-budget', camp.budget || 2000);
+            this.setInputValue('cms-campaign-target', camp.targetLeads || 100);
+        },
+
+        saveCampaignConfig(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const lpId = State.activeLpId;
+            if (!State.catalog[lpId]) return;
+
+            const name = document.getElementById('cms-campaign-name')?.value.trim() || `Campanha ${State.catalog[lpId].name}`;
+            const status = document.getElementById('cms-campaign-status')?.value || 'Em Veiculação';
+            const budget = parseFloat(document.getElementById('cms-campaign-budget')?.value) || 2000;
+            const targetLeads = parseInt(document.getElementById('cms-campaign-target')?.value, 10) || 100;
+
+            State.catalog[lpId].campaign = { name, status, budget, targetLeads };
+            Catalog.saveCatalog();
+            Catalog.updateCampaignInfoBar();
+            if (Performance && typeof Performance.render === 'function') {
+                Performance.render();
+            }
+            Utils.showToast(`Metas e orçamento da campanha de "${State.catalog[lpId].name}" salvos com sucesso!`, 'success');
+        },
+
         setInputValue(id, val) {
             const el = document.getElementById(id);
             if (el) el.value = val;
@@ -2162,23 +2247,39 @@
             State.stores.forEach((store, idx) => {
                 const li = document.createElement('li');
                 li.className = 'managed-item';
-                li.style.display = 'flex';
-                li.style.justifyContent = 'space-between';
-                li.style.alignItems = 'center';
-                li.style.padding = '8px 12px';
-                li.style.borderBottom = '1px solid #E2E8F0';
-
                 li.innerHTML = `
-                    <span style="font-size: 13px; font-weight: 600; color: #002C5B;">
-                        <i class="fas fa-store" style="margin-right: 6px; color: #64748B;"></i>
-                        ${Utils.escapeHtml(store)}
+                    <span class="managed-item-name">
+                        <i class="fas fa-store"></i>
+                        <span>${Utils.escapeHtml(store)}</span>
                     </span>
-                    <button type="button" class="btn-remove-item" onclick="window.LPStudio.removeStore(${idx})" title="Remover Loja" style="border:none; background:none; color:#EF4444; cursor:pointer;">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <div class="managed-item-actions">
+                        <button type="button" class="btn-item-action edit" onclick="window.LPStudio.editStore(${idx})" title="Editar Nome da Loja">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-item-action delete" onclick="window.LPStudio.removeStore(${idx})" title="Remover Loja">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 `;
                 list.appendChild(li);
             });
+        },
+
+        editStore(idx) {
+            const current = State.stores[idx];
+            if (!current) return;
+            const updated = prompt('Editar nome da Loja / Unidade:', current);
+            if (!updated) return;
+            const clean = updated.trim();
+            if (!clean || clean === current) return;
+
+            State.stores[idx] = clean;
+            localStorage.setItem(STORAGE_KEYS.stores, JSON.stringify(State.stores));
+
+            this.renderStoresList();
+            this.updateFilterDropdowns();
+            Leads.renderTable(State.filteredLeads);
+            Utils.showToast(`Loja atualizada para "${clean}"!`, 'success');
         },
 
         renderSellersList() {
@@ -2189,23 +2290,39 @@
             State.sellers.forEach((seller, idx) => {
                 const li = document.createElement('li');
                 li.className = 'managed-item';
-                li.style.display = 'flex';
-                li.style.justifyContent = 'space-between';
-                li.style.alignItems = 'center';
-                li.style.padding = '8px 12px';
-                li.style.borderBottom = '1px solid #E2E8F0';
-
                 li.innerHTML = `
-                    <span style="font-size: 13px; font-weight: 600; color: #002C5B;">
-                        <i class="fas fa-user-tag" style="margin-right: 6px; color: #64748B;"></i>
-                        ${Utils.escapeHtml(seller)}
+                    <span class="managed-item-name">
+                        <i class="fas fa-user-tag"></i>
+                        <span>${Utils.escapeHtml(seller)}</span>
                     </span>
-                    <button type="button" class="btn-remove-item" onclick="window.LPStudio.removeSeller(${idx})" title="Remover Vendedor" style="border:none; background:none; color:#EF4444; cursor:pointer;">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <div class="managed-item-actions">
+                        <button type="button" class="btn-item-action edit" onclick="window.LPStudio.editSeller(${idx})" title="Editar Nome do Consultor">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-item-action delete" onclick="window.LPStudio.removeSeller(${idx})" title="Remover Consultor">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 `;
                 list.appendChild(li);
             });
+        },
+
+        editSeller(idx) {
+            const current = State.sellers[idx];
+            if (!current) return;
+            const updated = prompt('Editar nome do Consultor / Vendedor:', current);
+            if (!updated) return;
+            const clean = updated.trim();
+            if (!clean || clean === current) return;
+
+            State.sellers[idx] = clean;
+            localStorage.setItem(STORAGE_KEYS.sellers, JSON.stringify(State.sellers));
+
+            this.renderSellersList();
+            this.updateFilterDropdowns();
+            Leads.renderTable(State.filteredLeads);
+            Utils.showToast(`Consultor atualizado para "${clean}"!`, 'success');
         },
 
         updateFilterDropdowns() {
@@ -2324,6 +2441,17 @@
             const btnSave = document.getElementById('btn-save-cms');
             if (btnSave && !form) {
                 btnSave.addEventListener('click', (e) => this.saveLpConfig(e));
+            }
+
+            // Formulário de Metas e Orçamento da Campanha CMS
+            const formCamp = document.getElementById('cms-campaign-form');
+            if (formCamp) {
+                formCamp.addEventListener('submit', (e) => this.saveCampaignConfig(e));
+            }
+
+            const btnSaveCamp = document.getElementById('btn-save-cms-campaign');
+            if (btnSaveCamp && !formCamp) {
+                btnSaveCamp.addEventListener('click', (e) => this.saveCampaignConfig(e));
             }
 
             // Lojas
@@ -2565,7 +2693,7 @@
             Leads.setDomText(['traffic-tiktok-pct'], `${tiktokPct}% do tráfego total`);
             Leads.setDomText(['traffic-other-clicks'], otherClicks);
             Leads.setDomText(['traffic-vouchers-converted'], vouchersConverted);
-            Leads.setDomText(['traffic-conversion-rate'], `Taxa de Conversão: ${convRate}%`);
+            Leads.setDomText(['traffic-conversion-rate'], `${convRate}%`);
 
             // Ranking de Campanhas
             this.renderRankingList('traffic-campaigns-list', campMap, 'Nenhuma campanha detectada para esta LP.');
@@ -2793,6 +2921,47 @@
             if (form) form.reset();
         },
 
+        openCampaignConfig() {
+            const modal = document.getElementById('modal-campaign-config');
+            if (!modal) return;
+
+            const activeLp = Catalog.getActiveLp();
+            const camp = activeLp.campaign || {
+                name: `Campanha ${activeLp.name}`,
+                status: 'Em Veiculação',
+                budget: 2500.00,
+                targetLeads: 150
+            };
+
+            const sub = document.getElementById('modal-campaign-lp-subtitle');
+            if (sub) sub.textContent = `Ajuste as metas e orçamento para a LP: ${activeLp.name} (${activeLp.slug})`;
+
+            const nameInp = document.getElementById('cfg-camp-name');
+            if (nameInp) nameInp.value = camp.name || '';
+
+            const statusSel = document.getElementById('cfg-camp-status');
+            if (statusSel) statusSel.value = camp.status || 'Em Veiculação';
+
+            const budgetInp = document.getElementById('cfg-camp-budget');
+            if (budgetInp) budgetInp.value = camp.budget || 2000;
+
+            const targetInp = document.getElementById('cfg-camp-target');
+            if (targetInp) targetInp.value = camp.targetLeads || 100;
+
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            modal.classList.add('is-open');
+        },
+
+        closeCampaignConfig() {
+            const modal = document.getElementById('modal-campaign-config');
+            if (!modal) return;
+
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+            modal.classList.remove('is-open');
+        },
+
         injectCreateLpModal() {
             const modal = document.createElement('div');
             modal.id = 'modal-create-lp';
@@ -2987,10 +3156,60 @@
                 });
             });
 
+            // Botão Configurar Campanha
+            const btnConfigCamp = document.getElementById('btn-quick-config-campaign');
+            if (btnConfigCamp) {
+                btnConfigCamp.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.openCampaignConfig();
+                });
+            }
+
+            const btnCloseCamp = document.getElementById('btn-close-campaign-modal');
+            if (btnCloseCamp) btnCloseCamp.addEventListener('click', () => this.closeCampaignConfig());
+
+            const btnCancelCamp = document.getElementById('btn-cancel-campaign-config');
+            if (btnCancelCamp) btnCancelCamp.addEventListener('click', () => this.closeCampaignConfig());
+
+            const modalCamp = document.getElementById('modal-campaign-config');
+            if (modalCamp) {
+                modalCamp.addEventListener('click', (e) => {
+                    if (e.target === modalCamp) {
+                        this.closeCampaignConfig();
+                    }
+                });
+            }
+
+            const formCamp = document.getElementById('form-config-campaign');
+            if (formCamp) {
+                formCamp.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const activeLp = Catalog.getActiveLp();
+                    const lpId = activeLp.id;
+                    const name = document.getElementById('cfg-camp-name')?.value.trim() || `Campanha ${activeLp.name}`;
+                    const status = document.getElementById('cfg-camp-status')?.value || 'Em Veiculação';
+                    const budget = parseFloat(document.getElementById('cfg-camp-budget')?.value) || 2000;
+                    const targetLeads = parseInt(document.getElementById('cfg-camp-target')?.value, 10) || 100;
+
+                    State.catalog[lpId].campaign = { name, status, budget, targetLeads };
+                    Catalog.saveCatalog();
+                    Catalog.updateCampaignInfoBar();
+                    if (typeof CMS.loadCampaignConfig === 'function') {
+                        CMS.loadCampaignConfig(lpId);
+                    }
+                    if (Performance && typeof Performance.render === 'function') {
+                        Performance.render();
+                    }
+                    this.closeCampaignConfig();
+                    Utils.showToast(`Campanha de "${activeLp.name}" atualizada com sucesso!`, 'success');
+                });
+            }
+
             // Tecla Escape fecha modais
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     this.closeCreateLp();
+                    this.closeCampaignConfig();
                     this.closePrescriptionModal();
                 }
             });
@@ -3096,8 +3315,16 @@
             Catalog.removeLp(lpId);
         },
 
+        editStore(idx) {
+            CMS.editStore(idx);
+        },
+
         removeStore(idx) {
             CMS.removeStore(idx);
+        },
+
+        editSeller(idx) {
+            CMS.editSeller(idx);
         },
 
         removeSeller(idx) {

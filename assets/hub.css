@@ -337,20 +337,33 @@ input, button, select, textarea {
 .hub-tabs {
     background: var(--bg-card);
     border-bottom: 1px solid var(--border-subtle);
-    padding: 0 28px;
+    padding: 0 24px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 6px;
+    gap: 16px;
     position: sticky;
     top: 63px;
     z-index: 900;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.hub-tabs-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     overflow-x: auto;
     scrollbar-width: none;
 }
 
-.hub-tabs::-webkit-scrollbar {
+.hub-tabs-list::-webkit-scrollbar {
     display: none;
+}
+
+.hub-tabs-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .tab-btn {
@@ -727,11 +740,12 @@ input, button, select, textarea {
 }
 
 .metric-title {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 11.5px;
+    font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap !important;
 }
 
 .metric-value-wrapper {
@@ -905,19 +919,39 @@ input, button, select, textarea {
     color: var(--text-muted);
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    padding: 14px 18px;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    padding: 8px 6px;
     border-bottom: 1px solid var(--border-subtle);
     white-space: nowrap;
 }
 
 .leads-table td {
-    padding: 14px 18px;
+    padding: 6px 6px;
     border-bottom: 1px solid var(--border-subtle);
     color: var(--text-main);
     vertical-align: middle;
+    font-size: 12px;
     white-space: nowrap !important;
+}
+
+.table-select,
+.table-input {
+    font-family: inherit;
+    font-size: 11.5px !important;
+    padding: 3px 5px !important;
+    border-radius: 4px;
+    border: 1px solid #CBD5E1;
+    background-color: #FFFFFF;
+    color: #0F172A;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.table-select:focus,
+.table-input:focus {
+    border-color: var(--royal-blue);
+    box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.12);
 }
 
 .leads-table tbody tr {
@@ -1235,10 +1269,13 @@ input, button, select, textarea {
 }
 
 .card-header h3 {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--navy-primary);
     line-height: 1.2;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-header p {
@@ -1413,6 +1450,90 @@ input, button, select, textarea {
     background: var(--navy-light);
 }
 
+.managed-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.managed-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--radius-sm, 6px);
+    font-size: 13px;
+    transition: var(--transition-fast);
+}
+
+.managed-item:hover {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.managed-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.managed-item-name i {
+    color: var(--text-light);
+}
+
+.managed-item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-item-action {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: var(--transition-fast);
+}
+
+.btn-item-action.edit {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border-color: #BFDBFE;
+}
+
+.btn-item-action.edit:hover {
+    background: #1D4ED8;
+    color: #FFFFFF;
+}
+
+.btn-item-action.delete {
+    background: #FEF2F2;
+    color: #DC2626;
+    border-color: #FECACA;
+}
+
+.btn-item-action.delete:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+}
+
+/* Compatibilidade tag chips */
 .tag-chips-container {
     display: flex;
     flex-wrap: wrap;
@@ -1431,21 +1552,6 @@ input, button, select, textarea {
     align-items: center;
     gap: 8px;
     box-shadow: var(--shadow-xs);
-}
-
-.chip-remove {
-    background: transparent;
-    border: none;
-    color: var(--text-light);
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    transition: var(--transition-fast);
-}
-
-.chip-remove:hover {
-    color: var(--accent-red);
 }
 
 /* UTM Preview Box */
@@ -2726,28 +2832,35 @@ input, button, select, textarea {
 
 /* 5. GAVETA LATERAL DE PRÉVIA RÁPIDA (QUICK DRAWER) */
 .btn-quick-drawer {
-    position: fixed;
-    right: 20px;
-    bottom: 24px;
-    z-index: 9998;
-    background: linear-gradient(135deg, #002C5B 0%, #1D4ED8 100%);
-    color: #FFFFFF;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 9999px;
-    font-size: 13.5px;
-    font-weight: 800;
-    box-shadow: 0 8px 24px rgba(0, 44, 91, 0.35);
+    background: #F1F5F9;
+    color: #002C5B;
+    border: 1px solid #CBD5E1;
+    padding: 7px 15px;
+    border-radius: var(--radius-pill, 9999px);
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-fast);
+}
+
+.btn-quick-drawer i {
+    font-size: 13px;
+    color: var(--royal-blue, #1E40AF);
 }
 
 .btn-quick-drawer:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 12px 28px rgba(0, 44, 91, 0.45);
+    background: var(--navy-primary, #002C5B);
+    color: #FFFFFF;
+    border-color: var(--navy-primary, #002C5B);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 44, 91, 0.18);
+}
+
+.btn-quick-drawer:hover i {
+    color: #FFFFFF;
 }
 
 .quick-drawer-panel {
