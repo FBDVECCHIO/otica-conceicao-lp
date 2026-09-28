@@ -600,6 +600,14 @@
                         <div class="addons-section">
                             <h4 class="addons-heading">Upgrades de Tecnologia em Lentes</h4>
 
+                            <div class="addon-toggle-row master-addon-toggle" style="background: rgba(0,44,91,0.06); padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(0,44,91,0.12);">
+                                <label class="addon-toggle-label" for="cms-toggle-show-tech-section" style="font-weight: 700; color: var(--navy-primary);">
+                                    <input type="checkbox" id="cms-toggle-show-tech-section" checked>
+                                    <span>Exibir Bloco de Tecnologias Extras nesta Landing Page</span>
+                                </label>
+                                <small style="display:block; font-size:11.5px; color:#64748B; margin-left: 24px; margin-top:2px;">Se desmarcado, o bloco completo de tecnologias adicionais será ocultado no site.</small>
+                            </div>
+
                             <div class="form-group">
                                 <label for="cms-antirreflexo">
                                     Adicional: Antirreflexo Premium
@@ -1317,130 +1325,148 @@
             <form id="form-create-lp" class="hub-modal-form">
                 <input type="hidden" id="edit-lp-id" value="">
 
-                <div class="form-group">
-                    <label for="new-lp-name">
-                        Nome Comercial da Landing Page
-                        <span class="required">*</span>
-                    </label>
-                    <input type="text" id="new-lp-name" placeholder="ex: Ray-Ban Aviador Completo" required>
-                </div>
+                <div class="modal-grid-2col">
+                    <!-- Coluna 1: Identificação & Campanha -->
+                    <div class="modal-col">
+                        <div class="modal-section-title"><i class="fas fa-bullhorn"></i> Identificação &amp; Campanha</div>
+                        
+                        <div class="form-group">
+                            <label for="new-lp-name">
+                                Nome Comercial da Landing Page
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" id="new-lp-name" placeholder="ex: Ray-Ban Aviador Completo" required>
+                        </div>
 
-                <div class="form-group">
-                    <label for="new-lp-slug">
-                        Slug da URL (Caminho da rota)
-                        <span class="required">*</span>
-                    </label>
-                    <div class="slug-input-wrapper">
-                        <span class="slug-prefix">lp.opticasconceicao.com.br/</span>
-                        <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-zA-Z0-9\-_]+" title="Apenas letras, números e traços">
-                    </div>
-                </div>
+                        <div class="form-group">
+                            <label for="new-lp-slug">
+                                Slug da URL (Caminho da rota)
+                                <span class="required">*</span>
+                            </label>
+                            <div class="slug-input-wrapper">
+                                <span class="slug-prefix">lp.opticasconceicao.com.br/</span>
+                                <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-zA-Z0-9\-_]+" title="Apenas letras, números e traços">
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label for="new-lp-campaign">
-                        Nome da Campanha Única
-                        <span class="required">*</span>
-                    </label>
-                    <input type="text" id="new-lp-campaign" placeholder="ex: Campanha Ray-Ban Verão 2026" required>
-                </div>
+                        <div class="form-group">
+                            <label for="new-lp-campaign">
+                                Nome da Campanha Única
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" id="new-lp-campaign" placeholder="ex: Campanha Ray-Ban Verão" required>
+                        </div>
 
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-budget">Orçamento Mídia (R$)</label>
-                        <div class="input-currency-wrapper">
-                            <span class="currency-prefix">R$</span>
-                            <input type="number" id="new-lp-budget" step="0.01" min="0" placeholder="2000.00" value="2000.00">
+                        <div class="form-row" style="display:flex; gap:12px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-budget">Orçamento Mídia (R$)</label>
+                                <div class="input-currency-wrapper">
+                                    <span class="currency-prefix">R$</span>
+                                    <input type="number" id="new-lp-budget" step="0.01" min="0" placeholder="2000.00" value="2000.00">
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-target-leads">Meta de Leads</label>
+                                <input type="number" id="new-lp-target-leads" min="1" placeholder="100" value="100">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-lp-status">Status da LP</label>
+                            <div class="filter-select-wrapper">
+                                <select id="new-lp-status">
+                                    <option value="Ativa" selected>Ativa (Online)</option>
+                                    <option value="Rascunho">Rascunho</option>
+                                    <option value="Pausada">Pausada (Fora do Ar)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-target-leads">Meta de Leads</label>
-                        <input type="number" id="new-lp-target-leads" min="1" placeholder="100" value="100">
-                    </div>
-                </div>
 
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-template">
-                            Template Base
-                            <span class="required">*</span>
-                        </label>
-                        <div class="filter-select-wrapper">
-                            <select id="new-lp-template" required>
-                                <option value="visaosimples">Template Visão Simples (Miopia/Astigmatismo/194)</option>
-                                <option value="forlife" selected>Template ForLife Multifocal</option>
-                                <option value="fila">Template FILA Sport</option>
-                                <option value="premium">Template Luxo Conceição</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-status">Status da LP</label>
-                        <div class="filter-select-wrapper">
-                            <select id="new-lp-status">
-                                <option value="Ativa" selected>Ativa</option>
-                                <option value="Rascunho">Rascunho</option>
-                                <option value="Pausada">Pausada</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                    <!-- Coluna 2: Template, Oferta & Marcas -->
+                    <div class="modal-col">
+                        <div class="modal-section-title"><i class="fas fa-layer-group"></i> Template &amp; Especificações do Produto</div>
 
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-offer-type">Tipo de Oferta</label>
-                        <div class="filter-select-wrapper">
-                            <select id="new-lp-offer-type">
-                                <option value="combo_completo" selected>Óculos Completo (Armação + Lentes)</option>
-                                <option value="so_lentes">Apenas Lentes (Troca na Armação)</option>
-                            </select>
+                        <div class="form-group">
+                            <label for="new-lp-template">
+                                Template Base
+                                <span class="required">*</span>
+                            </label>
+                            <div class="filter-select-wrapper">
+                                <select id="new-lp-template" required>
+                                    <option value="visaosimples">Template Visão Simples (Miopia/Astigmatismo/194)</option>
+                                    <option value="forlife" selected>Template ForLife Multifocal</option>
+                                    <option value="fila">Template FILA Sport</option>
+                                    <option value="premium">Template Luxo Conceição</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-lens-modality">Modalidade de Lente</label>
-                        <div class="filter-select-wrapper">
-                            <select id="new-lp-lens-modality">
-                                <option value="lentes_prontas" selected>Lentes Prontas (Estoque)</option>
-                                <option value="visao_simples_surfacada">Visão Simples Surfaçada</option>
-                                <option value="multifocal">Lentes Multifocais Digitais</option>
-                            </select>
+
+                        <div class="form-row" style="display:flex; gap:12px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-offer-type">Tipo de Oferta</label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-offer-type">
+                                        <option value="combo_completo" selected>Óculos Completo (Armação + Lentes)</option>
+                                        <option value="so_lentes">Apenas Lentes (Troca na Armação)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-lens-modality">Modalidade de Lente</label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-lens-modality">
+                                        <option value="lentes_prontas" selected>Lentes Prontas (Estoque)</option>
+                                        <option value="visao_simples_surfacada">Visão Simples Surfaçada</option>
+                                        <option value="multifocal">Lentes Multifocais Digitais</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-frame-brand">Marca da Armação</label>
-                        <input type="text" id="new-lp-frame-brand" placeholder="ex: Coleção Conceição">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-lens-brand">Marca das Lentes</label>
-                        <input type="text" id="new-lp-lens-brand" placeholder="ex: Lentes Monofocais HD">
-                    </div>
-                </div>
-
-                <div class="form-row" style="display:flex; gap:16px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-price">
-                            Preço Base do Combo (R$)
-                        </label>
-                        <div class="input-currency-wrapper">
-                            <span class="currency-prefix">R$</span>
-                            <input type="number" id="new-lp-price" step="0.01" min="0" placeholder="297.00" value="297.00" required>
+                        <div class="form-row" style="display:flex; gap:12px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-frame-brand">Marca da Armação</label>
+                                <input type="text" id="new-lp-frame-brand" placeholder="ex: Coleção Conceição">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-lens-brand">Marca das Lentes</label>
+                                <input type="text" id="new-lp-lens-brand" placeholder="ex: Lentes Monofocais HD">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="new-lp-installments">
-                            Parcelas Sem Juros
-                        </label>
-                        <input type="number" id="new-lp-installments" min="1" max="24" placeholder="10" value="10" required>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="new-lp-color">Cor de Destaque da Marca</label>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="color" id="new-lp-color" value="#002C5B" style="width:42px; height:38px; border:none; border-radius:8px; cursor:pointer;">
-                        <span style="font-size:12px; color:var(--text-muted, #64748B);">Personaliza os detalhes visuais da Landing Page no painel.</span>
+                        <div class="form-row" style="display:flex; gap:12px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-price">Preço Combo (R$)</label>
+                                <div class="input-currency-wrapper">
+                                    <span class="currency-prefix">R$</span>
+                                    <input type="number" id="new-lp-price" step="0.01" min="0" placeholder="297.00" value="297.00" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-installments">Parcelas Sem Juros</label>
+                                <input type="number" id="new-lp-installments" min="1" max="24" placeholder="10" value="10" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="display:flex; gap:12px; align-items:center;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-tech-section">Bloco de Tecnologias Extras</label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-tech-section">
+                                        <option value="true" selected>Ativado (Exibir no site)</option>
+                                        <option value="false">Desativado (Ocultar no site)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-color">Cor da Marca</label>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <input type="color" id="new-lp-color" value="#002C5B" style="width:38px; height:34px; border:none; border-radius:6px; cursor:pointer;">
+                                    <span style="font-size:11px; color:#64748B;">Cor de destaque</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

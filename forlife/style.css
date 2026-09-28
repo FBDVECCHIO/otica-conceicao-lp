@@ -1931,3 +1931,39 @@ body {
         margin-top: 4px;
     }
 }
+
+/* ==========================================
+   CARDS DE TECNOLOGIA DESATIVADA (CINZA ATENUADO)
+   ========================================== */
+.tech-card.is-disabled-gray {
+    opacity: 0.45 !important;
+    filter: grayscale(1) !important;
+    cursor: not-allowed !important;
+    background: #F1F5F9 !important;
+    border: 1.5px dashed #CBD5E1 !important;
+    box-shadow: none !important;
+    position: relative;
+    pointer-events: none !important;
+}
+
+.tech-card.is-disabled-gray .tech-checkbox-badge {
+    display: none !important;
+}
+
+.tech-card.is-disabled-gray .tech-phrase-text {
+    color: #64748B !important;
+}
+
+.tech-disabled-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #E2E8F0;
+    color: #64748B;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}

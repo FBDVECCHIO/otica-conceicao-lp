@@ -38,9 +38,90 @@ const selectedAddons = {
 let prescriptionBase64 = "";
 
 // ==========================================
+// PROTOCOLO DE SAÍDA DO AR (LPS DESATIVADAS)
+// ==========================================
+async function checkLpOnlineStatus() {
+    try {
+        const path = window.location.pathname.replace(/^\/+|\/+$/g, '') || 'forlife';
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeId = urlParams.get('theme') || '';
+
+        // 1. Checa LocalStorage se desativada neste navegador
+        const raw = localStorage.getItem('otica_deactivated_lps');
+        if (raw) {
+            const deact = JSON.parse(raw);
+            if (Array.isArray(deact)) {
+                if (deact.includes(path) || deact.includes('/' + path) || (themeId && deact.includes(themeId))) return false;
+            } else if (typeof deact === 'object' && deact !== null) {
+                if (deact[path] || deact['/' + path] || (themeId && deact[themeId])) return false;
+            }
+        }
+
+        // 2. Checa catálogo local se status foi alterado para 'Pausada' / 'Inativa'
+        const rawCat = localStorage.getItem('otica_conceicao_lps_catalog');
+        if (rawCat) {
+            const cat = JSON.parse(rawCat);
+            const lp = cat[path] || cat['/' + path];
+            if (lp && (lp.status === 'Pausada' || lp.status === 'Inativa' || lp.status === 'Desativada')) {
+                return false;
+            }
+        }
+
+        // 3. Checa Supabase se houver registro de offline para este slug
+        if (supabaseClient) {
+            const { data } = await supabaseClient
+                .from('forlife_config')
+                .select('id')
+                .eq('id', `lp_offline_${path}`)
+                .maybeSingle();
+
+            if (data && data.id) {
+                return false;
+            }
+        }
+    } catch (e) {
+        console.warn('Erro ao verificar status online da LP:', e);
+    }
+    return true;
+}
+
+function renderOfflineScreen() {
+    document.body.innerHTML = `
+        <div style="min-height: 100vh; background: #001A36; display: flex; align-items: center; justify-content: center; padding: 24px; font-family: 'Outfit', sans-serif; color: #FFFFFF; text-align: center;">
+            <div style="max-width: 520px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 20px; padding: 40px 28px; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <span style="display: inline-block; padding: 4px 12px; background: rgba(255,255,255,0.1); border-radius: 9999px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #93C5FD; margin-bottom: 12px;">Campanha Encerrada</span>
+                <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">Esta Oferta Não Está Mais Disponível</h1>
+                <p style="font-size: 14.5px; color: #94A3B8; line-height: 1.6; margin-bottom: 28px;">
+                    A campanha promocional vinculada a este endereço foi desativada ou teve seu lote promocional encerrado. Conheça nossas ofertas em destaque ou fale diretamente com a nossa equipe especializada.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="https://lp.opticaconceicao.com.br/forlife" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #0066CC; color: #FFFFFF; padding: 14px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 15px; transition: background 0.2s;">
+                        <i class="fas fa-arrow-right"></i> Ver Campanhas Ativas da Ótica
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=5519978056552&text=Olá,%20gostaria%20de%20consultar%20ofertas%20ativas%20nas%20Ópticas%20Conceição" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.1); color: #FFFFFF; padding: 12px 24px; border-radius: 12px; font-weight: 600; text-decoration: none; font-size: 14px;">
+                        <i class="fab fa-whatsapp" style="color: #22C55E;"></i> Falar com um Consultor no WhatsApp
+                    </a>
+                </div>
+                <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748B;">
+                    Ópticas Conceição &bull; Desde 1948 &bull; Campinas/SP
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ==========================================
 // INICIALIZAÇÃO
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    const isOnline = await checkLpOnlineStatus();
+    if (!isOnline) {
+        renderOfflineScreen();
+        return;
+    }
     initScarcityBadge();
     await loadForlifeConfig();
     setupEventListeners();
@@ -651,12 +732,17 @@ async function loadForlifeConfig() {
         const bluecut = (cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00;
         const fotossensivel = (cms && cms.fotossensivel !== undefined) ? parseFloat(cms.fotossensivel) : 120.00;
 
+        const showTechSection = (cms && cms.showTechSection !== undefined) ? cms.showTechSection : (lp && lp.showTechSection !== undefined ? lp.showTechSection : true);
+        const addonsActive = (cms && cms.addonsActive) ? cms.addonsActive : ((lp && lp.addonsActive) ? lp.addonsActive : { antirreflexo: true, bluecut: true, fotossensivel: true });
+
         forlifeConfig = {
             comboPrice: price,
             installments: installments,
             addonAntirreflexo: antirreflexo,
             addonBluecut: bluecut,
             addonFotossensivel: fotossensivel,
+            showTechSection: showTechSection,
+            addonsActive: addonsActive,
             lpId: lp ? lp.id : activeLpInfo.slug,
             lpName: lp ? lp.name : ''
         };
@@ -678,6 +764,8 @@ async function loadForlifeConfig() {
                     addonAntirreflexo: parseFloat(data.addon_antirreflexo) || 100.00,
                     addonBluecut: parseFloat(data.addon_bluecut) || 100.00,
                     addonFotossensivel: parseFloat(data.addon_fotossensivel) || 150.00,
+                    showTechSection: true,
+                    addonsActive: { antirreflexo: true, bluecut: true, fotossensivel: true },
                     lpId: 'forlife',
                     lpName: 'ForLife Multifocal Di Capri'
                 };
@@ -709,7 +797,17 @@ function formatMoney(value) {
 // ATUALIZAÇÃO DA INTERFACE & CÁLCULOS
 // ==========================================
 function updatePricingUI() {
-    const { comboPrice, installments, addonAntirreflexo, addonBluecut, addonFotossensivel } = forlifeConfig;
+    const { comboPrice, installments, addonAntirreflexo, addonBluecut, addonFotossensivel, showTechSection, addonsActive } = forlifeConfig;
+
+    // 0. Alternar visibilidade da seção inteira de tecnologias
+    const techSection = document.getElementById('tecnologias');
+    if (techSection) {
+        if (showTechSection === false) {
+            techSection.style.display = 'none';
+        } else {
+            techSection.style.display = '';
+        }
+    }
 
     // 1. Atualizar Banner 2 (Combo)
     const comboCashEl = document.getElementById('combo-cash-price');
@@ -728,6 +826,23 @@ function updatePricingUI() {
     if (priceAntirreflexoEl) priceAntirreflexoEl.textContent = `+ R$ ${formatMoney(addonAntirreflexo)}`;
     if (priceBluecutEl) priceBluecutEl.textContent = `+ R$ ${formatMoney(addonBluecut)}`;
     if (priceFotoEl) priceFotoEl.textContent = `+ R$ ${formatMoney(addonFotossensivel)}`;
+
+    // Atualizar estado de ativação individual de cada tecnologia (cinza desativada)
+    ['antirreflexo', 'bluecut', 'fotossensivel'].forEach(addon => {
+        const card = document.getElementById(`card-addon-${addon}`);
+        if (card) {
+            const isActive = addonsActive ? (addonsActive[addon] !== false) : true;
+            if (!isActive) {
+                card.classList.add('is-disabled-gray');
+                card.classList.remove('selected');
+                selectedAddons[addon] = false;
+                const checkIcon = card.querySelector('.tech-checkbox-badge i');
+                if (checkIcon) checkIcon.style.opacity = '0';
+            } else {
+                card.classList.remove('is-disabled-gray');
+            }
+        }
+    });
 
     // 3. Atualizar Banner 4 (Resumo)
     const summaryComboPriceEl = document.getElementById('summary-combo-price');
@@ -811,6 +926,7 @@ function setupEventListeners() {
     const techCards = document.querySelectorAll('.tech-card');
     techCards.forEach(card => {
         card.addEventListener('click', () => {
+            if (card.classList.contains('is-disabled-gray')) return;
             const key = card.getAttribute('data-addon');
             if (key in selectedAddons) {
                 selectedAddons[key] = !selectedAddons[key];

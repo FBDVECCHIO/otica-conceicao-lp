@@ -633,6 +633,7 @@
                 lensModality: lp.lensModality,
                 frameBrand: lp.frameBrand,
                 lensBrand: lp.lensBrand,
+                showTechSection: lp.showTechSection !== false,
                 antirreflexo: 60.00,
                 bluecut: 70.00,
                 fotossensivel: 120.00,
@@ -672,7 +673,32 @@
             if (updatedData.lensModality) lp.lensModality = updatedData.lensModality;
             if (updatedData.frameBrand) lp.frameBrand = updatedData.frameBrand;
             if (updatedData.lensBrand) lp.lensBrand = updatedData.lensBrand;
+            if (updatedData.showTechSection !== undefined) lp.showTechSection = updatedData.showTechSection;
             if (updatedData.addonsActive) lp.addonsActive = updatedData.addonsActive;
+
+            // Gerencia protocolo de status online/offline
+            const slugKey = cleanSlug.replace(/^\/+/, '');
+            if (lp.status === 'Pausada' || lp.status === 'Inativa' || lp.status === 'Desativada') {
+                try {
+                    const deact = JSON.parse(localStorage.getItem('otica_deactivated_lps') || '{}');
+                    deact[slugKey] = { slug: slugKey, name: lp.name, deactivatedAt: new Date().toISOString() };
+                    deact[lpId] = { slug: slugKey, name: lp.name, deactivatedAt: new Date().toISOString() };
+                    localStorage.setItem('otica_deactivated_lps', JSON.stringify(deact));
+                    if (State.supabase) {
+                        State.supabase.from(SUPABASE_CONFIG.configTable).upsert({ id: `lp_offline_${slugKey}`, updated_at: new Date().toISOString() }).then(() => {});
+                    }
+                } catch (e) {}
+            } else if (lp.status === 'Ativa') {
+                try {
+                    const deact = JSON.parse(localStorage.getItem('otica_deactivated_lps') || '{}');
+                    delete deact[slugKey];
+                    delete deact[lpId];
+                    localStorage.setItem('otica_deactivated_lps', JSON.stringify(deact));
+                    if (State.supabase) {
+                        State.supabase.from(SUPABASE_CONFIG.configTable).delete().eq('id', `lp_offline_${slugKey}`).then(() => {});
+                    }
+                } catch (e) {}
+            }
 
             if (updatedData.campaign) {
                 lp.campaign = {
@@ -688,6 +714,7 @@
             let cmsObj = {
                 comboPrice: lp.price,
                 installments: lp.installments,
+                showTechSection: lp.showTechSection !== false,
                 antirreflexo: 0.00,
                 bluecut: 70.00,
                 fotossensivel: 120.00
@@ -698,6 +725,7 @@
             } catch (e) {}
             cmsObj.comboPrice = lp.price;
             cmsObj.installments = lp.installments;
+            cmsObj.showTechSection = lp.showTechSection !== false;
             localStorage.setItem(cmsKey, JSON.stringify(cmsObj));
 
             // Sincroniza seletor e catálogo
@@ -729,7 +757,7 @@
             return lp;
         },
 
-        removeLp(lpId) {
+        async removeLp(lpId) {
             if (!State.catalog[lpId]) return false;
 
             const totalLps = Object.keys(State.catalog).length;
@@ -738,9 +766,31 @@
                 return false;
             }
 
-            const lpName = State.catalog[lpId].name;
-            if (!confirm(`Deseja realmente remover a Landing Page "${lpName}" (${lpId})? Ela deixará de ser exibida no comparativo, catálogo e seletor.`)) {
+            const lp = State.catalog[lpId];
+            const lpName = lp.name;
+            const lpSlug = (lp.slug || lpId).replace(/^\/+/, '');
+
+            if (!confirm(`Deseja realmente remover a Landing Page "${lpName}" (${lpId})?\n\nProtocolo de Segurança: A página sairá do ar imediatamente em todos os dispositivos e novos acessos verão a tela de campanha encerrada.`)) {
                 return false;
+            }
+
+            // Registra no protocolo de páginas desativadas/fora do ar
+            try {
+                const deact = JSON.parse(localStorage.getItem('otica_deactivated_lps') || '{}');
+                deact[lpSlug] = { slug: lpSlug, name: lpName, deactivatedAt: new Date().toISOString() };
+                deact[lpId] = { slug: lpSlug, name: lpName, deactivatedAt: new Date().toISOString() };
+                localStorage.setItem('otica_deactivated_lps', JSON.stringify(deact));
+            } catch (e) {}
+
+            if (State.supabase) {
+                try {
+                    await State.supabase.from(SUPABASE_CONFIG.configTable).upsert({
+                        id: `lp_offline_${lpSlug}`,
+                        updated_at: new Date().toISOString()
+                    });
+                } catch (err) {
+                    console.warn('[LPStudio] Erro ao sincronizar status offline:', err);
+                }
             }
 
             delete State.catalog[lpId];
@@ -758,7 +808,7 @@
                 Performance.render();
             }
 
-            Utils.showToast(`Landing Page "${lpName}" removida com sucesso.`, 'info');
+            Utils.showToast(`Landing Page "${lpName}" removida e retirada do ar com sucesso.`, 'info');
             return true;
         },
 
@@ -2316,6 +2366,7 @@
                 lensModality: currentLp.lensModality || 'lentes_prontas',
                 frameBrand: currentLp.frameBrand || 'Coleção Conceição',
                 lensBrand: currentLp.lensBrand || 'Lentes Monofocais HD',
+                showTechSection: currentLp.showTechSection !== false,
                 antirreflexo: currentLp.antirreflexo || 0.00,
                 bluecut: currentLp.bluecut || 70.00,
                 fotossensivel: currentLp.fotossensivel || 120.00,
@@ -2343,6 +2394,10 @@
             this.setInputValue('cms-antirreflexo', config.antirreflexo);
             this.setInputValue('cms-bluecut', config.bluecut);
             this.setInputValue('cms-fotossensivel', config.fotossensivel);
+
+            // Interruptor mestre da seção de tecnologias
+            const chkShowSec = document.getElementById('cms-toggle-show-tech-section');
+            if (chkShowSec) chkShowSec.checked = config.showTechSection !== false;
 
             // Checkboxes de ativação das tecnologias
             const chkAnti = document.getElementById('cms-toggle-antirreflexo');
@@ -2401,6 +2456,7 @@
             const lensModality = document.getElementById('cms-lens-modality')?.value || 'lentes_prontas';
             const frameBrand = (document.getElementById('cms-frame-brand')?.value || '').trim() || 'Coleção Conceição';
             const lensBrand = (document.getElementById('cms-lens-brand')?.value || '').trim() || 'Lentes Monofocais HD';
+            const showTechSection = document.getElementById('cms-toggle-show-tech-section')?.checked ?? true;
             const antirreflexo = parseFloat(document.getElementById('cms-antirreflexo')?.value) || 0;
             const bluecut = parseFloat(document.getElementById('cms-bluecut')?.value) || 0;
             const fotossensivel = parseFloat(document.getElementById('cms-fotossensivel')?.value) || 0;
@@ -2418,6 +2474,7 @@
                 lensModality,
                 frameBrand,
                 lensBrand,
+                showTechSection,
                 antirreflexo,
                 bluecut,
                 fotossensivel,
@@ -2435,6 +2492,7 @@
                 State.catalog[lpId].lensModality = lensModality;
                 State.catalog[lpId].frameBrand = frameBrand;
                 State.catalog[lpId].lensBrand = lensBrand;
+                State.catalog[lpId].showTechSection = showTechSection;
                 State.catalog[lpId].addonsActive = addonsActive;
                 Catalog.saveCatalog();
                 Catalog.renderCatalogGrid();
@@ -3180,6 +3238,8 @@
             if (targetInput) targetInput.value = '100';
             const statusInput = modal.querySelector('#new-lp-status');
             if (statusInput) statusInput.value = 'Ativa';
+            const techSecInput = modal.querySelector('#new-lp-tech-section');
+            if (techSecInput) techSecInput.value = 'true';
             const colorInput = modal.querySelector('#new-lp-color');
             if (colorInput) colorInput.value = '#002C5B';
 
@@ -3248,6 +3308,9 @@
 
             const statusInput = modal.querySelector('#new-lp-status');
             if (statusInput) statusInput.value = lp.status || 'Ativa';
+
+            const techSecInput = modal.querySelector('#new-lp-tech-section');
+            if (techSecInput) techSecInput.value = lp.showTechSection === false ? 'false' : 'true';
 
             const priceInput = modal.querySelector('#new-lp-price');
             if (priceInput) priceInput.value = lp.price || 194.00;
@@ -3391,6 +3454,7 @@
                         const frameBrand = (modal.querySelector('#new-lp-frame-brand')?.value || '').trim() || 'Coleção Conceição';
                         const lensBrand = (modal.querySelector('#new-lp-lens-brand')?.value || '').trim() || 'Lentes Monofocais HD';
                         const status = modal.querySelector('#new-lp-status')?.value || 'Ativa';
+                        const showTechSection = modal.querySelector('#new-lp-tech-section')?.value !== 'false';
                         const price = parseFloat(modal.querySelector('#new-lp-price')?.value) || 194.00;
                         const installments = parseInt(modal.querySelector('#new-lp-installments')?.value, 10) || 6;
                         const color = modal.querySelector('#new-lp-color')?.value || '#002C5B';
@@ -3409,6 +3473,7 @@
                             lensModality,
                             frameBrand,
                             lensBrand,
+                            showTechSection,
                             campaign: {
                                 name: campaignName,
                                 budget,

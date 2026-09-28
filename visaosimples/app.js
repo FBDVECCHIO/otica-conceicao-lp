@@ -28,6 +28,7 @@ let vsConfig = {
     addonAntirreflexo: 60.00,
     addonBluecut: 70.00,
     addonFotossensivel: 120.00,
+    showTechSection: true,
     addonsActive: {
         antirreflexo: true,
         bluecut: true,
@@ -45,9 +46,90 @@ const selectedAddons = {
 let prescriptionBase64 = "";
 
 // ==============================================================================
+// PROTOCOLO DE SAÍDA DO AR (LPS DESATIVADAS)
+// ==============================================================================
+async function checkLpOnlineStatus() {
+    try {
+        const path = window.location.pathname.replace(/^\/+|\/+$/g, '') || '194';
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeId = urlParams.get('theme') || '';
+
+        // 1. Checa LocalStorage se desativada neste navegador
+        const raw = localStorage.getItem('otica_deactivated_lps');
+        if (raw) {
+            const deact = JSON.parse(raw);
+            if (Array.isArray(deact)) {
+                if (deact.includes(path) || deact.includes('/' + path) || (themeId && deact.includes(themeId))) return false;
+            } else if (typeof deact === 'object' && deact !== null) {
+                if (deact[path] || deact['/' + path] || (themeId && deact[themeId])) return false;
+            }
+        }
+
+        // 2. Checa catálogo local se status foi alterado para 'Pausada' / 'Inativa'
+        const rawCat = localStorage.getItem('otica_conceicao_lps_catalog');
+        if (rawCat) {
+            const cat = JSON.parse(rawCat);
+            const lp = cat[path] || cat['/' + path];
+            if (lp && (lp.status === 'Pausada' || lp.status === 'Inativa' || lp.status === 'Desativada')) {
+                return false;
+            }
+        }
+
+        // 3. Checa Supabase se houver registro de offline para este slug
+        if (supabaseClient) {
+            const { data } = await supabaseClient
+                .from('forlife_config')
+                .select('id')
+                .eq('id', `lp_offline_${path}`)
+                .maybeSingle();
+
+            if (data && data.id) {
+                return false;
+            }
+        }
+    } catch (e) {
+        console.warn('Erro ao verificar status online da LP:', e);
+    }
+    return true;
+}
+
+function renderOfflineScreen() {
+    document.body.innerHTML = `
+        <div style="min-height: 100vh; background: #001A36; display: flex; align-items: center; justify-content: center; padding: 24px; font-family: 'Outfit', sans-serif; color: #FFFFFF; text-align: center;">
+            <div style="max-width: 520px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 20px; padding: 40px 28px; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <span style="display: inline-block; padding: 4px 12px; background: rgba(255,255,255,0.1); border-radius: 9999px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #93C5FD; margin-bottom: 12px;">Campanha Encerrada</span>
+                <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px;">Esta Oferta Não Está Mais Disponível</h1>
+                <p style="font-size: 14.5px; color: #94A3B8; line-height: 1.6; margin-bottom: 28px;">
+                    A campanha promocional vinculada a este endereço foi desativada ou teve seu lote promocional encerrado. Conheça nossas ofertas em destaque ou fale diretamente com a nossa equipe especializada.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="https://lp.opticaconceicao.com.br/forlife" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #0066CC; color: #FFFFFF; padding: 14px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 15px; transition: background 0.2s;">
+                        <i class="fas fa-arrow-right"></i> Ver Campanhas Ativas da Ótica
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=5519978056552&text=Olá,%20gostaria%20de%20consultar%20ofertas%20ativas%20nas%20Ópticas%20Conceição" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.1); color: #FFFFFF; padding: 12px 24px; border-radius: 12px; font-weight: 600; text-decoration: none; font-size: 14px;">
+                        <i class="fab fa-whatsapp" style="color: #22C55E;"></i> Falar com um Consultor no WhatsApp
+                    </a>
+                </div>
+                <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #64748B;">
+                    Ópticas Conceição &bull; Desde 1948 &bull; Campinas/SP
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ==============================================================================
 // INICIALIZAÇÃO
 // ==============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
+    const isOnline = await checkLpOnlineStatus();
+    if (!isOnline) {
+        renderOfflineScreen();
+        return;
+    }
     initScarcityBadge();
     await loadConfigFromStorage();
     applyConfigToDOM();
@@ -83,6 +165,7 @@ async function loadConfigFromStorage() {
             if (lpEntry.lensModality) vsConfig.lensModality = lpEntry.lensModality;
             if (lpEntry.frameBrand) vsConfig.frameBrand = lpEntry.frameBrand;
             if (lpEntry.lensBrand) vsConfig.lensBrand = lpEntry.lensBrand;
+            if (lpEntry.showTechSection !== undefined) vsConfig.showTechSection = lpEntry.showTechSection;
             if (lpEntry.addonsActive) vsConfig.addonsActive = { ...vsConfig.addonsActive, ...lpEntry.addonsActive };
         }
 
@@ -100,6 +183,7 @@ async function loadConfigFromStorage() {
             if (parsed.lensModality) vsConfig.lensModality = parsed.lensModality;
             if (parsed.frameBrand) vsConfig.frameBrand = parsed.frameBrand;
             if (parsed.lensBrand) vsConfig.lensBrand = parsed.lensBrand;
+            if (parsed.showTechSection !== undefined) vsConfig.showTechSection = parsed.showTechSection;
             if (parsed.addonsActive) vsConfig.addonsActive = { ...vsConfig.addonsActive, ...parsed.addonsActive };
         }
     } catch (err) {
@@ -111,6 +195,16 @@ async function loadConfigFromStorage() {
 // APLICAÇÃO VISUAL DA CONFIGURAÇÃO (HEADLINE, MARCAS, BADGES, ADICIONAIS)
 // ==============================================================================
 function applyConfigToDOM() {
+    // 0. Exibição da Seção de Tecnologias
+    const techSec = document.getElementById('tecnologias');
+    if (techSec) {
+        if (vsConfig.showTechSection === false) {
+            techSec.style.display = 'none';
+        } else {
+            techSec.style.display = '';
+        }
+    }
+
     // 1. Modalidade da Lente
     const modalityBadge = document.getElementById('hero-modality-badge');
     if (modalityBadge) {
