@@ -542,58 +542,74 @@
                     </div>
 
                     <form id="cms-config-form" class="cms-form">
-                        <div class="form-group">
-                            <label for="cms-combo-price">
-                                Preço Base do Combo (Armação + Lentes)
-                                <span class="help-text">Valor à vista em R$</span>
-                            </label>
-                            <div class="input-currency-wrapper">
-                                <span class="currency-prefix">R$</span>
-                                <input type="number" id="cms-combo-price" step="0.01" min="0" placeholder="297.00" required>
+                        <!-- Bloco 1: Precificação & Pagamento -->
+                        <div class="cms-sub-section">
+                            <div class="cms-sub-heading">
+                                <i class="fas fa-coins"></i>
+                                <span>Precificação &amp; Pagamento</span>
+                            </div>
+                            <div class="cms-form-row-2col">
+                                <div class="form-group">
+                                    <label for="cms-combo-price">
+                                        Preço Base (R$)
+                                        <span class="help-text">Valor à vista</span>
+                                    </label>
+                                    <div class="input-currency-wrapper">
+                                        <span class="currency-prefix">R$</span>
+                                        <input type="number" id="cms-combo-price" step="0.01" min="0" placeholder="297.00" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cms-installments">
+                                        Parcelamento
+                                        <span class="help-text">Máx. sem juros</span>
+                                    </label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fas fa-credit-card input-inner-icon"></i>
+                                        <input type="number" id="cms-installments" min="1" max="24" placeholder="10" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="cms-installments">
-                                Parcelamento Máximo Sem Juros
-                                <span class="help-text">Número de vezes para cálculo de parcelas</span>
-                            </label>
-                            <div class="input-icon-wrapper">
-                                <i class="fas fa-credit-card input-inner-icon"></i>
-                                <input type="number" id="cms-installments" min="1" max="24" placeholder="10" required>
+                        <!-- Bloco 2: Estrutura da Oferta & Marcas -->
+                        <div class="cms-sub-section">
+                            <div class="cms-sub-heading">
+                                <i class="fas fa-glasses"></i>
+                                <span>Estrutura da Oferta &amp; Marcas</span>
                             </div>
-                        </div>
 
-                        <div class="form-row" style="display:flex; gap:16px;">
-                            <div class="form-group" style="flex:1;">
+                            <div class="form-group">
                                 <label for="cms-offer-type">Tipo de Oferta</label>
-                                <div class="filter-select-wrapper">
-                                    <select id="cms-offer-type">
+                                <div class="filter-select-wrapper w-full">
+                                    <select id="cms-offer-type" class="cms-select-full">
                                         <option value="combo_completo" selected>Óculos Completo (Armação + Lentes)</option>
                                         <option value="so_lentes">Apenas Lentes (Troca na Armação)</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group" style="flex:1;">
+
+                            <div class="form-group">
                                 <label for="cms-lens-modality">Modalidade das Lentes</label>
-                                <div class="filter-select-wrapper">
-                                    <select id="cms-lens-modality">
+                                <div class="filter-select-wrapper w-full">
+                                    <select id="cms-lens-modality" class="cms-select-full">
                                         <option value="lentes_prontas" selected>Lentes Prontas (Estoque)</option>
                                         <option value="visao_simples_surfacada">Visão Simples Surfaçada</option>
                                         <option value="multifocal">Lentes Multifocais Digitais</option>
                                     </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-row" style="display:flex; gap:16px;">
-                            <div class="form-group" style="flex:1;">
-                                <label for="cms-frame-brand">Marca da Armação</label>
-                                <input type="text" id="cms-frame-brand" placeholder="ex: Coleção Conceição">
-                            </div>
-                            <div class="form-group" style="flex:1;">
-                                <label for="cms-lens-brand">Marca das Lentes</label>
-                                <input type="text" id="cms-lens-brand" placeholder="ex: Lentes Monofocais HD">
+                            <div class="cms-form-row-2col">
+                                <div class="form-group">
+                                    <label for="cms-frame-brand">Marca da Armação</label>
+                                    <input type="text" id="cms-frame-brand" placeholder="ex: Coleção Conceição">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cms-lens-brand">Marca das Lentes</label>
+                                    <input type="text" id="cms-lens-brand" placeholder="ex: Lentes Monofocais HD">
+                                </div>
                             </div>
                         </div>
 

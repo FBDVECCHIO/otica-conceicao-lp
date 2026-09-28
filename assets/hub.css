@@ -1242,7 +1242,7 @@ input, button, select, textarea {
    -------------------------------------------------------------------------- */
 .cms-grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 24px;
 }
 
@@ -1287,7 +1287,72 @@ input, button, select, textarea {
 /* Formulário CMS */
 .cms-form .form-group,
 .utm-builder-form .form-group {
+    margin-bottom: 16px;
+    min-width: 0;
+}
+
+.cms-sub-section {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--radius-md);
+    padding: 16px;
     margin-bottom: 18px;
+}
+
+.cms-sub-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--navy-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.cms-sub-heading i {
+    color: var(--royal-blue);
+    font-size: 13px;
+}
+
+.cms-form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+    min-width: 0;
+}
+
+.cms-form-row-2col:last-child {
+    margin-bottom: 0;
+}
+
+.cms-form-row-2col .form-group {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+.filter-select-wrapper {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.filter-select-wrapper.w-full select,
+.cms-select-full,
+.cms-form .filter-select-wrapper select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.filter-select-wrapper select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .form-group label {
@@ -1309,6 +1374,7 @@ input, button, select, textarea {
 .form-group input,
 .quick-add-group input {
     width: 100%;
+    box-sizing: border-box;
     padding: 10px 14px;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
