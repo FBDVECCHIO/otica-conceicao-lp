@@ -1971,6 +1971,27 @@ input, button, select, textarea {
     color: var(--navy-primary);
 }
 
+.btn-card-edit {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #EFF6FF;
+    color: #2563EB;
+    border: 1px solid #BFDBFE;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-card-edit:hover {
+    background: #2563EB;
+    color: #FFFFFF;
+    border-color: #2563EB;
+}
+
 .btn-card-delete {
     width: 36px;
     height: 36px;

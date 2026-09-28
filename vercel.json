@@ -8,6 +8,7 @@
     { "source": "/admin/", "destination": "/hub.html" },
     { "source": "/forlife", "destination": "/forlife/index.html" },
     { "source": "/forlife/", "destination": "/forlife/index.html" },
-    { "source": "/forlife/admin", "destination": "/forlife/admin.html" }
+    { "source": "/forlife/admin", "destination": "/forlife/admin.html" },
+    { "source": "/:slug((?!assets|hub|admin|forlife|docs).*)", "destination": "/forlife/index.html" }
   ]
 }

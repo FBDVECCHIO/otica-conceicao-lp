@@ -514,26 +514,125 @@
                 throw new Error(`Já existe uma Landing Page cadastrada com o ID "${id}".`);
             }
 
+            const slugVal = Utils.slugify(newLpData.slug || newLpData.name);
+            const cleanSlug = '/' + slugVal.replace(/^\/+/, '');
+            const cleanUrl = cleanSlug;
+
             const lp = {
                 id,
                 name: newLpData.name.trim(),
-                url: newLpData.url.trim(),
-                slug: newLpData.slug ? (newLpData.slug.startsWith('/') ? newLpData.slug : `/${newLpData.slug}`) : `/${id}`,
+                url: cleanUrl,
+                slug: cleanSlug,
                 status: newLpData.status || 'Ativa',
                 color: newLpData.color || '#002C5B',
                 price: parseFloat(newLpData.price) || 297.00,
                 installments: parseInt(newLpData.installments, 10) || 10,
-                description: newLpData.description || 'Nova landing page cadastrada no Studio.',
+                description: newLpData.description || `Campanha promocional para ${newLpData.name.trim()}.`,
+                template: newLpData.template || 'forlife',
+                campaign: newLpData.campaign || {
+                    name: `Campanha ${newLpData.name.trim()}`,
+                    budget: parseFloat(newLpData.budget) || 2000.00,
+                    targetLeads: parseInt(newLpData.targetLeads, 10) || 100,
+                    status: newLpData.status === 'Ativa' ? 'Em Veiculação' : 'Planejamento'
+                },
                 custom: true
             };
 
             State.catalog[id] = lp;
             this.saveCatalog();
+
+            // Inicializa CMS com os dados de preço e parcelamento cadastrados
+            const cmsKey = STORAGE_KEYS.cmsConfigPrefix + id;
+            localStorage.setItem(cmsKey, JSON.stringify({
+                comboPrice: lp.price,
+                installments: lp.installments,
+                antirreflexo: 0.00,
+                bluecut: 70.00,
+                fotossensivel: 120.00
+            }));
+
             this.populateSelector();
             this.renderCatalogGrid();
             this.setActiveLp(id);
 
+            if (Performance && typeof Performance.render === 'function') {
+                Performance.render();
+            }
+
             Utils.showToast(`Landing Page "${lp.name}" criada com sucesso!`, 'success');
+            return lp;
+        },
+
+        updateLp(lpId, updatedData) {
+            if (!State.catalog[lpId]) {
+                throw new Error(`Landing Page "${lpId}" não encontrada no catálogo.`);
+            }
+
+            const lp = State.catalog[lpId];
+            const cleanSlug = updatedData.slug ? (updatedData.slug.startsWith('/') ? updatedData.slug : `/${updatedData.slug}`) : lp.slug;
+
+            lp.name = updatedData.name.trim();
+            lp.slug = cleanSlug;
+            lp.url = cleanSlug;
+            lp.status = updatedData.status || lp.status;
+            lp.color = updatedData.color || lp.color;
+            lp.price = parseFloat(updatedData.price) || lp.price;
+            lp.installments = parseInt(updatedData.installments, 10) || lp.installments;
+            if (updatedData.description) lp.description = updatedData.description;
+            if (updatedData.template) lp.template = updatedData.template;
+
+            if (updatedData.campaign) {
+                lp.campaign = {
+                    ...lp.campaign,
+                    ...updatedData.campaign
+                };
+            }
+
+            this.saveCatalog();
+
+            // Sincroniza configurações no CMS
+            const cmsKey = STORAGE_KEYS.cmsConfigPrefix + lpId;
+            let cmsObj = {
+                comboPrice: lp.price,
+                installments: lp.installments,
+                antirreflexo: 0.00,
+                bluecut: 70.00,
+                fotossensivel: 120.00
+            };
+            try {
+                const storedCms = localStorage.getItem(cmsKey);
+                if (storedCms) cmsObj = { ...cmsObj, ...JSON.parse(storedCms) };
+            } catch (e) {}
+            cmsObj.comboPrice = lp.price;
+            cmsObj.installments = lp.installments;
+            localStorage.setItem(cmsKey, JSON.stringify(cmsObj));
+
+            // Sincroniza seletor e catálogo
+            this.populateSelector();
+            this.renderCatalogGrid();
+
+            // Se for a LP ativa, atualiza barra superior e visualizador
+            if (State.activeLpId === lpId) {
+                this.updateCampaignInfoBar();
+                if (CMS && typeof CMS.loadCmsConfig === 'function') {
+                    CMS.loadCmsConfig(lpId);
+                }
+                if (CMS && typeof CMS.loadCampaignConfig === 'function') {
+                    CMS.loadCampaignConfig(lpId);
+                }
+                if (Preview && typeof Preview.updateIframe === 'function') {
+                    Preview.updateIframe(lp);
+                }
+                if (Preview && typeof Preview.updateUiInfo === 'function') {
+                    Preview.updateUiInfo(lp);
+                }
+            }
+
+            if (Performance && typeof Performance.render === 'function') {
+                Performance.render();
+            }
+
+            Utils.showToast(`Landing Page "${lp.name}" atualizada com sucesso!`, 'success');
             return lp;
         },
 
@@ -632,6 +731,9 @@
                         <a href="${lp.url}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
                             <i class="fas fa-external-link-alt"></i>
                         </a>
+                        <button type="button" class="btn-card-edit" data-edit-lp="${lp.id}" title="Editar Landing Page">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         ${Object.keys(State.catalog).length > 1 ? `
                             <button type="button" class="btn-card-delete" data-delete-lp="${lp.id}" title="Excluir Landing Page">
                                 <i class="fas fa-trash-alt"></i>
@@ -683,6 +785,13 @@
                     if (selectBtn) {
                         const lpId = selectBtn.getAttribute('data-select-lp');
                         this.setActiveLp(lpId);
+                        return;
+                    }
+
+                    const editBtn = e.target.closest('[data-edit-lp]');
+                    if (editBtn) {
+                        const lpId = editBtn.getAttribute('data-edit-lp');
+                        Modal.openEditLp(lpId);
                         return;
                     }
 
@@ -2895,18 +3004,107 @@
 
         openCreateLp() {
             const modal = document.getElementById('modal-create-lp');
-            if (!modal) {
-                // Se o modal não existe no DOM, cria dinamicamente
-                this.injectCreateLpModal();
-                return;
-            }
+            if (!modal) return;
+
+            const editIdInput = modal.querySelector('#edit-lp-id');
+            if (editIdInput) editIdInput.value = '';
+
+            const title = modal.querySelector('#modal-create-lp-title');
+            if (title) title.textContent = 'Criar Nova Landing Page';
+
+            const subtitle = modal.querySelector('#modal-create-lp-subtitle');
+            if (subtitle) subtitle.textContent = 'Adicione uma nova página promocional com templates otimizados';
+
+            const submitText = modal.querySelector('#btn-submit-create-lp-text');
+            if (submitText) submitText.textContent = 'Criar Landing Page';
+
+            const submitIcon = modal.querySelector('#btn-submit-create-lp-icon');
+            if (submitIcon) submitIcon.className = 'fas fa-rocket';
+
+            const form = document.getElementById('form-create-lp');
+            if (form) form.reset();
+
+            // Valores iniciais padrão
+            const priceInput = modal.querySelector('#new-lp-price');
+            if (priceInput) priceInput.value = '297.00';
+            const instInput = modal.querySelector('#new-lp-installments');
+            if (instInput) instInput.value = '10';
+            const budgetInput = modal.querySelector('#new-lp-budget');
+            if (budgetInput) budgetInput.value = '2000.00';
+            const targetInput = modal.querySelector('#new-lp-target-leads');
+            if (targetInput) targetInput.value = '100';
+            const statusInput = modal.querySelector('#new-lp-status');
+            if (statusInput) statusInput.value = 'Ativa';
+            const colorInput = modal.querySelector('#new-lp-color');
+            if (colorInput) colorInput.value = '#002C5B';
 
             modal.style.display = 'flex';
-            modal.classList.add('active');
-            modal.classList.add('is-open');
+            modal.classList.add('active', 'is-open');
 
-            const firstInput = modal.querySelector('input');
+            const firstInput = modal.querySelector('#new-lp-name');
             if (firstInput) firstInput.focus();
+        },
+
+        openEditLp(lpId) {
+            const modal = document.getElementById('modal-create-lp');
+            if (!modal) return;
+
+            const lp = State.catalog[lpId] || DEFAULT_LPS[lpId];
+            if (!lp) return;
+
+            const editIdInput = modal.querySelector('#edit-lp-id');
+            if (editIdInput) editIdInput.value = lpId;
+
+            const title = modal.querySelector('#modal-create-lp-title');
+            if (title) title.textContent = `Editar Landing Page: ${lp.name}`;
+
+            const subtitle = modal.querySelector('#modal-create-lp-subtitle');
+            if (subtitle) subtitle.textContent = `Ajuste as configurações comerciais da LP (${lp.slug || '/' + lp.id})`;
+
+            const submitText = modal.querySelector('#btn-submit-create-lp-text');
+            if (submitText) submitText.textContent = 'Salvar Alterações';
+
+            const submitIcon = modal.querySelector('#btn-submit-create-lp-icon');
+            if (submitIcon) submitIcon.className = 'fas fa-save';
+
+            const nameInput = modal.querySelector('#new-lp-name');
+            if (nameInput) nameInput.value = lp.name || '';
+
+            const slugInput = modal.querySelector('#new-lp-slug');
+            if (slugInput) {
+                slugInput.value = (lp.slug || '').replace(/^\/+/, '');
+                slugInput.dataset.touched = 'true';
+            }
+
+            const camp = lp.campaign || {};
+            const campInput = modal.querySelector('#new-lp-campaign');
+            if (campInput) campInput.value = camp.name || `Campanha ${lp.name}`;
+
+            const budgetInput = modal.querySelector('#new-lp-budget');
+            if (budgetInput) budgetInput.value = camp.budget || 2000.00;
+
+            const targetInput = modal.querySelector('#new-lp-target-leads');
+            if (targetInput) targetInput.value = camp.targetLeads || 100;
+
+            const templateInput = modal.querySelector('#new-lp-template');
+            if (templateInput) templateInput.value = lp.template || ((lp.url && lp.url.includes('fila')) ? 'fila' : 'forlife');
+
+            const statusInput = modal.querySelector('#new-lp-status');
+            if (statusInput) statusInput.value = lp.status || 'Ativa';
+
+            const priceInput = modal.querySelector('#new-lp-price');
+            if (priceInput) priceInput.value = lp.price || 297.00;
+
+            const instInput = modal.querySelector('#new-lp-installments');
+            if (instInput) instInput.value = lp.installments || 10;
+
+            const colorInput = modal.querySelector('#new-lp-color');
+            if (colorInput) colorInput.value = lp.color || '#002C5B';
+
+            modal.style.display = 'flex';
+            modal.classList.add('active', 'is-open');
+
+            if (nameInput) nameInput.focus();
         },
 
         closeCreateLp() {
@@ -2914,8 +3112,10 @@
             if (!modal) return;
 
             modal.style.display = 'none';
-            modal.classList.remove('active');
-            modal.classList.remove('is-open');
+            modal.classList.remove('active', 'is-open');
+
+            const editIdInput = modal.querySelector('#edit-lp-id');
+            if (editIdInput) editIdInput.value = '';
 
             const form = document.getElementById('form-create-lp');
             if (form) form.reset();
@@ -2962,128 +3162,52 @@
             modal.classList.remove('is-open');
         },
 
-        injectCreateLpModal() {
-            const modal = document.createElement('div');
-            modal.id = 'modal-create-lp';
-            modal.className = 'modal-backdrop';
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100vw';
-            modal.style.height = '100vh';
-            modal.style.backgroundColor = 'rgba(0, 26, 54, 0.6)';
-            modal.style.backdropFilter = 'blur(4px)';
-            modal.style.display = 'flex';
-            modal.style.alignItems = 'center';
-            modal.style.justifyContent = 'center';
-            modal.style.zIndex = '99999';
-            modal.style.padding = '16px';
-
-            modal.innerHTML = `
-                <div class="modal-card" style="background:#FFFFFF; border-radius:16px; width:100%; max-width:540px; box-shadow:0 20px 40px rgba(0,0,0,0.25); overflow:hidden; border-top:6px solid #002C5B; font-family:'Outfit',sans-serif;">
-                    <div style="padding: 20px 24px; border-bottom: 1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <h3 style="margin:0; font-size:18px; font-weight:800; color:#002C5B;">Nova Landing Page</h3>
-                            <p style="margin:2px 0 0; font-size:12px; color:#64748B;">Cadastre e ative uma nova página para o catálogo multi-LP.</p>
-                        </div>
-                        <button type="button" class="btn-close-modal" id="btn-close-modal-create" style="border:none; background:none; font-size:20px; color:#94A3B8; cursor:pointer;">&times;</button>
-                    </div>
-
-                    <form id="form-create-lp" style="padding: 20px 24px;">
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                            <div style="grid-column: 1 / -1;">
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Nome da Campanha / Produto *</label>
-                                <input type="text" id="new-lp-name" class="cfg-input" placeholder="ex: Kodak City Multifocal Digital" required style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                            </div>
-
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">ID / Slug *</label>
-                                <input type="text" id="new-lp-slug" class="cfg-input" placeholder="ex: kodak" required style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                            </div>
-
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Status Inicial</label>
-                                <select id="new-lp-status" class="cfg-input" style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                                    <option value="Ativa">Ativa</option>
-                                    <option value="Rascunho" selected>Rascunho</option>
-                                </select>
-                            </div>
-
-                            <div style="grid-column: 1 / -1;">
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Caminho da URL / Destino *</label>
-                                <input type="text" id="new-lp-url" class="cfg-input" placeholder="/forlife/index.html?theme=kodak" required style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                            </div>
-
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Preço Combo (R$)</label>
-                                <input type="number" step="0.01" id="new-lp-price" class="cfg-input" value="297.00" required style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                            </div>
-
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Parcelas Sem Juros</label>
-                                <input type="number" min="1" max="24" id="new-lp-installments" class="cfg-input" value="10" required style="width:100%; padding:9px 12px; border:1px solid #CBD5E1; border-radius:8px; font-size:13px; box-sizing:border-box;">
-                            </div>
-
-                            <div style="grid-column: 1 / -1;">
-                                <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px; color:#002C5B;">Cor de Destaque da Marca</label>
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <input type="color" id="new-lp-color" value="#002C5B" style="width:40px; height:38px; border:none; border-radius:6px; cursor:pointer;">
-                                    <span style="font-size:12px; color:#64748B;">Selecione a paleta primária da Landing Page.</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #E2E8F0; padding-top:16px;">
-                            <button type="button" class="btn-secondary" id="btn-cancel-modal-create" style="padding:9px 16px; border:1px solid #CBD5E1; background:#F8FAFC; color:#64748B; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Cancelar</button>
-                            <button type="submit" class="btn-primary" style="padding:9px 20px; border:none; background:#002C5B; color:#FFFFFF; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">Cadastrar e Abrir LP</button>
-                        </div>
-                    </form>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-            this.bindModalEvents(modal);
-            this.openCreateLp();
-        },
-
         bindModalEvents(modal) {
-            const closeBtn = modal.querySelector('#btn-close-modal-create');
-            const cancelBtn = modal.querySelector('#btn-cancel-modal-create');
+            // Todos os botões de fechar (X)
+            const closeBtns = modal.querySelectorAll('.modal-close-btn, .btn-close-modal, #btn-close-modal, #btn-close-modal-create');
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.closeCreateLp();
+                });
+            });
 
-            if (closeBtn) closeBtn.addEventListener('click', () => this.closeCreateLp());
-            if (cancelBtn) cancelBtn.addEventListener('click', () => this.closeCreateLp());
+            // Todos os botões de cancelar
+            const cancelBtns = modal.querySelectorAll('.btn-cancel-modal, .btn-secondary, #btn-cancel-create-lp, #btn-cancel-modal-create');
+            cancelBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.closeCreateLp();
+                });
+            });
 
-            // Fecha ao clicar fora da janela
+            // Fecha ao clicar fora da janela (backdrop)
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) this.closeCreateLp();
             });
 
-            // Sugestão automática de URL com base no nome e slug
+            // Fecha no ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && (modal.classList.contains('active') || modal.classList.contains('is-open'))) {
+                    this.closeCreateLp();
+                }
+            });
+
+            // Sugestão automática de URL com base no nome e slug (somente na criação)
             const nameInput = modal.querySelector('#new-lp-name');
             const slugInput = modal.querySelector('#new-lp-slug');
-            const urlInput = modal.querySelector('#new-lp-url');
 
-            if (nameInput && slugInput && urlInput) {
+            if (nameInput && slugInput) {
                 nameInput.addEventListener('input', () => {
-                    if (!slugInput.dataset.touched) {
+                    const editId = (modal.querySelector('#edit-lp-id')?.value || '').trim();
+                    if (!editId && !slugInput.dataset.touched) {
                         const s = Utils.slugify(nameInput.value);
                         slugInput.value = s;
-                        if (!urlInput.dataset.touched) {
-                            urlInput.value = `/forlife/index.html?theme=${s}`;
-                        }
                     }
                 });
 
                 slugInput.addEventListener('input', () => {
                     slugInput.dataset.touched = 'true';
-                    if (!urlInput.dataset.touched) {
-                        const s = Utils.slugify(slugInput.value);
-                        urlInput.value = `/forlife/index.html?theme=${s}`;
-                    }
-                });
-
-                urlInput.addEventListener('input', () => {
-                    urlInput.dataset.touched = 'true';
                 });
             }
 
@@ -3093,32 +3217,48 @@
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     try {
+                        const editId = (modal.querySelector('#edit-lp-id')?.value || '').trim();
                         const name = (modal.querySelector('#new-lp-name')?.value || '').trim();
                         if (!name) throw new Error('Por favor, informe o nome comercial da Landing Page.');
 
                         const rawSlug = (modal.querySelector('#new-lp-slug')?.value || '').trim();
                         const slugVal = Utils.slugify(rawSlug || name);
-                        const slug = '/' + slugVal.replace(/^\//, '');
+                        const slug = '/' + slugVal.replace(/^\/+/, '');
 
+                        const campaignName = (modal.querySelector('#new-lp-campaign')?.value || '').trim() || `Campanha ${name}`;
+                        const budget = parseFloat(modal.querySelector('#new-lp-budget')?.value) || 2000.00;
+                        const targetLeads = parseInt(modal.querySelector('#new-lp-target-leads')?.value, 10) || 100;
                         const template = modal.querySelector('#new-lp-template')?.value || 'forlife';
-                        const url = modal.querySelector('#new-lp-url')?.value || (template === 'fila' ? `/?theme=${slugVal}` : `/forlife/index.html?theme=${slugVal}`);
                         const status = modal.querySelector('#new-lp-status')?.value || 'Ativa';
                         const price = parseFloat(modal.querySelector('#new-lp-price')?.value) || 297.00;
                         const installments = parseInt(modal.querySelector('#new-lp-installments')?.value, 10) || 10;
                         const color = modal.querySelector('#new-lp-color')?.value || '#002C5B';
+                        const url = slug;
 
-                        Catalog.addLp({
+                        const lpPayload = {
                             name,
                             slug,
                             url,
                             status,
                             price,
                             installments,
-                            color
-                        });
+                            color,
+                            template,
+                            campaign: {
+                                name: campaignName,
+                                budget,
+                                targetLeads,
+                                status: status === 'Ativa' ? 'Em Veiculação' : 'Planejamento'
+                            }
+                        };
+
+                        if (editId) {
+                            Catalog.updateLp(editId, lpPayload);
+                        } else {
+                            Catalog.addLp(lpPayload);
+                        }
 
                         this.closeCreateLp();
-                        Utils.showToast(`Landing Page "${name}" criada com sucesso!`, 'success');
                     } catch (err) {
                         Utils.showToast(err.message, 'error');
                     }
@@ -3313,6 +3453,10 @@
 
         deleteLp(lpId) {
             Catalog.removeLp(lpId);
+        },
+
+        editLp(lpId) {
+            Modal.openEditLp(lpId);
         },
 
         editStore(idx) {

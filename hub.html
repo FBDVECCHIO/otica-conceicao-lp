@@ -1251,10 +1251,10 @@
         <div class="hub-modal-card">
             <div class="hub-modal-header">
                 <div class="modal-title-group">
-                    <div class="modal-icon"><i class="fas fa-magic"></i></div>
+                    <div class="modal-icon"><i class="fas fa-magic" id="modal-create-lp-icon"></i></div>
                     <div>
-                        <h3>Criar Nova Landing Page</h3>
-                        <p>Adicione uma nova página promocional com templates otimizados</p>
+                        <h3 id="modal-create-lp-title">Criar Nova Landing Page</h3>
+                        <p id="modal-create-lp-subtitle">Adicione uma nova página promocional com templates otimizados</p>
                     </div>
                 </div>
                 <button type="button" id="btn-close-modal" class="modal-close-btn" title="Fechar Janela">
@@ -1263,6 +1263,8 @@
             </div>
 
             <form id="form-create-lp" class="hub-modal-form">
+                <input type="hidden" id="edit-lp-id" value="">
+
                 <div class="form-group">
                     <label for="new-lp-name">
                         Nome Comercial da Landing Page
@@ -1278,11 +1280,10 @@
                     </label>
                     <div class="slug-input-wrapper">
                         <span class="slug-prefix">lp.opticasconceicao.com.br/</span>
-                        <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-z0-9\-_]+" title="Apenas letras minúsculas, números e traços">
+                        <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-zA-Z0-9\-_]+" title="Apenas letras, números e traços">
                     </div>
                 </div>
 
-                
                 <div class="form-group">
                     <label for="new-lp-campaign">
                         Nome da Campanha Única
@@ -1296,44 +1297,72 @@
                         <label for="new-lp-budget">Orçamento Mídia (R$)</label>
                         <div class="input-currency-wrapper">
                             <span class="currency-prefix">R$</span>
-                            <input type="number" id="new-lp-budget" step="0.01" min="0" placeholder="2000.00">
+                            <input type="number" id="new-lp-budget" step="0.01" min="0" placeholder="2000.00" value="2000.00">
                         </div>
                     </div>
                     <div class="form-group" style="flex:1;">
                         <label for="new-lp-target-leads">Meta de Leads</label>
-                        <input type="number" id="new-lp-target-leads" min="1" placeholder="100">
+                        <input type="number" id="new-lp-target-leads" min="1" placeholder="100" value="100">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display:flex; gap:16px;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-template">
+                            Template Base
+                            <span class="required">*</span>
+                        </label>
+                        <div class="filter-select-wrapper">
+                            <select id="new-lp-template" required>
+                                <option value="forlife" selected>Template ForLife Multifocal</option>
+                                <option value="fila">Template FILA Sport</option>
+                                <option value="premium">Template Luxo Conceição</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-status">Status da LP</label>
+                        <div class="filter-select-wrapper">
+                            <select id="new-lp-status">
+                                <option value="Ativa" selected>Ativa</option>
+                                <option value="Rascunho">Rascunho</option>
+                                <option value="Pausada">Pausada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display:flex; gap:16px;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-price">
+                            Preço Base do Combo (R$)
+                        </label>
+                        <div class="input-currency-wrapper">
+                            <span class="currency-prefix">R$</span>
+                            <input type="number" id="new-lp-price" step="0.01" min="0" placeholder="297.00" value="297.00" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="new-lp-installments">
+                            Parcelas Sem Juros
+                        </label>
+                        <input type="number" id="new-lp-installments" min="1" max="24" placeholder="10" value="10" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="new-lp-template">
-                        Template Base de Design
-                        <span class="required">*</span>
-                    </label>
-                    <div class="filter-select-wrapper">
-                        <select id="new-lp-template" required>
-                            <option value="forlife" selected>Template ForLife Multifocal (Design Navy Clean &amp; Moderno)</option>
-                            <option value="fila">Template FILA Sport (Design Bold Esportivo Dinâmico)</option>
-                            <option value="premium">Template Luxo Conceição (Design Gold &amp; Alta Óptica)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="new-lp-price">
-                        Preço Base do Combo Inicial (R$)
-                    </label>
-                    <div class="input-currency-wrapper">
-                        <span class="currency-prefix">R$</span>
-                        <input type="number" id="new-lp-price" step="0.01" min="0" placeholder="349.00">
+                    <label for="new-lp-color">Cor de Destaque da Marca</label>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="color" id="new-lp-color" value="#002C5B" style="width:42px; height:38px; border:none; border-radius:8px; cursor:pointer;">
+                        <span style="font-size:12px; color:var(--text-muted, #64748B);">Personaliza os detalhes visuais da Landing Page no painel.</span>
                     </div>
                 </div>
 
                 <div class="modal-actions-footer">
                     <button type="button" class="btn-cancel-modal" id="btn-cancel-create-lp">Cancelar</button>
-                    <button type="submit" class="btn-submit-modal">
-                        <i class="fas fa-rocket"></i>
-                        <span>Criar Landing Page</span>
+                    <button type="submit" class="btn-submit-modal" id="btn-submit-create-lp">
+                        <i class="fas fa-rocket" id="btn-submit-create-lp-icon"></i>
+                        <span id="btn-submit-create-lp-text">Criar Landing Page</span>
                     </button>
                 </div>
             </form>

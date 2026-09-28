@@ -435,10 +435,11 @@ async function initTrafficTracker() {
         const loc = await detectVisitorLocation();
         const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
         const device = isMobile ? 'Mobile' : 'Desktop';
-        const visitId = 'vis_' + Math.random().toString(36).substring(2, 9);
+        const currentLpId = (typeof detectActiveLandingPage === 'function' ? detectActiveLandingPage().slug : '') || forlifeConfig.lpId || 'forlife';
 
         const visitRecord = {
             id: visitId,
+            lp_id: currentLpId,
             created_at: new Date().toISOString(),
             source: utm.source,
             medium: utm.medium,
@@ -556,11 +557,87 @@ function initScarcityBadge() {
     });
 }
 
-// Carregar configurações de preços (Supabase ou LocalStorage)
-async function loadForlifeConfig() {
-    let loadedFromCloud = false;
+// Detecção dinâmica de Landing Page ativa a partir da rota ou parâmetros
+function detectActiveLandingPage() {
+    let slug = window.location.pathname.replace(/^\/+|\/+$/g, '');
+    const urlParams = new URLSearchParams(window.location.search);
+    const themeParam = urlParams.get('theme') || urlParams.get('lp');
 
-    if (supabaseClient) {
+    // Se o pathname for vazio, 'forlife' ou 'forlife/index.html', checa o parâmetro theme
+    if (!slug || slug === 'forlife' || slug === 'forlife/index.html' || slug === 'index.html') {
+        if (themeParam) {
+            slug = themeParam.trim();
+        } else {
+            slug = 'forlife';
+        }
+    }
+
+    let catalog = {};
+    try {
+        const stored = localStorage.getItem('otica_conceicao_lps_catalog');
+        if (stored) catalog = JSON.parse(stored);
+    } catch (e) {}
+
+    let matchedLp = null;
+    const cleanSlug = slug.toLowerCase();
+
+    for (const [id, lp] of Object.entries(catalog)) {
+        const lpSlug = (lp.slug || '').replace(/^\/+|\/+$/g, '').toLowerCase();
+        if (id.toLowerCase() === cleanSlug || lpSlug === cleanSlug) {
+            matchedLp = lp;
+            break;
+        }
+    }
+
+    let cmsConfig = null;
+    if (matchedLp) {
+        try {
+            const cmsStored = localStorage.getItem('otica_cms_config_' + matchedLp.id);
+            if (cmsStored) cmsConfig = JSON.parse(cmsStored);
+        } catch (e) {}
+    } else {
+        try {
+            const cmsStored = localStorage.getItem('otica_cms_config_' + cleanSlug);
+            if (cmsStored) cmsConfig = JSON.parse(cmsStored);
+        } catch (e) {}
+    }
+
+    return {
+        slug: slug,
+        lp: matchedLp,
+        cmsConfig: cmsConfig
+    };
+}
+
+// Carregar configurações de preços e parâmetros dinâmicos da LP
+async function loadForlifeConfig() {
+    let loadedFromLocalLp = false;
+
+    // 1. Detectar LP ativa dinamicamente
+    const activeLpInfo = detectActiveLandingPage();
+    const lp = activeLpInfo.lp;
+    const cms = activeLpInfo.cmsConfig;
+
+    if (lp || cms) {
+        const price = (cms && cms.comboPrice) ? parseFloat(cms.comboPrice) : ((lp && lp.price) ? parseFloat(lp.price) : 297.00);
+        const installments = (cms && cms.installments) ? parseInt(cms.installments, 10) : ((lp && lp.installments) ? parseInt(lp.installments, 10) : 10);
+        const antirreflexo = (cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00;
+        const bluecut = (cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00;
+        const fotossensivel = (cms && cms.fotossensivel !== undefined) ? parseFloat(cms.fotossensivel) : 120.00;
+
+        forlifeConfig = {
+            comboPrice: price,
+            installments: installments,
+            addonAntirreflexo: antirreflexo,
+            addonBluecut: bluecut,
+            addonFotossensivel: fotossensivel,
+            lpId: lp ? lp.id : activeLpInfo.slug,
+            lpName: lp ? lp.name : ''
+        };
+        loadedFromLocalLp = true;
+    }
+
+    if (!loadedFromLocalLp && supabaseClient) {
         try {
             const { data, error } = await supabaseClient
                 .from('forlife_config')
@@ -574,22 +651,27 @@ async function loadForlifeConfig() {
                     installments: parseInt(data.combo_installments) || 10,
                     addonAntirreflexo: parseFloat(data.addon_antirreflexo) || 100.00,
                     addonBluecut: parseFloat(data.addon_bluecut) || 100.00,
-                    addonFotossensivel: parseFloat(data.addon_fotossensivel) || 150.00
+                    addonFotossensivel: parseFloat(data.addon_fotossensivel) || 150.00,
+                    lpId: 'forlife',
+                    lpName: 'ForLife Multifocal Di Capri'
                 };
-                loadedFromCloud = true;
             }
         } catch (e) {
             console.warn("Usando fallback de configuração local:", e);
         }
     }
 
-    if (!loadedFromCloud) {
+    if (!loadedFromLocalLp && !forlifeConfig.lpId) {
         const local = localStorage.getItem('forlife_config');
         if (local) {
             try {
-                forlifeConfig = JSON.parse(local);
+                forlifeConfig = { ...forlifeConfig, ...JSON.parse(local) };
             } catch (e) {}
         }
+    }
+
+    if (lp && lp.name && lp.id !== 'forlife') {
+        document.title = `${lp.name} | Ópticas Conceição`;
     }
 }
 
@@ -1015,6 +1097,8 @@ async function handleVoucherSubmit(e) {
 
     const leadData = {
         date: todayFormatted,
+        lp_id: forlifeConfig.lpId || 'forlife',
+        lpId: forlifeConfig.lpId || 'forlife',
         name: name,
         phone: phone,
         email: email,
@@ -1114,8 +1198,9 @@ async function handleVoucherSubmit(e) {
         ? `🎯 *Origem:* Anúncio ${utm.source.toUpperCase()}${utm.campaign ? ' (' + utm.campaign + ')' : ''}\n` 
         : '';
 
+    const lpTitle = forlifeConfig.lpName || 'Multifocal Digital Di Capri + Armação';
     const messageText = 
-`Olá, Ópticas Conceição! Acabei de gerar meu cupom exclusivo ForLife no site.\n\n` +
+`Olá, Ópticas Conceição! Acabei de gerar meu cupom exclusivo no site.\n\n` +
 `🎫 *Código do Cupom:* ${voucherCode}\n` +
 `⏰ *Cupom válido por 7 dias!*\n` +
 `👤 *Nome:* ${name}\n` +
@@ -1123,12 +1208,11 @@ async function handleVoucherSubmit(e) {
 `🏪 *Loja Escolhida:* ${store}\n` +
 `📞 *WhatsApp:* ${phone}\n\n` +
 utmNotice +
-`👓 *Combo:* Multifocal Digital Di Capri + Armação\n` +
+`👓 *Combo:* ${lpTitle}\n` +
 `💰 *Valor Combo Base:* R$ ${formatMoney(forlifeConfig.comboPrice)}\n\n` +
 `⚡ *Tecnologia:*\n${addonsText}\n\n` +
 `💵 *Total:* R$ ${formatMoney(totalPrice)} (em até ${forlifeConfig.installments}x de R$ ${formatMoney(totalPrice / forlifeConfig.installments)} sem juros)\n` +
 `📋 *Situação da Receita:* ${recipeStatusText}\n\n` +
-`⏰ *Cupom válido por 7 dias!*\n` +
 `Gostaria de garantir as condições do meu cupom e agendar meu atendimento!`;
 
     const whatsappBtn = document.getElementById('btn-whatsapp-voucher');
