@@ -714,10 +714,15 @@
             let cmsObj = {
                 comboPrice: lp.price,
                 installments: lp.installments,
+                offerType: lp.offerType || 'combo_completo',
+                lensModality: lp.lensModality || 'lentes_prontas',
+                frameBrand: lp.frameBrand || 'Coleção Conceição',
+                lensBrand: lp.lensBrand || 'Lentes Monofocais HD',
                 showTechSection: lp.showTechSection !== false,
                 antirreflexo: 0.00,
                 bluecut: 70.00,
-                fotossensivel: 120.00
+                fotossensivel: 120.00,
+                addonsActive: lp.addonsActive || { antirreflexo: true, bluecut: true, fotossensivel: true }
             };
             try {
                 const storedCms = localStorage.getItem(cmsKey);
@@ -725,8 +730,39 @@
             } catch (e) {}
             cmsObj.comboPrice = lp.price;
             cmsObj.installments = lp.installments;
+            cmsObj.offerType = lp.offerType || 'combo_completo';
+            cmsObj.lensModality = lp.lensModality || 'lentes_prontas';
+            cmsObj.frameBrand = lp.frameBrand || 'Coleção Conceição';
+            cmsObj.lensBrand = lp.lensBrand || 'Lentes Monofocais HD';
             cmsObj.showTechSection = lp.showTechSection !== false;
+            if (lp.addonsActive) cmsObj.addonsActive = lp.addonsActive;
             localStorage.setItem(cmsKey, JSON.stringify(cmsObj));
+
+            if (slugKey && slugKey !== lpId) {
+                localStorage.setItem(STORAGE_KEYS.cmsConfigPrefix + slugKey, JSON.stringify(cmsObj));
+            }
+
+            if (lpId === '194' || lpId === 'forlife-194') {
+                localStorage.setItem('otica_cms_config_194', JSON.stringify(cmsObj));
+                localStorage.setItem('otica_cms_config_forlife-194', JSON.stringify(cmsObj));
+                if (State.catalog['194']) {
+                    State.catalog['194'].frameBrand = lp.frameBrand;
+                    State.catalog['194'].lensBrand = lp.lensBrand;
+                    State.catalog['194'].offerType = lp.offerType;
+                    State.catalog['194'].lensModality = lp.lensModality;
+                    State.catalog['194'].price = lp.price;
+                    State.catalog['194'].installments = lp.installments;
+                }
+                if (State.catalog['forlife-194']) {
+                    State.catalog['forlife-194'].frameBrand = lp.frameBrand;
+                    State.catalog['forlife-194'].lensBrand = lp.lensBrand;
+                    State.catalog['forlife-194'].offerType = lp.offerType;
+                    State.catalog['forlife-194'].lensModality = lp.lensModality;
+                    State.catalog['forlife-194'].price = lp.price;
+                    State.catalog['forlife-194'].installments = lp.installments;
+                }
+                this.saveCatalog();
+            }
 
             // Sincroniza seletor e catálogo
             this.populateSelector();
@@ -735,8 +771,8 @@
             // Se for a LP ativa, atualiza barra superior e visualizador
             if (State.activeLpId === lpId) {
                 this.updateCampaignInfoBar();
-                if (CMS && typeof CMS.loadCmsConfig === 'function') {
-                    CMS.loadCmsConfig(lpId);
+                if (CMS && typeof CMS.loadLpConfig === 'function') {
+                    CMS.loadLpConfig(lpId);
                 }
                 if (CMS && typeof CMS.loadCampaignConfig === 'function') {
                     CMS.loadCampaignConfig(lpId);
@@ -2483,6 +2519,31 @@
 
             // Salva no LocalStorage da LP
             localStorage.setItem(STORAGE_KEYS.cmsConfigPrefix + lpId, JSON.stringify(config));
+
+            // Sincroniza slug key e aliases 194 / forlife-194
+            const curLp = State.catalog[lpId];
+            if (curLp && curLp.slug) {
+                const slugKey = curLp.slug.replace(/^\/+/, '');
+                if (slugKey && slugKey !== lpId) {
+                    localStorage.setItem(STORAGE_KEYS.cmsConfigPrefix + slugKey, JSON.stringify(config));
+                }
+            }
+
+            if (lpId === '194' || lpId === 'forlife-194') {
+                localStorage.setItem('otica_cms_config_194', JSON.stringify(config));
+                localStorage.setItem('otica_cms_config_forlife-194', JSON.stringify(config));
+                const otherId = lpId === '194' ? 'forlife-194' : '194';
+                if (State.catalog[otherId]) {
+                    State.catalog[otherId].price = comboPrice;
+                    State.catalog[otherId].installments = installments;
+                    State.catalog[otherId].offerType = offerType;
+                    State.catalog[otherId].lensModality = lensModality;
+                    State.catalog[otherId].frameBrand = frameBrand;
+                    State.catalog[otherId].lensBrand = lensBrand;
+                    State.catalog[otherId].showTechSection = showTechSection;
+                    State.catalog[otherId].addonsActive = addonsActive;
+                }
+            }
 
             // Atualiza também os dados do catálogo da LP
             if (State.catalog[lpId]) {

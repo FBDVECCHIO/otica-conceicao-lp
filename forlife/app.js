@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     initScarcityBadge();
     await loadForlifeConfig();
+    applyBrandsToDOM();
     setupEventListeners();
     setupFAQ();
     setupScrollTop();
@@ -699,12 +700,16 @@ function detectActiveLandingPage() {
     let cmsConfig = null;
     if (matchedLp) {
         try {
-            const cmsStored = localStorage.getItem('otica_cms_config_' + matchedLp.id);
+            const cleanLpSlug = (matchedLp.slug || '').replace(/^\/+|\/+$/g, '');
+            const cmsStored = localStorage.getItem('otica_cms_config_' + matchedLp.id) ||
+                              (cleanLpSlug ? localStorage.getItem('otica_cms_config_' + cleanLpSlug) : null) ||
+                              (matchedLp.id === 'forlife-194' || matchedLp.id === '194' ? localStorage.getItem('otica_cms_config_194') : null);
             if (cmsStored) cmsConfig = JSON.parse(cmsStored);
         } catch (e) {}
     } else {
         try {
-            const cmsStored = localStorage.getItem('otica_cms_config_' + cleanSlug);
+            const cmsStored = localStorage.getItem('otica_cms_config_' + cleanSlug) ||
+                              (cleanSlug === '194' || cleanSlug === 'forlife-194' ? localStorage.getItem('otica_cms_config_194') : null);
             if (cmsStored) cmsConfig = JSON.parse(cmsStored);
         } catch (e) {}
     }
@@ -735,6 +740,11 @@ async function loadForlifeConfig() {
         const showTechSection = (cms && cms.showTechSection !== undefined) ? cms.showTechSection : (lp && lp.showTechSection !== undefined ? lp.showTechSection : true);
         const addonsActive = (cms && cms.addonsActive) ? cms.addonsActive : ((lp && lp.addonsActive) ? lp.addonsActive : { antirreflexo: true, bluecut: true, fotossensivel: true });
 
+        const frameBrand = (cms && cms.frameBrand) ? cms.frameBrand : ((lp && lp.frameBrand) ? lp.frameBrand : 'Di Capri');
+        const lensBrand = (cms && cms.lensBrand) ? cms.lensBrand : ((lp && lp.lensBrand) ? lp.lensBrand : 'Multifocais Digitais');
+        const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
+        const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : 'lentes_multifocais');
+
         forlifeConfig = {
             comboPrice: price,
             installments: installments,
@@ -743,6 +753,10 @@ async function loadForlifeConfig() {
             addonFotossensivel: fotossensivel,
             showTechSection: showTechSection,
             addonsActive: addonsActive,
+            frameBrand: frameBrand,
+            lensBrand: lensBrand,
+            offerType: offerType,
+            lensModality: lensModality,
             lpId: lp ? lp.id : activeLpInfo.slug,
             lpName: lp ? lp.name : ''
         };
@@ -766,6 +780,10 @@ async function loadForlifeConfig() {
                     addonFotossensivel: parseFloat(data.addon_fotossensivel) || 150.00,
                     showTechSection: true,
                     addonsActive: { antirreflexo: true, bluecut: true, fotossensivel: true },
+                    frameBrand: 'Di Capri',
+                    lensBrand: 'Multifocal Di Capri HD',
+                    offerType: 'combo_completo',
+                    lensModality: 'multifocal',
                     lpId: 'forlife',
                     lpName: 'ForLife Multifocal Di Capri'
                 };
@@ -786,6 +804,65 @@ async function loadForlifeConfig() {
 
     if (lp && lp.name && lp.id !== 'forlife') {
         document.title = `${lp.name} | Ópticas Conceição`;
+    }
+}
+
+// ==========================================
+// PROPAGAÇÃO DINÂMICA DE MARCAS & OFERTAS
+// ==========================================
+function applyBrandsToDOM() {
+    const frameBrand = forlifeConfig.frameBrand || 'Di Capri';
+    const lensBrand = forlifeConfig.lensBrand || 'Multifocais Digitais';
+    const offerType = forlifeConfig.offerType || 'combo_completo';
+
+    // 1. Elementos com classes dinâmicas
+    document.querySelectorAll('.dyn-frame-brand').forEach(el => {
+        el.textContent = frameBrand;
+    });
+    document.querySelectorAll('.dyn-lens-brand').forEach(el => {
+        el.textContent = lensBrand;
+    });
+
+    // 2. Cards de Especificação Técnica no Hero
+    const specFrame = document.getElementById('forlife-frame-brand');
+    if (specFrame) specFrame.textContent = frameBrand;
+
+    const specLens = document.getElementById('forlife-lens-brand');
+    if (specLens) specLens.textContent = lensBrand;
+
+    // 3. Títulos, Subtítulos e Tópicos do Combo
+    const heroTitle = document.getElementById('forlife-hero-title');
+    const heroSubtitle = document.getElementById('forlife-hero-subtitle');
+    const comboTitle = document.getElementById('forlife-combo-title');
+    const offerBadge = document.getElementById('forlife-offer-badge');
+    const featFrame = document.getElementById('forlife-feat-frame');
+    const featLens = document.getElementById('forlife-feat-lens');
+
+    if (offerType === 'so_lentes') {
+        if (offerBadge) offerBadge.textContent = 'Apenas Lentes';
+        if (heroTitle) heroTitle.innerHTML = `Lentes ${lensBrand}<br class="mobile-break"> Para Sua Armação`;
+        if (heroSubtitle) heroSubtitle.textContent = `Lentes ${lensBrand} com montagem precisa e rápida adaptação`;
+        if (comboTitle) comboTitle.textContent = `Lentes ${lensBrand} + Sua Armação`;
+        if (featFrame) featFrame.textContent = 'Montagem e adaptação técnica na sua armação atual';
+        if (featLens) featLens.textContent = `Lentes ${lensBrand} calibradas com precisão digital`;
+    } else {
+        if (offerBadge) offerBadge.textContent = 'Combo Especial';
+        if (heroTitle) heroTitle.innerHTML = `${lensBrand}<br class="mobile-break"> + Armação ${frameBrand}`;
+        if (heroSubtitle) heroSubtitle.textContent = `Lentes ${lensBrand} com armação de grau ${frameBrand} inclusa`;
+        if (comboTitle) comboTitle.textContent = `Lentes ${lensBrand} + Armação ${frameBrand}`;
+        if (featFrame) featFrame.textContent = `Armação de grau ${frameBrand} inclusa à sua escolha`;
+        if (featLens) featLens.textContent = `Lentes ${lensBrand} calibradas para seu grau`;
+    }
+
+    // 4. Atualiza botão de WhatsApp do Banner 1
+    const heroWhatsappBtn = document.getElementById('forlife-hero-whatsapp');
+    if (heroWhatsappBtn) {
+        const instVal = formatMoney(forlifeConfig.comboPrice / forlifeConfig.installments);
+        const cashVal = formatMoney(forlifeConfig.comboPrice);
+        const msg = encodeURIComponent(
+            `Olá! Vim pela promoção do site das Ópticas Conceição e gostaria de garantir o *Combo ${lensBrand} + Armação ${frameBrand}* por R$ ${cashVal} (ou ${forlifeConfig.installments}x de R$ ${instVal} sem juros). Poderiam me atender?`
+        );
+        heroWhatsappBtn.href = `https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=${msg}`;
     }
 }
 

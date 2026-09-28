@@ -145,8 +145,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ==============================================================================
 async function loadConfigFromStorage() {
     try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryLp = urlParams.get('lp') || urlParams.get('theme') || '';
         const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
-        const slug = path || '194';
+        const slug = queryLp || path || '194';
         
         let catalog = {};
         try {
@@ -154,7 +156,17 @@ async function loadConfigFromStorage() {
             if (raw) catalog = JSON.parse(raw);
         } catch (e) {}
 
-        const lpEntry = catalog[slug] || catalog['194'] || catalog['forlife-194'];
+        // Busca por correspondência exata ou parcial de slug/id
+        let lpEntry = catalog[slug] || catalog['/' + slug] || catalog['194'] || catalog['forlife-194'];
+        if (!lpEntry) {
+            for (const key in catalog) {
+                const item = catalog[key];
+                if (item && (item.slug === '/' + slug || item.id === slug || (item.url && item.url.includes(slug)))) {
+                    lpEntry = item;
+                    break;
+                }
+            }
+        }
         
         if (lpEntry) {
             vsConfig.lpId = lpEntry.id || slug;
@@ -170,8 +182,10 @@ async function loadConfigFromStorage() {
         }
 
         // Tenta recuperar do CMS se configurado
-        const cmsKey = 'otica_cms_config_' + (lpEntry ? lpEntry.id : slug);
-        const storedCms = localStorage.getItem(cmsKey);
+        const targetId = lpEntry ? lpEntry.id : slug;
+        const storedCms = localStorage.getItem('otica_cms_config_' + targetId) || 
+                          localStorage.getItem('otica_cms_config_' + slug) ||
+                          localStorage.getItem('otica_cms_config_194');
         if (storedCms) {
             const parsed = JSON.parse(storedCms);
             if (parsed.comboPrice) vsConfig.comboPrice = parseFloat(parsed.comboPrice);
@@ -221,20 +235,26 @@ function applyConfigToDOM() {
     const offerBadge = document.getElementById('combo-offer-type-badge');
     const heroTitle = document.getElementById('hero-title');
     const featFrame = document.getElementById('feat-frame-text');
+    const featLens = document.getElementById('feat-lens-text');
+    const comboTitle = document.getElementById('combo-card-title');
     const specFrameCard = document.getElementById('spec-frame-brand')?.closest('.brand-spec-card');
 
     if (vsConfig.offerType === 'so_lentes') {
         if (offerBadge) offerBadge.textContent = 'Apenas Lentes';
-        if (heroTitle) heroTitle.innerHTML = 'Lentes Visão Simples<br class="mobile-break"> Para Sua Armação';
+        if (heroTitle) heroTitle.innerHTML = `Lentes ${vsConfig.lensBrand || 'Visão Simples'}<br class="mobile-break"> Para Sua Armação`;
         if (featFrame) featFrame.textContent = 'Montagem e adaptação técnica na sua armação atual';
+        if (featLens) featLens.textContent = `Lentes ${vsConfig.lensBrand || 'Visão Simples'} calibradas com precisão digital`;
+        if (comboTitle) comboTitle.textContent = `Lentes ${vsConfig.lensBrand || 'Visão Simples'} + Sua Armação`;
         if (specFrameCard) {
             const frameVal = document.getElementById('spec-frame-brand');
             if (frameVal) frameVal.textContent = vsConfig.frameBrand || 'Sua Armação Atual';
         }
     } else {
         if (offerBadge) offerBadge.textContent = 'Óculos Completo';
-        if (heroTitle) heroTitle.innerHTML = 'Óculos Completo Visão Simples<br class="mobile-break"> + Armação';
-        if (featFrame) featFrame.textContent = 'Armação de grau inclusa à sua escolha';
+        if (heroTitle) heroTitle.innerHTML = `Óculos Completo Visão Simples<br class="mobile-break"> + Armação ${vsConfig.frameBrand ? vsConfig.frameBrand : ''}`;
+        if (featFrame) featFrame.textContent = `Armação de grau ${vsConfig.frameBrand || ''} inclusa à sua escolha`;
+        if (featLens) featLens.textContent = `Lentes ${vsConfig.lensBrand || 'de Visão Simples'} calibradas para seu grau`;
+        if (comboTitle) comboTitle.textContent = `Lentes ${vsConfig.lensBrand || 'Visão Simples'} + Armação ${vsConfig.frameBrand || ''}`;
         const frameVal = document.getElementById('spec-frame-brand');
         if (frameVal) frameVal.textContent = vsConfig.frameBrand || 'Coleção Conceição';
     }
@@ -242,6 +262,14 @@ function applyConfigToDOM() {
     // 3. Marca das Lentes
     const lensVal = document.getElementById('spec-lens-brand');
     if (lensVal) lensVal.textContent = vsConfig.lensBrand || 'Lentes Monofocais HD';
+
+    // 3.1 Propagação para todos os elementos com classes dinâmicas
+    document.querySelectorAll('.dyn-frame-brand').forEach(el => {
+        el.textContent = vsConfig.frameBrand || 'Coleção Conceição';
+    });
+    document.querySelectorAll('.dyn-lens-brand').forEach(el => {
+        el.textContent = vsConfig.lensBrand || 'Lentes Monofocais HD';
+    });
 
     // 4. Preços dos Adicionais no HTML
     const priceAntirreflexo = document.getElementById('price-val-antirreflexo');
@@ -367,8 +395,12 @@ function updateHeroWhatsappLink(price, inst) {
     const instVal = `R$ ${(price / inst).toFixed(2).replace('.', ',')}`;
     const phone = "5519978056552";
 
+    const offerDesc = vsConfig.offerType === 'so_lentes'
+        ? `Lentes ${vsConfig.lensBrand || 'Visão Simples'}`
+        : `Armação ${vsConfig.frameBrand || 'Conceição'} + Lentes ${vsConfig.lensBrand || 'Visão Simples'}`;
+
     const text = encodeURIComponent(
-        `Olá! Vim pela promoção do site das Ópticas Conceição e gostaria de garantir o *Combo Visão Simples* por ${fmtPrice} (ou ${inst}x de ${instVal} sem juros). Poderiam me atender?`
+        `Olá! Vim pela promoção do site das Ópticas Conceição e gostaria de garantir o combo *${offerDesc}* por ${fmtPrice} (ou ${inst}x de ${instVal} sem juros). Poderiam me atender?`
     );
 
     btn.href = `https://api.whatsapp.com/send?1=pt_BR&phone=${phone}&text=${text}`;
