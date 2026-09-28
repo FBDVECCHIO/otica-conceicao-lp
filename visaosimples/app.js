@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadConfigFromStorage() {
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        const queryLp = urlParams.get('lp') || urlParams.get('theme') || '';
+        const queryLp = urlParams.get('lp') || urlParams.get('slug') || urlParams.get('theme') || '';
         const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
         const slug = queryLp || path || '194';
         
@@ -157,15 +157,20 @@ async function loadConfigFromStorage() {
         } catch (e) {}
 
         // Busca por correspondência exata ou parcial de slug/id
-        let lpEntry = catalog[slug] || catalog['/' + slug] || catalog['194'] || catalog['forlife-194'];
+        let lpEntry = catalog[slug] || catalog['/' + slug] || null;
         if (!lpEntry) {
             for (const key in catalog) {
                 const item = catalog[key];
-                if (item && (item.slug === '/' + slug || item.id === slug || (item.url && item.url.includes(slug)))) {
+                if (item && (item.slug === '/' + slug || item.slug === slug || item.id === slug || (item.url && item.url.includes(slug)))) {
                     lpEntry = item;
                     break;
                 }
             }
+        }
+
+        // Se ainda não encontrou e for a campanha 194 padrão ou sem query
+        if (!lpEntry && (slug === '194' || slug === 'forlife-194' || !queryLp)) {
+            lpEntry = catalog['194'] || catalog['forlife-194'] || null;
         }
         
         if (lpEntry) {
@@ -182,10 +187,13 @@ async function loadConfigFromStorage() {
         }
 
         // Tenta recuperar do CMS se configurado
+        const cleanSlugKey = slug.replace(/^\/+/, '');
         const targetId = lpEntry ? lpEntry.id : slug;
         const storedCms = localStorage.getItem('otica_cms_config_' + targetId) || 
+                          (lpEntry && lpEntry.slug ? localStorage.getItem('otica_cms_config_' + lpEntry.slug.replace(/^\/+/, '')) : null) ||
+                          localStorage.getItem('otica_cms_config_' + cleanSlugKey) ||
                           localStorage.getItem('otica_cms_config_' + slug) ||
-                          localStorage.getItem('otica_cms_config_194');
+                          ((slug === '194' || slug === 'forlife-194' || !queryLp) ? localStorage.getItem('otica_cms_config_194') : null);
         if (storedCms) {
             const parsed = JSON.parse(storedCms);
             if (parsed.comboPrice) vsConfig.comboPrice = parseFloat(parsed.comboPrice);

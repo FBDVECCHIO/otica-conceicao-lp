@@ -643,15 +643,13 @@ function initScarcityBadge() {
 function detectActiveLandingPage() {
     let slug = window.location.pathname.replace(/^\/+|\/+$/g, '');
     const urlParams = new URLSearchParams(window.location.search);
-    const themeParam = urlParams.get('theme') || urlParams.get('lp');
+    const themeParam = urlParams.get('theme') || urlParams.get('lp') || urlParams.get('slug');
 
-    // Se o pathname for vazio, 'forlife' ou 'forlife/index.html', checa o parâmetro theme
-    if (!slug || slug === 'forlife' || slug === 'forlife/index.html' || slug === 'index.html') {
-        if (themeParam) {
-            slug = themeParam.trim();
-        } else {
-            slug = 'forlife';
-        }
+    // Se o parâmetro theme/lp/slug for passado na URL, tem prioridade absoluta
+    if (themeParam) {
+        slug = themeParam.trim();
+    } else if (!slug || slug === 'forlife' || slug === 'forlife/index.html' || slug === 'index.html') {
+        slug = 'forlife';
     }
 
     let catalog = {};

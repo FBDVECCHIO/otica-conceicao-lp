@@ -565,7 +565,7 @@
 
             // Notifica os subsistemas
             const activeLp = this.getActiveLp();
-            Preview.updateIframe(activeLp);
+            Preview.updateIframe(activeLp, true);
             Preview.updateUiInfo(activeLp);
             this.updateCampaignInfoBar();
             CMS.loadLpConfig(lpId);
@@ -640,9 +640,21 @@
                 addonsActive: lp.addonsActive
             }));
 
+            // Também salva sob a chave do slug limpo para máxima compatibilidade
+            const cleanSlugKey = cleanSlug.replace(/^\/+/, '');
+            if (cleanSlugKey && cleanSlugKey !== id) {
+                localStorage.setItem(STORAGE_KEYS.cmsConfigPrefix + cleanSlugKey, localStorage.getItem(cmsKey));
+            }
+
             this.populateSelector();
             this.renderCatalogGrid();
             this.setActiveLp(id);
+
+            // Troca automaticamente para a aba do Visualizador Interativo
+            const tabPreviewBtn = document.querySelector('.tab-btn[data-tab="tab-preview"]');
+            if (tabPreviewBtn) {
+                tabPreviewBtn.click();
+            }
 
             if (Performance && typeof Performance.render === 'function') {
                 Performance.render();
@@ -778,7 +790,7 @@
                     CMS.loadCampaignConfig(lpId);
                 }
                 if (Preview && typeof Preview.updateIframe === 'function') {
-                    Preview.updateIframe(lp);
+                    Preview.updateIframe(lp, true);
                 }
                 if (Preview && typeof Preview.updateUiInfo === 'function') {
                     Preview.updateUiInfo(lp);
@@ -907,7 +919,7 @@
                             <i class="fas ${isActive ? 'fa-check-circle' : 'fa-desktop'}"></i>
                             ${isActive ? 'LP Ativa no Painel' : 'Gerenciar LP'}
                         </button>
-                        <a href="${lp.url}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
+                        <a href="${Preview.resolvePreviewUrl(lp)}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
                             <i class="fas fa-external-link-alt"></i>
                         </a>
                         <button type="button" class="btn-card-edit" data-edit-lp="${lp.id}" title="Editar Landing Page">
@@ -1015,30 +1027,84 @@
             this.setViewport('desktop');
         },
 
-        updateIframe(lp) {
-            const iframe = document.getElementById('preview-iframe');
-            if (!iframe || !lp) return;
+        resolvePreviewUrl(lp, forceRefresh = false) {
+            if (!lp) return '/forlife/index.html';
 
-            // Evita recarregar se o src já for exatamente o mesmo
-            const targetUrl = new URL(lp.url, window.location.origin).href;
-            if (iframe.src !== targetUrl) {
-                iframe.src = lp.url;
+            const template = (lp.template || '').toLowerCase();
+            const idParam = encodeURIComponent(lp.id);
+            const rawSlug = (lp.slug || lp.id).replace(/^\/+/, '');
+            const slugParam = encodeURIComponent(rawSlug);
+            const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
+
+            let basePath = '';
+            if (template === 'visaosimples' || template === '194' || lp.id === '194' || lp.id === 'forlife-194') {
+                basePath = `/visaosimples/index.html?lp=${idParam}&slug=${slugParam}`;
+            } else if (template === 'fila' || lp.id === 'fila') {
+                basePath = `/index.html?lp=${idParam}`;
+            } else {
+                // Padrão forlife / multifocal
+                basePath = `/forlife/index.html?lp=${idParam}&theme=${idParam}&slug=${slugParam}`;
             }
+
+            return basePath + cacheBuster;
+        },
+
+        updateIframe(lp, forceRefresh = false) {
+            if (!lp) return;
+            const targetUrl = this.resolvePreviewUrl(lp, forceRefresh);
+
+            // 1. Iframe Principal do Visualizador
+            const iframe = document.getElementById('preview-iframe');
+            if (iframe) {
+                const currentFull = iframe.src ? (new URL(iframe.src, window.location.origin).pathname + new URL(iframe.src, window.location.origin).search) : '';
+                const targetFull = new URL(targetUrl, window.location.origin).pathname + new URL(targetUrl, window.location.origin).search;
+                
+                if (forceRefresh || currentFull !== targetFull) {
+                    iframe.src = targetUrl;
+                }
+            }
+
+            // 2. Sincroniza Iframes do Modo Híbrido
+            this.syncHybridIframes(lp, forceRefresh);
+
+            // 3. Sincroniza Iframe da Gaveta Lateral
+            this.syncDrawerIframe(lp, forceRefresh);
         },
 
         updateUiInfo(lp) {
             if (!lp) return;
 
+            const cleanSlug = lp.slug || ('/' + lp.id);
+            const previewTargetUrl = this.resolvePreviewUrl(lp);
+
             // URL display
             const urlDisplay = document.getElementById('preview-url-display');
             if (urlDisplay) {
-                const fullUrl = new URL(lp.url, window.location.origin).href;
                 if (urlDisplay.tagName === 'INPUT' || urlDisplay.tagName === 'TEXTAREA') {
-                    urlDisplay.value = fullUrl;
+                    urlDisplay.value = cleanSlug;
                 } else {
-                    urlDisplay.textContent = fullUrl;
-                    urlDisplay.title = fullUrl;
+                    urlDisplay.textContent = cleanSlug;
+                    urlDisplay.title = cleanSlug;
                 }
+            }
+
+            // Barra de endereço no mockup do navegador emulado
+            const chromeAddress = document.getElementById('chrome-address-path');
+            if (chromeAddress) {
+                chromeAddress.textContent = cleanSlug;
+                chromeAddress.title = cleanSlug;
+            }
+
+            // Barra de endereço do mockup híbrido
+            const hybridPath = document.getElementById('hybrid-path-desktop');
+            if (hybridPath) {
+                hybridPath.textContent = cleanSlug;
+            }
+
+            // Slug da Gaveta Lateral
+            const drawerSlug = document.getElementById('drawer-lp-slug');
+            if (drawerSlug) {
+                drawerSlug.textContent = cleanSlug;
             }
 
             // Status Badge
@@ -1053,7 +1119,7 @@
             // Botão Abrir Externo
             const btnOpen = document.getElementById('btn-open-lp-external');
             if (btnOpen) {
-                btnOpen.href = lp.url;
+                btnOpen.href = previewTargetUrl;
                 btnOpen.target = '_blank';
             }
         },
@@ -1062,10 +1128,17 @@
             const preset = VIEWPORT_PRESETS[viewportKey] || VIEWPORT_PRESETS.desktop;
             State.activeViewport = viewportKey;
 
+            const deviceWrapper = document.getElementById('device-wrapper');
             const container = document.querySelector('.preview-frame-wrapper') || 
                               document.querySelector('.preview-wrapper') || 
-                              document.getElementById('preview-iframe-container');
+                              document.getElementById('preview-iframe-container') ||
+                              deviceWrapper;
             const iframe = document.getElementById('preview-iframe');
+
+            // Atualiza classe do mockup wrapper para estilos CSS dedicados
+            if (deviceWrapper) {
+                deviceWrapper.className = `device-mockup-wrapper viewport-${viewportKey}`;
+            }
 
             // Atualiza botões ativos
             document.querySelectorAll('[data-viewport]').forEach(btn => {
@@ -1090,29 +1163,21 @@
         },
 
         reloadIframe() {
-            const iframe = document.getElementById('preview-iframe');
+            const activeLp = Catalog.getActiveLp();
             const btn = document.getElementById('btn-reload-iframe');
+            const chromeBtn = document.getElementById('chrome-reload-btn');
 
-            if (!iframe) return;
+            const icons = [];
+            if (btn && btn.querySelector('i')) icons.push(btn.querySelector('i'));
+            if (chromeBtn && chromeBtn.querySelector('i')) icons.push(chromeBtn.querySelector('i'));
 
-            let icon = null;
-            if (btn) {
-                icon = btn.querySelector('i');
-                if (icon) icon.classList.add('fa-spin');
-            }
+            icons.forEach(ic => ic.classList.add('fa-spin'));
 
-            try {
-                iframe.contentWindow.location.reload();
-            } catch (e) {
-                // Fallback para cross-origin
-                const currentSrc = iframe.src;
-                iframe.src = '';
-                iframe.src = currentSrc;
-            }
+            this.updateIframe(activeLp, true);
 
             setTimeout(() => {
-                if (icon) icon.classList.remove('fa-spin');
-                Utils.showToast('Preview recarregado.', 'info');
+                icons.forEach(ic => ic.classList.remove('fa-spin'));
+                Utils.showToast('Preview recarregado com dados atualizados.', 'info');
             }, 600);
         },
 
@@ -1122,14 +1187,22 @@
                 const vpBtn = e.target.closest('[data-viewport]');
                 if (vpBtn) {
                     const vp = vpBtn.getAttribute('data-viewport');
-                    this.setViewport(vp);
+                    if (vp !== 'hybrid') {
+                        this.setViewport(vp);
+                    }
                 }
             });
 
-            // Botão de recarregar iframe
+            // Botão de recarregar iframe no toolbar
             const btnReload = document.getElementById('btn-reload-iframe');
             if (btnReload) {
                 btnReload.addEventListener('click', () => this.reloadIframe());
+            }
+
+            // Botão de recarregar no chrome address bar
+            const chromeReload = document.getElementById('chrome-reload-btn');
+            if (chromeReload) {
+                chromeReload.addEventListener('click', () => this.reloadIframe());
             }
         },
 
@@ -1157,7 +1230,7 @@
             if (btnQuick && drawerPanel) {
                 btnQuick.addEventListener('click', () => {
                     drawerPanel.classList.toggle('open');
-                    this.syncDrawerIframe();
+                    this.syncDrawerIframe(null, true);
                 });
             }
 
@@ -1198,7 +1271,7 @@
                 if (hybridContainer) hybridContainer.style.display = 'flex';
                 if (btnHybrid) btnHybrid.classList.add('active');
                 otherVpBtns.forEach(b => b.classList.remove('active'));
-                this.syncHybridIframes();
+                this.syncHybridIframes(null, true);
                 Utils.showToast('Modo Híbrido ativado: Desktop, Tablet e Mobile sincronizados!', 'info');
             } else {
                 if (singleWrapper) singleWrapper.style.display = 'block';
@@ -1207,30 +1280,46 @@
             }
         },
 
-        syncHybridIframes() {
-            const activeLp = Catalog.getActiveLp();
+        syncHybridIframes(lp, forceRefresh = false) {
+            const activeLp = lp || Catalog.getActiveLp();
+            if (!activeLp) return;
+
+            const targetUrl = this.resolvePreviewUrl(activeLp, forceRefresh);
+            const targetFull = new URL(targetUrl, window.location.origin).pathname + new URL(targetUrl, window.location.origin).search;
+
             const iframes = [
                 document.getElementById('hybrid-iframe-desktop'),
                 document.getElementById('hybrid-iframe-tablet'),
                 document.getElementById('hybrid-iframe-mobile')
             ];
             iframes.forEach(iframe => {
-                if (iframe && (!iframe.src || !iframe.src.includes(activeLp.url))) {
-                    iframe.src = activeLp.url;
+                if (iframe) {
+                    const currentFull = iframe.src ? (new URL(iframe.src, window.location.origin).pathname + new URL(iframe.src, window.location.origin).search) : '';
+                    if (forceRefresh || currentFull !== targetFull) {
+                        iframe.src = targetUrl;
+                    }
                 }
             });
             const pathDisplay = document.getElementById('hybrid-path-desktop');
-            if (pathDisplay) pathDisplay.textContent = activeLp.slug;
+            if (pathDisplay) pathDisplay.textContent = activeLp.slug || ('/' + activeLp.id);
         },
 
-        syncDrawerIframe() {
-            const activeLp = Catalog.getActiveLp();
+        syncDrawerIframe(lp, forceRefresh = false) {
+            const activeLp = lp || Catalog.getActiveLp();
+            if (!activeLp) return;
+
+            const targetUrl = this.resolvePreviewUrl(activeLp, forceRefresh);
+            const targetFull = new URL(targetUrl, window.location.origin).pathname + new URL(targetUrl, window.location.origin).search;
+
             const drawerIframe = document.getElementById('drawer-iframe');
             const slugDisplay = document.getElementById('drawer-lp-slug');
-            if (drawerIframe && (!drawerIframe.src || !drawerIframe.src.includes(activeLp.url))) {
-                drawerIframe.src = activeLp.url;
+            if (drawerIframe) {
+                const currentFull = drawerIframe.src ? (new URL(drawerIframe.src, window.location.origin).pathname + new URL(drawerIframe.src, window.location.origin).search) : '';
+                if (forceRefresh || currentFull !== targetFull) {
+                    drawerIframe.src = targetUrl;
+                }
             }
-            if (slugDisplay) slugDisplay.textContent = activeLp.slug;
+            if (slugDisplay) slugDisplay.textContent = activeLp.slug || ('/' + activeLp.id);
         }
     };
 
