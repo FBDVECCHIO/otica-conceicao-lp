@@ -69,6 +69,23 @@
                 status: 'Em Veiculação'
             }
         },
+        'forlife-194': {
+            id: 'forlife-194',
+            name: 'ForLife Especial 194',
+            url: '/forlife-194',
+            slug: '/forlife-194',
+            status: 'Ativa',
+            color: '#002C5B',
+            price: 194.00,
+            installments: 6,
+            description: 'Combo promocional ForLife por R$ 194,00 em até 6x sem juros.',
+            campaign: {
+                name: 'Campanha Promocional 194',
+                budget: 2000.00,
+                targetLeads: 150,
+                status: 'Em Veiculação'
+            }
+        },
         varilux: {
             id: 'varilux',
             name: 'Varilux Comfort Max',

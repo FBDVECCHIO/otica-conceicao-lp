@@ -578,6 +578,14 @@ function detectActiveLandingPage() {
         if (stored) catalog = JSON.parse(stored);
     } catch (e) {}
 
+    const DEFAULT_CATALOG = {
+        forlife: { id: 'forlife', name: 'ForLife Multifocal Di Capri', slug: '/forlife', price: 297.00, installments: 10 },
+        'forlife-194': { id: 'forlife-194', name: 'ForLife Especial 194', slug: '/forlife-194', price: 194.00, installments: 6 },
+        '194': { id: '194', name: 'ForLife Especial 194', slug: '/194', price: 194.00, installments: 6 },
+        varilux: { id: 'varilux', name: 'Varilux Comfort Max', slug: '/varilux', price: 349.00, installments: 10 },
+        zeiss: { id: 'zeiss', name: 'Zeiss SmartLife Digital', slug: '/zeiss', price: 420.00, installments: 12 }
+    };
+
     let matchedLp = null;
     const cleanSlug = slug.toLowerCase();
 
@@ -586,6 +594,24 @@ function detectActiveLandingPage() {
         if (id.toLowerCase() === cleanSlug || lpSlug === cleanSlug) {
             matchedLp = lp;
             break;
+        }
+    }
+
+    if (!matchedLp) {
+        if (DEFAULT_CATALOG[cleanSlug]) {
+            matchedLp = DEFAULT_CATALOG[cleanSlug];
+        } else {
+            const numMatch = cleanSlug.match(/(?:^|[-_])(\d{2,4})$/);
+            if (numMatch) {
+                const inferredPrice = parseFloat(numMatch[1]);
+                matchedLp = {
+                    id: cleanSlug,
+                    name: `ForLife Especial ${numMatch[1]}`,
+                    slug: '/' + cleanSlug,
+                    price: inferredPrice,
+                    installments: inferredPrice < 200 ? 6 : 10
+                };
+            }
         }
     }
 
