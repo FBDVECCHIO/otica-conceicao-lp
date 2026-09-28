@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Óculos Completo Visão Simples (Miopia &amp; Astigmatismo) | Ópticas Conceição</title>
+    
+    <!-- Meta SEO & Open Graph -->
+    <meta name="description" id="meta-description" content="Combo Óculos Completo: Armação de Grau + Lentes Visão Simples por apenas R$ 194,00 ou 6x de R$ 32,33 sem juros nas Ópticas Conceição. 78 anos de tradição em Campinas.">
+    <meta property="og:title" id="og-title" content="Óculos Completo Visão Simples | Ópticas Conceição">
+    <meta property="og:description" id="og-description" content="Óculos completo por apenas R$ 194,00 à vista ou 6x de R$ 32,33. Resgate seu cupom exclusivo!">
+    <meta property="og:type" content="website">
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2904508746602007');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2904508746602007&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Estilos Customizados Visão Simples -->
+    <link rel="stylesheet" href="/visaosimples/style.css?v=20260928a">
+</head>
+<body>
+
+    <!-- CABEÇALHO (Header) -->
+    <header class="header-forlife">
+        <div class="container header-container">
+            <a href="/visaosimples" class="header-logo-link" title="Ópticas Conceição - Desde 1948">
+                <img src="/assets/images/logo_branco_clean.png?v=20260905h" alt="Ópticas Conceição Logo">
+            </a>
+            <span class="header-promo-title">Lote promocional exclusivo!</span>
+        </div>
+    </header>
+
+    <!-- BANNER 1: PREÇO & OFERTA PRINCIPAL (Fundo Navy Blue) -->
+    <section class="banner-combo" id="combo">
+        <div class="container">
+            <div class="text-center">
+                <span class="badge-modality" id="hero-modality-badge">
+                    <i class="fas fa-eye"></i> Lentes Prontas (Estoque)
+                </span>
+                <h1 class="section-title" id="hero-title">
+                    Óculos Completo Visão Simples<br class="mobile-break"> + Armação
+                </h1>
+                <p class="section-subtitle" id="hero-subtitle" style="color: rgba(255,255,255,0.9);">
+                    Nitidez absoluta para Miopia, Astigmatismo, Hipermetropia ou Óculos de Leitura
+                </p>
+            </div>
+
+            <!-- Grid de Especificação de Marcas -->
+            <div class="brand-spec-grid" id="brand-spec-container">
+                <div class="brand-spec-card">
+                    <div class="brand-spec-icon"><i class="fas fa-glasses"></i></div>
+                    <div class="brand-spec-info">
+                        <span class="brand-spec-label">Armação Inclusa</span>
+                        <span class="brand-spec-value" id="spec-frame-brand">Coleção Conceição</span>
+                    </div>
+                </div>
+                <div class="brand-spec-card">
+                    <div class="brand-spec-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="brand-spec-info">
+                        <span class="brand-spec-label">Tecnologia em Lentes</span>
+                        <span class="brand-spec-value" id="spec-lens-brand">Lentes Monofocais HD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Destaque do Combo -->
+            <div class="combo-card">
+                <div class="combo-grid">
+                    <div class="combo-info">
+                        <h3 id="combo-card-title">Lentes Visão Simples + Armação</h3>
+                        <div class="combo-card-badge" id="combo-offer-type-badge">Combo Completo</div>
+                        <ul class="combo-features" id="combo-features-list">
+                            <li><i class="fas fa-check-circle"></i> <span id="feat-frame-text">Armação de receituário inclusa à sua escolha</span></li>
+                            <li><i class="fas fa-check-circle"></i> <span id="feat-lens-text">Lentes de Visão Simples calibradas para seu grau</span></li>
+                            <li><i class="fas fa-check-circle"></i> Foco perfeito para Miopia, Astigmatismo ou Perto</li>
+                            <li><i class="fas fa-check-circle"></i> Laboratório próprio de montagem e entrega expressa</li>
+                        </ul>
+                    </div>
+
+                    <div class="combo-pricing-box">
+                        <div class="pricing-title">Valor Especial do Combo</div>
+
+                        <!-- Valor Principal em Destaque: Parcelado -->
+                        <div class="pricing-installment-primary">
+                            <span class="pricing-inst-prefix"><span id="combo-inst-count">6</span>x de</span>
+                            <span class="pricing-inst-val-main" id="combo-inst-val">R$ 32,33</span>
+                        </div>
+                        <div class="pricing-installment-tag-box">
+                            <span class="pricing-installment-tag"><i class="fas fa-check"></i> Sem juros no cartão</span>
+                        </div>
+
+                        <!-- Valor Menor Secundário: Total à vista -->
+                        <div class="pricing-cash-secondary">
+                            ou <span id="combo-cash-price">R$ 194,00</span> à vista
+                        </div>
+                        
+                        <!-- CTA Banner 1 WhatsApp 1-Clique em Destaque -->
+                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20garantir%20o%20cupom%20de%20R$%20194,00" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-highlight" id="btn-hero-whatsapp" data-track-element="CTA WhatsApp 1-Clique Visão Simples">
+                            <i class="fab fa-whatsapp"></i> Cupom no WhatsApp em 1 Clique
+                        </a>
+
+                        <!-- CTA Secundário no Site -->
+                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta Combo Visão Simples" style="width: 100%; margin-top: 10px; background: rgba(0, 44, 91, 0.08); color: var(--navy-primary); box-shadow: none; border: 1.5px solid var(--navy-primary);">
+                            <i class="fas fa-ticket-alt"></i> Ou Gerar Cupom no Formulário
+                        </a>
+                        <div style="margin-top: 12px;">
+                            <div class="voucher-scarcity-badge on-light">
+                                <span class="scarcity-pulse-dot"></span>
+                                <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER 2: TECNOLOGIAS ADICIONAIS ÀS LENTES (Fundo Branco) -->
+    <section class="banner-tecnologias" id="tecnologias">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag navy">
+                    <i class="fas fa-microchip"></i> Upgrades Opcionais
+                </span>
+                <h2 class="section-title">Tecnologias Extras para Lentes</h2>
+                <p class="section-subtitle text-muted">
+                    Potencialize suas lentes de visão simples com proteção avançada
+                </p>
+            </div>
+
+            <!-- Grid de Cards Selecionáveis -->
+            <div class="tech-grid" id="tech-grid-container">
+                <!-- Card 1: Antirreflexo -->
+                <div class="tech-card" data-addon="antirreflexo" id="card-addon-antirreflexo">
+                    <div class="tech-header">
+                        <div class="tech-title-group">
+                            <div class="tech-icon-box">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h4 class="tech-title">Antirreflexo</h4>
+                        </div>
+                        <div class="tech-checkbox-badge">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Comparativo em Quadrados Arredondados: SEM vs COM -->
+                    <div class="tech-circles-container">
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame">
+                                <img src="/assets/images/tech_antirreflexo_sem.jpg?v=20260905g" alt="Sem Antirreflexo" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label sem">SEM</span>
+                        </div>
+                        <div class="tech-circle-divider">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame com-frame">
+                                <img src="/assets/images/tech_antirreflexo_com.jpg?v=20260905g" alt="Com Antirreflexo" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label com">COM</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-phrase-box">
+                        <p class="tech-phrase-text">Transparência total sem reflexos de luz.</p>
+                    </div>
+
+                    <div class="tech-accordion">
+                        <button type="button" class="tech-accordion-btn" data-track-element="Aba Antirreflexo" aria-expanded="false">
+                            <span>Conhecer o benefício</span>
+                            <span class="accordion-spring-icon"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="tech-accordion-content">
+                            <div class="tech-accordion-body">
+                                <p>Elimina reflexos indesejados de lâmpadas, telas e faróis à noite. Garante fotos sem reflexo branco nos olhos e mais conforto em ambientes iluminados.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-price-footer">
+                        <span class="tech-price-label">Adicional:</span>
+                        <span class="tech-price-val" id="price-val-antirreflexo">+ R$ 60,00</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Filtro Luz Azul (Bluecut) -->
+                <div class="tech-card" data-addon="bluecut" id="card-addon-bluecut">
+                    <div class="tech-header">
+                        <div class="tech-title-group">
+                            <div class="tech-icon-box">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            <h4 class="tech-title">Filtro Azul (Bluecut)</h4>
+                        </div>
+                        <div class="tech-checkbox-badge">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Comparativo em Quadrados Arredondados: SEM vs COM -->
+                    <div class="tech-circles-container">
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame">
+                                <img src="/assets/images/tech_bluecut_sem.jpg?v=20260905g" alt="Sem Filtro Azul" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label sem">SEM</span>
+                        </div>
+                        <div class="tech-circle-divider">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame com-frame">
+                                <img src="/assets/images/tech_bluecut_com.jpg?v=20260905g" alt="Com Filtro Azul" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label com">COM</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-phrase-box">
+                        <p class="tech-phrase-text">Proteção total para celular e computador.</p>
+                    </div>
+
+                    <div class="tech-accordion">
+                        <button type="button" class="tech-accordion-btn" data-track-element="Aba Blue Cut" aria-expanded="false">
+                            <span>Conhecer o benefício</span>
+                            <span class="accordion-spring-icon"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="tech-accordion-content">
+                            <div class="tech-accordion-body">
+                                <p>Bloqueia a luz azul nociva emitida por computadores e celulares, reduzindo dor de cabeça, ardência nos olhos e melhorando a qualidade do sono.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-price-footer">
+                        <span class="tech-price-label">Adicional:</span>
+                        <span class="tech-price-val" id="price-val-bluecut">+ R$ 70,00</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Fotossensível -->
+                <div class="tech-card" data-addon="fotossensivel" id="card-addon-fotossensivel">
+                    <div class="tech-header">
+                        <div class="tech-title-group">
+                            <div class="tech-icon-box">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <h4 class="tech-title">Fotossensíveis</h4>
+                        </div>
+                        <div class="tech-checkbox-badge">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Comparativo em Quadrados Arredondados: SEM vs COM -->
+                    <div class="tech-circles-container">
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame">
+                                <img src="/assets/images/tech_fotossensivel_sem.jpg?v=20260905g" alt="Sem Fotossensíveis" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label sem">SEM</span>
+                        </div>
+                        <div class="tech-circle-divider">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="tech-circle-col">
+                            <div class="tech-square-frame com-frame">
+                                <img src="/assets/images/tech_fotossensivel_com.jpg?v=20260905g" alt="Com Fotossensíveis" class="tech-square-img" loading="lazy">
+                            </div>
+                            <span class="tech-circle-label com">COM</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-phrase-box">
+                        <p class="tech-phrase-text">Óculos de grau e solar em uma só lente.</p>
+                    </div>
+
+                    <div class="tech-accordion">
+                        <button type="button" class="tech-accordion-btn" data-track-element="Aba Fotossensível" aria-expanded="false">
+                            <span>Conhecer o benefício</span>
+                            <span class="accordion-spring-icon"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="tech-accordion-content">
+                            <div class="tech-accordion-body">
+                                <p>Lentes que escurecem automaticamente com a luz solar e voltam a ficar 100% transparentes em ambientes internos. Conforto e proteção UV o dia todo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-price-footer">
+                        <span class="tech-price-label">Adicional:</span>
+                        <span class="tech-price-val" id="price-val-fotossensivel">+ R$ 120,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Banner 2: Gerar Voucher -->
+            <div class="voucher-cta-group">
+                <a href="#voucher" class="btn-voucher-action" data-track-element="CTA Seção Tecnologias">
+                    <i class="fas fa-ticket-alt"></i> Gerar meu Cupom com Esta Oferta
+                </a>
+                <div class="voucher-scarcity-badge on-light">
+                    <span class="scarcity-pulse-dot"></span>
+                    <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER 3: RESGATE DE CUPOM & FORMULÁRIO (Fundo Navy Blue) -->
+    <section class="banner-voucher" id="voucher">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag white">
+                    <i class="fas fa-ticket-alt"></i> Resgate Oficial
+                </span>
+                <h2 class="section-title">Garanta o Seu Desconto com Cupom</h2>
+            </div>
+
+            <div class="voucher-layout">
+                <!-- Coluna 1: Resumo Dinâmico -->
+                <div class="summary-box">
+                    <h3 class="summary-title"><i class="fas fa-receipt"></i> Resumo do seu Pedido</h3>
+                    
+                    <div class="summary-line">
+                        <span id="summary-combo-title">Combo Visão Simples (Armação + Lentes)</span>
+                        <span id="summary-combo-price">R$ 194,00</span>
+                    </div>
+
+                    <div style="margin-top: 14px; font-size: 13px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.75); letter-spacing: 0.5px;">
+                        Tecnologia Selecionada:
+                    </div>
+                    
+                    <div class="summary-addons-list" id="summary-addons-container">
+                        <!-- Preenchido via app.js -->
+                    </div>
+
+                    <div class="summary-total-box">
+                        <div class="summary-total-label">Total do Combo:</div>
+                        <div class="summary-total-price" id="summary-total-price-val">R$ 194,00</div>
+                        <div class="summary-total-installments" id="summary-total-inst-val">ou até 6x de R$ 32,33 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Formulário com Checkboxes de Receita -->
+                <div class="voucher-form-card">
+                    <div id="form-inputs-container">
+                        <h3>Dados para o Cupom</h3>
+                        <p>Preencha os campos abaixo para gerar seu cupom oficial de desconto:</p>
+
+                        <form id="voucher-form">
+                            <div class="form-group">
+                                <label for="client-name">Nome Completo *</label>
+                                <input type="text" id="client-name" class="form-input" placeholder="Digite seu nome completo" required minlength="3">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="client-phone">WhatsApp com DDD *</label>
+                                <input type="tel" id="client-phone" class="form-input" placeholder="(19) 99999-9999" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="client-email">E-mail (Opcional)</label>
+                                <input type="email" id="client-email" class="form-input" placeholder="seuemail@exemplo.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="client-city">Cidade / Região (Opcional)</label>
+                                <input type="text" id="client-city" class="form-input" placeholder="Ex: Campinas">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="client-store">Escolha a loja (Opcional):</label>
+                                <select id="client-store" class="form-input" data-track-element="Seletor Loja de Retirada" style="cursor: pointer; background-color: #FFFFFF; font-weight: 600;">
+                                    <option value="" selected>Selecione a loja onde quer ir (ou combine no WhatsApp)...</option>
+                                    <!-- Preenchido dinamicamente via app.js -->
+                                </select>
+                            </div>
+
+                            <!-- CHECKBOXES DE RECEITA MÉDICA -->
+                            <div class="form-group">
+                                <label style="margin-bottom: 8px;">Sua receita médica (Opcional):</label>
+                                <div class="recipe-selection-box">
+                                    <label class="recipe-option-card" id="card-recipe-have">
+                                        <input type="radio" name="recipe_status" id="recipe-option-have" value="have">
+                                        <span class="recipe-option-text">Possuo receita</span>
+                                    </label>
+
+                                    <div id="prescription-upload-area">
+                                        <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary); margin-bottom: 6px;">
+                                            Anexar imagem ou foto da receita (Opcional):
+                                        </div>
+                                        <input type="file" id="prescription-file" accept="image/*,application/pdf" capture="environment" class="form-input" style="padding: 8px; cursor: pointer;">
+                                        <div id="prescription-preview-box" style="margin-top: 8px; display: none; align-items: center; gap: 8px;">
+                                            <i class="fas fa-check-circle" style="color: var(--navy-primary);"></i>
+                                            <span id="prescription-file-name" style="font-size: 12px; font-weight: 700; color: var(--navy-primary);">Receita carregada!</span>
+                                        </div>
+                                    </div>
+
+                                    <label class="recipe-option-card" id="card-recipe-need">
+                                        <input type="radio" name="recipe_status" id="recipe-option-need" value="need">
+                                        <span class="recipe-option-text">Preciso atualizar minha receita</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit-voucher" id="btn-submit-voucher" data-track-element="Formulário Gerar Voucher" disabled>
+                                <i class="fas fa-ticket-alt"></i> Gerar Meu Cupom Oficial
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Box de Sucesso do Voucher -->
+                    <div class="voucher-success-box" id="voucher-success-box">
+                        <div style="font-size: 50px; color: var(--navy-primary); margin-bottom: 12px;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 style="font-size: 24px; color: var(--navy-primary); margin-bottom: 8px;">Parabéns, <span id="voucher-user-name"></span>!</h3>
+                        <p style="font-size: 14px; color: var(--text-muted);">
+                            Seu cupom exclusivo de <strong>Visão Simples</strong> foi gerado e registrado com sucesso!
+                        </p>
+
+                        <div class="voucher-code-badge" id="voucher-code-display">VS194-XXXX</div>
+                        <div>
+                            <span class="voucher-validity-tag">
+                                <i class="fas fa-clock"></i> Cupom válido por 7 dias!
+                            </span>
+                        </div>
+
+                        <p style="font-size: 14px; color: var(--text-dark); margin-bottom: 22px; line-height: 1.5;">
+                            Clique no botão abaixo para resgatar no WhatsApp da nossa equipe e garantir as condições na loja:
+                        </p>
+
+                        <a href="#" class="btn-whatsapp-share" id="btn-whatsapp-voucher" data-track-element="WhatsApp Resgatar Voucher" target="_blank">
+                            <i class="fab fa-whatsapp" style="font-size: 20px;"></i> Resgatar Cupom no WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER 4: HISTÓRIA & AUTORIDADE - 78 ANOS (Fundo Branco) -->
+    <section class="banner-autoridade light-mode" id="autoridade">
+        <div class="container">
+            <div class="autoridade-content">
+                <span class="section-tag navy">
+                    <i class="fas fa-award"></i> Tradição &amp; Confiança Desde 1948
+                </span>
+                <h2 class="section-title">Há <span>78 anos</span> cuidando da saúde visual de Campinas e região</h2>
+
+                <div class="autoridade-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">78 Anos</div>
+                        <div class="stat-label">De história, tradição e precisão técnica</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">+100 Mil</div>
+                        <div class="stat-label">Clientes atendidos com alta satisfação</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Laboratório próprio de montagem e calibração</div>
+                    </div>
+                </div>
+
+                <div class="voucher-cta-group">
+                    <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA História Conceição">
+                        <i class="fas fa-ticket-alt"></i> Gerar meu Cupom
+                    </a>
+                    <div class="voucher-scarcity-badge on-light">
+                        <span class="scarcity-pulse-dot"></span>
+                        <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER 5: TIRA-DÚVIDAS / FAQ DE VISÃO SIMPLES (Fundo Navy Blue) -->
+    <section class="banner-faq" id="faq">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag white">
+                    <i class="fas fa-question-circle"></i> Perguntas Frequentes
+                </span>
+                <h2 class="section-title">Tira-Dúvidas Sobre o Combo Visão Simples</h2>
+                <p class="section-subtitle" style="color: rgba(255,255,255,0.88);">
+                    Respostas diretas para as dúvidas mais comuns sobre lentes de visão simples:
+                </p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>1. O que está incluso no Combo Visão Simples de R$ 194,00?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes de Visão Simples calibradas para seu grau (miopia, astigmatismo, hipermetropia ou leitura).
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>2. Para quais tipos de grau esse combo é indicado?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        É indicado para graus de visão simples padrão (miopia até -4,00, hipermetropia até +4,00 e astigmatismo até -2,00). Para graus mais elevados ou lentes ultrafinas personalizadas, nossa equipe no laboratório oferece opções surfaçadas com condições especiais de fábrica.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>3. Posso fazer apenas as lentes se já tiver minha armação?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sim! Nossos consultores avaliam a sua armação atual e realizam a montagem precisa no laboratório próprio da Conceição com garantia de ajuste perfeito.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>4. E se eu não tiver receita médica em mãos?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Basta selecionar "Preciso atualizar minha receita" ao gerar o cupom. Nossa equipe indicará clínicas parceiras de confiança e médicos oftalmologistas próximos em Campinas para você realizar seu exame com comodidade.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>5. Como funciona o parcelamento de R$ 194,00 em até 6x?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Você pode parcelar o valor total em até 6x de R$ 32,33 sem juros em qualquer cartão de crédito aceito em nossas lojas físicas.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>6. Qual o prazo para meus óculos ficarem prontos?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Como contamos com estoque de lentes e laboratório próprio de montagem computadorizada em Campinas, a maioria dos óculos de visão simples é entregue com extrema agilidade, muitas vezes em poucas horas ou no dia seguinte!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ (Footer) -->
+    <footer class="footer-forlife">
+        <div class="container text-center">
+            <p>&copy; 2026 Ópticas Conceição. Desde 1948 cuidando da sua saúde visual em Campinas e região.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts da Aplicação -->
+    <script src="/visaosimples/app.js?v=20260928a"></script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+// ==============================================================================
+// LANDING PAGE VISÃO SIMPLES - MOTOR DINÂMICO & LEAD MANAGER
+// ÓPTICAS CONCEIÇÃO - VERSÃO 2.1.0
+// ==============================================================================
+
+const SUPABASE_URL = "https://mngwfearwjkpisararbe.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZ3dmZWFyd2prcGlzYXJhcmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTc5MzksImV4cCI6MjA5NjE3MzkzOX0.vk9Ol41NU2RI72-ZZKIcm7hzccYBjzPPptb6rZv_mKs";
+
+let supabaseClient = null;
+if (SUPABASE_URL && SUPABASE_KEY) {
+    try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch (e) {
+        console.error("Erro ao inicializar Supabase:", e);
+    }
+}
+
+// Configuração Padrão do Template Visão Simples (Campanha 194)
+let vsConfig = {
+    lpId: '194',
+    name: 'Óculos Completo Visão Simples 194',
+    comboPrice: 194.00,
+    installments: 6,
+    offerType: 'combo_completo', // 'combo_completo' | 'so_lentes'
+    lensModality: 'lentes_prontas', // 'lentes_prontas' | 'visao_simples_surfacada' | 'multifocal'
+    frameBrand: 'Coleção Conceição',
+    lensBrand: 'Lentes Monofocais HD',
+    addonAntirreflexo: 60.00,
+    addonBluecut: 70.00,
+    addonFotossensivel: 120.00,
+    addonsActive: {
+        antirreflexo: true,
+        bluecut: true,
+        fotossensivel: true
+    }
+};
+
+// Estado dos adicionais selecionados
+const selectedAddons = {
+    antirreflexo: false,
+    bluecut: false,
+    fotossensivel: false
+};
+
+let prescriptionBase64 = "";
+
+// ==============================================================================
+// INICIALIZAÇÃO
+// ==============================================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    initScarcityBadge();
+    await loadConfigFromStorage();
+    applyConfigToDOM();
+    setupEventListeners();
+    setupFAQ();
+    updatePricingUI();
+    initStores();
+    initTrafficTracker();
+});
+
+// ==============================================================================
+// CARREGAMENTO DA CONFIGURAÇÃO DINÂMICA (CMS / CATALOG / FALLBACK)
+// ==============================================================================
+async function loadConfigFromStorage() {
+    try {
+        const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+        const slug = path || '194';
+        
+        let catalog = {};
+        try {
+            const raw = localStorage.getItem('otica_conceicao_lps_catalog');
+            if (raw) catalog = JSON.parse(raw);
+        } catch (e) {}
+
+        const lpEntry = catalog[slug] || catalog['194'] || catalog['forlife-194'];
+        
+        if (lpEntry) {
+            vsConfig.lpId = lpEntry.id || slug;
+            vsConfig.name = lpEntry.name || vsConfig.name;
+            vsConfig.comboPrice = parseFloat(lpEntry.price) || 194.00;
+            vsConfig.installments = parseInt(lpEntry.installments, 10) || 6;
+            if (lpEntry.offerType) vsConfig.offerType = lpEntry.offerType;
+            if (lpEntry.lensModality) vsConfig.lensModality = lpEntry.lensModality;
+            if (lpEntry.frameBrand) vsConfig.frameBrand = lpEntry.frameBrand;
+            if (lpEntry.lensBrand) vsConfig.lensBrand = lpEntry.lensBrand;
+            if (lpEntry.addonsActive) vsConfig.addonsActive = { ...vsConfig.addonsActive, ...lpEntry.addonsActive };
+        }
+
+        // Tenta recuperar do CMS se configurado
+        const cmsKey = 'otica_cms_config_' + (lpEntry ? lpEntry.id : slug);
+        const storedCms = localStorage.getItem(cmsKey);
+        if (storedCms) {
+            const parsed = JSON.parse(storedCms);
+            if (parsed.comboPrice) vsConfig.comboPrice = parseFloat(parsed.comboPrice);
+            if (parsed.installments) vsConfig.installments = parseInt(parsed.installments, 10);
+            if (parsed.antirreflexo !== undefined) vsConfig.addonAntirreflexo = parseFloat(parsed.antirreflexo);
+            if (parsed.bluecut !== undefined) vsConfig.addonBluecut = parseFloat(parsed.bluecut);
+            if (parsed.fotossensivel !== undefined) vsConfig.addonFotossensivel = parseFloat(parsed.fotossensivel);
+            if (parsed.offerType) vsConfig.offerType = parsed.offerType;
+            if (parsed.lensModality) vsConfig.lensModality = parsed.lensModality;
+            if (parsed.frameBrand) vsConfig.frameBrand = parsed.frameBrand;
+            if (parsed.lensBrand) vsConfig.lensBrand = parsed.lensBrand;
+            if (parsed.addonsActive) vsConfig.addonsActive = { ...vsConfig.addonsActive, ...parsed.addonsActive };
+        }
+    } catch (err) {
+        console.warn("[VisãoSimples] Usando configuração padrão:", err);
+    }
+}
+
+// ==============================================================================
+// APLICAÇÃO VISUAL DA CONFIGURAÇÃO (HEADLINE, MARCAS, BADGES, ADICIONAIS)
+// ==============================================================================
+function applyConfigToDOM() {
+    // 1. Modalidade da Lente
+    const modalityBadge = document.getElementById('hero-modality-badge');
+    if (modalityBadge) {
+        if (vsConfig.lensModality === 'lentes_prontas') {
+            modalityBadge.innerHTML = '<i class="fas fa-bolt"></i> Lentes Prontas (Estoque Express)';
+        } else if (vsConfig.lensModality === 'visao_simples_surfacada') {
+            modalityBadge.innerHTML = '<i class="fas fa-microscope"></i> Visão Simples Surfaçada Digital (Sob Medida)';
+        } else if (vsConfig.lensModality === 'multifocal') {
+            modalityBadge.innerHTML = '<i class="fas fa-layer-group"></i> Lentes Multifocais Digitais HD';
+        }
+    }
+
+    // 2. Tipo de Oferta (Óculos Completo vs Só Lentes)
+    const offerBadge = document.getElementById('combo-offer-type-badge');
+    const heroTitle = document.getElementById('hero-title');
+    const featFrame = document.getElementById('feat-frame-text');
+    const specFrameCard = document.getElementById('spec-frame-brand')?.closest('.brand-spec-card');
+
+    if (vsConfig.offerType === 'so_lentes') {
+        if (offerBadge) offerBadge.textContent = 'Apenas Lentes';
+        if (heroTitle) heroTitle.innerHTML = 'Lentes Visão Simples<br class="mobile-break"> Para Sua Armação';
+        if (featFrame) featFrame.textContent = 'Montagem e adaptação técnica na sua armação atual';
+        if (specFrameCard) {
+            const frameVal = document.getElementById('spec-frame-brand');
+            if (frameVal) frameVal.textContent = vsConfig.frameBrand || 'Sua Armação Atual';
+        }
+    } else {
+        if (offerBadge) offerBadge.textContent = 'Óculos Completo';
+        if (heroTitle) heroTitle.innerHTML = 'Óculos Completo Visão Simples<br class="mobile-break"> + Armação';
+        if (featFrame) featFrame.textContent = 'Armação de grau inclusa à sua escolha';
+        const frameVal = document.getElementById('spec-frame-brand');
+        if (frameVal) frameVal.textContent = vsConfig.frameBrand || 'Coleção Conceição';
+    }
+
+    // 3. Marca das Lentes
+    const lensVal = document.getElementById('spec-lens-brand');
+    if (lensVal) lensVal.textContent = vsConfig.lensBrand || 'Lentes Monofocais HD';
+
+    // 4. Preços dos Adicionais no HTML
+    const priceAntirreflexo = document.getElementById('price-val-antirreflexo');
+    if (priceAntirreflexo) priceAntirreflexo.textContent = `+ R$ ${vsConfig.addonAntirreflexo.toFixed(2).replace('.', ',')}`;
+
+    const priceBluecut = document.getElementById('price-val-bluecut');
+    if (priceBluecut) priceBluecut.textContent = `+ R$ ${vsConfig.addonBluecut.toFixed(2).replace('.', ',')}`;
+
+    const priceFotossensivel = document.getElementById('price-val-fotossensivel');
+    if (priceFotossensivel) priceFotossensivel.textContent = `+ R$ ${vsConfig.addonFotossensivel.toFixed(2).replace('.', ',')}`;
+
+    // 5. Controle de Tecnologias Ativas vs Desativadas (Cinza Baixo)
+    const addons = ['antirreflexo', 'bluecut', 'fotossensivel'];
+    addons.forEach(ad => {
+        const card = document.getElementById(`card-addon-${ad}`);
+        if (!card) return;
+
+        const isEnabled = vsConfig.addonsActive ? (vsConfig.addonsActive[ad] !== false) : true;
+        if (!isEnabled) {
+            card.classList.add('is-disabled-gray');
+            selectedAddons[ad] = false;
+
+            // Insere pílula de indisponível se não houver
+            if (!card.querySelector('.tech-disabled-pill')) {
+                const badgeBox = card.querySelector('.tech-checkbox-badge');
+                if (badgeBox) {
+                    const pill = document.createElement('span');
+                    pill.className = 'tech-disabled-pill';
+                    pill.innerHTML = '<i class="fas fa-ban"></i> Indisponível';
+                    badgeBox.parentNode.insertBefore(pill, badgeBox);
+                }
+            }
+        } else {
+            card.classList.remove('is-disabled-gray');
+            const pill = card.querySelector('.tech-disabled-pill');
+            if (pill) pill.remove();
+        }
+    });
+}
+
+// ==============================================================================
+// ATUALIZAÇÃO REATIVA DE PREÇOS & RESUMO
+// ==============================================================================
+function updatePricingUI() {
+    const basePrice = vsConfig.comboPrice;
+    const installments = vsConfig.installments || 6;
+
+    let totalAddons = 0;
+    const activeAddonsList = [];
+
+    if (selectedAddons.antirreflexo && (vsConfig.addonsActive?.antirreflexo !== false)) {
+        totalAddons += vsConfig.addonAntirreflexo;
+        activeAddonsList.push({ name: 'Tratamento Antirreflexo', price: vsConfig.addonAntirreflexo });
+    }
+    if (selectedAddons.bluecut && (vsConfig.addonsActive?.bluecut !== false)) {
+        totalAddons += vsConfig.addonBluecut;
+        activeAddonsList.push({ name: 'Filtro Azul (Bluecut)', price: vsConfig.addonBluecut });
+    }
+    if (selectedAddons.fotossensivel && (vsConfig.addonsActive?.fotossensivel !== false)) {
+        totalAddons += vsConfig.addonFotossensivel;
+        activeAddonsList.push({ name: 'Lentes Fotossensíveis', price: vsConfig.addonFotossensivel });
+    }
+
+    const totalPrice = basePrice + totalAddons;
+    const installmentVal = (totalPrice / installments);
+
+    const fmtMoney = (v) => `R$ ${v.toFixed(2).replace('.', ',')}`;
+
+    // Atualiza Hero
+    const elInstCount = document.getElementById('combo-inst-count');
+    if (elInstCount) elInstCount.textContent = installments;
+
+    const elInstVal = document.getElementById('combo-inst-val');
+    if (elInstVal) elInstVal.textContent = fmtMoney(basePrice / installments);
+
+    const elCashPrice = document.getElementById('combo-cash-price');
+    if (elCashPrice) elCashPrice.textContent = fmtMoney(basePrice);
+
+    // Atualiza Resumo no Banner do Cupom
+    const elSummaryTitle = document.getElementById('summary-combo-title');
+    if (elSummaryTitle) {
+        elSummaryTitle.textContent = vsConfig.offerType === 'so_lentes' 
+            ? `Lentes Visão Simples (${vsConfig.lensBrand || 'Monofocais'})`
+            : `Óculos Completo (${vsConfig.frameBrand} + ${vsConfig.lensBrand})`;
+    }
+
+    const elSummaryComboPrice = document.getElementById('summary-combo-price');
+    if (elSummaryComboPrice) elSummaryComboPrice.textContent = fmtMoney(basePrice);
+
+    const elSummaryTotalPrice = document.getElementById('summary-total-price-val');
+    if (elSummaryTotalPrice) elSummaryTotalPrice.textContent = fmtMoney(totalPrice);
+
+    const elSummaryTotalInst = document.getElementById('summary-total-inst-val');
+    if (elSummaryTotalInst) elSummaryTotalInst.textContent = `ou até ${installments}x de ${fmtMoney(installmentVal)} sem juros`;
+
+    // Renderiza lista de adicionais no resumo
+    const elAddonsContainer = document.getElementById('summary-addons-container');
+    if (elAddonsContainer) {
+        elAddonsContainer.innerHTML = '';
+        if (activeAddonsList.length === 0) {
+            elAddonsContainer.innerHTML = '<span style="font-size: 13px; color: rgba(255,255,255,0.6); font-style: italic;">Nenhuma tecnologia extra selecionada</span>';
+        } else {
+            activeAddonsList.forEach(item => {
+                const line = document.createElement('div');
+                line.className = 'summary-line';
+                line.style.fontSize = '13.5px';
+                line.style.color = '#93C5FD';
+                line.innerHTML = `<span>+ ${item.name}</span><span>${fmtMoney(item.price)}</span>`;
+                elAddonsContainer.appendChild(line);
+            });
+        }
+    }
+
+    // Atualiza Link do CTA do WhatsApp da Hero
+    updateHeroWhatsappLink(basePrice, installments);
+}
+
+function updateHeroWhatsappLink(price, inst) {
+    const btn = document.getElementById('btn-hero-whatsapp');
+    if (!btn) return;
+
+    const fmtPrice = `R$ ${price.toFixed(2).replace('.', ',')}`;
+    const instVal = `R$ ${(price / inst).toFixed(2).replace('.', ',')}`;
+    const phone = "5519978056552";
+
+    const text = encodeURIComponent(
+        `Olá! Vim pela promoção do site das Ópticas Conceição e gostaria de garantir o *Combo Visão Simples* por ${fmtPrice} (ou ${inst}x de ${instVal} sem juros). Poderiam me atender?`
+    );
+
+    btn.href = `https://api.whatsapp.com/send?1=pt_BR&phone=${phone}&text=${text}`;
+}
+
+// ==============================================================================
+// SELEÇÃO INTERATIVA DE TECNOLOGIAS ADICIONAIS
+// ==============================================================================
+function setupEventListeners() {
+    ['antirreflexo', 'bluecut', 'fotossensivel'].forEach(addon => {
+        const card = document.getElementById(`card-addon-${addon}`);
+        if (!card) return;
+
+        card.addEventListener('click', (e) => {
+            // Se clicou no botão de abrir benefício, deixa o accordion agir
+            if (e.target.closest('.tech-accordion-btn') || e.target.closest('.tech-accordion-content')) {
+                return;
+            }
+
+            // Não seleciona se estiver desativado em cinza
+            if (card.classList.contains('is-disabled-gray')) {
+                return;
+            }
+
+            selectedAddons[addon] = !selectedAddons[addon];
+            if (selectedAddons[addon]) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+            updatePricingUI();
+        });
+    });
+
+    // Accordions das tecnologias
+    document.querySelectorAll('.tech-accordion-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const content = btn.nextElementSibling;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', !expanded);
+            if (content) {
+                content.style.maxHeight = expanded ? null : `${content.scrollHeight}px`;
+            }
+        });
+    });
+
+    // Formulário do Voucher
+    const form = document.getElementById('voucher-form');
+    const submitBtn = document.getElementById('btn-submit-voucher');
+    const inputName = document.getElementById('client-name');
+    const inputPhone = document.getElementById('client-phone');
+
+    function checkFormValidity() {
+        if (!submitBtn || !inputName || !inputPhone) return;
+        const valid = inputName.value.trim().length >= 3 && inputPhone.value.trim().length >= 10;
+        submitBtn.disabled = !valid;
+    }
+
+    if (inputName) inputName.addEventListener('input', checkFormValidity);
+    if (inputPhone) {
+        inputPhone.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 6) {
+                v = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+            } else if (v.length > 2) {
+                v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+            }
+            e.target.value = v;
+            checkFormValidity();
+        });
+    }
+
+    // Receita Médica Checkboxes
+    const radioHave = document.getElementById('recipe-option-have');
+    const radioNeed = document.getElementById('recipe-option-need');
+    const uploadArea = document.getElementById('prescription-upload-area');
+    const fileInput = document.getElementById('prescription-file');
+
+    if (radioHave) {
+        radioHave.addEventListener('change', () => {
+            if (radioHave.checked && uploadArea) uploadArea.style.display = 'block';
+        });
+    }
+    if (radioNeed) {
+        radioNeed.addEventListener('change', () => {
+            if (radioNeed.checked && uploadArea) uploadArea.style.display = 'none';
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                prescriptionBase64 = reader.result;
+                const preview = document.getElementById('prescription-preview-box');
+                const label = document.getElementById('prescription-file-name');
+                if (preview && label) {
+                    label.textContent = file.name;
+                    preview.style.display = 'flex';
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Submissão do Cupom
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleVoucherSubmission();
+        });
+    }
+}
+
+// ==============================================================================
+// GERAÇÃO E ENVIO DO VOUCHER DE DESCONTO
+// ==============================================================================
+async function handleVoucherSubmission() {
+    const name = document.getElementById('client-name')?.value.trim();
+    const phone = document.getElementById('client-phone')?.value.trim();
+    const email = document.getElementById('client-email')?.value.trim() || '';
+    const city = document.getElementById('client-city')?.value.trim() || 'Campinas';
+    const store = document.getElementById('client-store')?.value || 'Não informada';
+    const recipeStatus = document.querySelector('input[name="recipe_status"]:checked')?.value || 'nao_informado';
+
+    const voucherCode = 'VS194-' + Math.floor(1000 + Math.random() * 9000);
+
+    const basePrice = vsConfig.comboPrice;
+    let total = basePrice;
+    const addonsNames = [];
+
+    if (selectedAddons.antirreflexo) { total += vsConfig.addonAntirreflexo; addonsNames.push('Antirreflexo'); }
+    if (selectedAddons.bluecut) { total += vsConfig.addonBluecut; addonsNames.push('Bluecut (Filtro Azul)'); }
+    if (selectedAddons.fotossensivel) { total += vsConfig.addonFotossensivel; addonsNames.push('Fotossensível'); }
+
+    const leadPayload = {
+        code: voucherCode,
+        client_name: name,
+        client_phone: phone,
+        client_email: email,
+        client_city: city,
+        store_choice: store,
+        recipe_status: recipeStatus,
+        lp_id: vsConfig.lpId || '194',
+        combo_name: vsConfig.name,
+        offer_type: vsConfig.offerType,
+        lens_modality: vsConfig.lensModality,
+        frame_brand: vsConfig.frameBrand,
+        lens_brand: vsConfig.lensBrand,
+        total_value: total,
+        addons: addonsNames.join(', ') || 'Nenhum',
+        created_at: new Date().toISOString()
+    };
+
+    // Salva no Supabase se disponível
+    if (supabaseClient) {
+        try {
+            await supabaseClient.from('forlife_leads').insert([leadPayload]);
+        } catch (err) {
+            console.warn("[VisãoSimples] Erro ao gravar lead no Supabase:", err);
+        }
+    }
+
+    // Salva localmente como garantia
+    try {
+        const existing = JSON.parse(localStorage.getItem('forlife_leads') || '[]');
+        existing.unshift(leadPayload);
+        localStorage.setItem('forlife_leads', JSON.stringify(existing));
+    } catch (e) {}
+
+    // Exibe tela de sucesso
+    const formCard = document.getElementById('form-inputs-container');
+    const successCard = document.getElementById('voucher-success-box');
+    const userName = document.getElementById('voucher-user-name');
+    const codeDisplay = document.getElementById('voucher-code-display');
+    const btnWhatsapp = document.getElementById('btn-whatsapp-voucher');
+
+    if (userName) userName.textContent = name;
+    if (codeDisplay) codeDisplay.textContent = voucherCode;
+
+    // Monta mensagem do WhatsApp
+    const fmtTotal = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    const instVal = `R$ ${(total / vsConfig.installments).toFixed(2).replace('.', ',')}`;
+    const addonsStr = addonsNames.length > 0 ? ` + ${addonsNames.join(' + ')}` : '';
+
+    const msg = encodeURIComponent(
+        `Olá! Acabei de gerar meu Cupom Oficial *${voucherCode}* pelo site das Ópticas Conceição!\n\n` +
+        `👤 *Nome:* ${name}\n` +
+        `👓 *Oferta:* ${vsConfig.name}${addonsStr}\n` +
+        `💰 *Valor Especial:* ${fmtTotal} (em até ${vsConfig.installments}x de ${instVal} sem juros)\n` +
+        `📍 *Loja de Preferência:* ${store}\n\n` +
+        `Gostaria de agendar meu atendimento e resgatar as condições especiais na loja!`
+    );
+
+    if (btnWhatsapp) {
+        btnWhatsapp.href = `https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=${msg}`;
+    }
+
+    if (formCard) formCard.style.display = 'none';
+    if (successCard) successCard.style.display = 'block';
+
+    successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ==============================================================================
+// FAQ ACORDION
+// ==============================================================================
+function setupFAQ() {
+    document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        if (question) {
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                if (!isActive) item.classList.add('active');
+            });
+        }
+    });
+}
+
+function initScarcityBadge() {
+    const el = document.querySelector('.scarcity-number');
+    if (!el) return;
+    const saved = sessionStorage.getItem('scarcity_count');
+    if (saved) {
+        el.textContent = saved;
+    } else {
+        const count = Math.floor(Math.random() * 5) + 12; // entre 12 e 16
+        sessionStorage.setItem('scarcity_count', count);
+        el.textContent = count;
+    }
+}
+
+function initStores() {
+    const select = document.getElementById('client-store');
+    if (!select) return;
+
+    const defaultStores = [
+        "Loja 1: Rua Barão de Jaguara, 1102 - Centro, Campinas",
+        "Loja 2: Av. Francisco Glicério, 1045 - Centro, Campinas",
+        "Loja 3: Rua 13 de Maio, 450 - Centro, Campinas",
+        "Loja 4: Shopping Iguatemi Campinas",
+        "Loja 5: Parque D. Pedro Shopping"
+    ];
+
+    defaultStores.forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st;
+        opt.textContent = st;
+        select.appendChild(opt);
+    });
+}
+
+function initTrafficTracker() {
+    try {
+        const log = {
+            url: window.location.href,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+        };
+        const raw = localStorage.getItem('forlife_traffic_log') || '[]';
+        const parsed = JSON.parse(raw);
+        parsed.unshift(log);
+        if (parsed.length > 100) parsed.pop();
+        localStorage.setItem('forlife_traffic_log', JSON.stringify(parsed));
+    } catch (e) {}
+}

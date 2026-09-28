@@ -3237,3 +3237,41 @@ input, button, select, textarea {
     color: #FFFFFF !important;
     transform: scale(1.12);
 }
+
+/* Toggles de Ativação de Tecnologias Extras no CMS */
+.addon-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+}
+
+.addon-toggle-row:hover {
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+.addon-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+}
+
+.addon-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #002C5B;
+    cursor: pointer;
+}
+

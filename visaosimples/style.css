@@ -1,0 +1,151 @@
+/* ==========================================================================
+   LANDING PAGE VISÃO SIMPLES (MONOFOCAL / PRONTAS & SURFAÇADAS) - ÓPTICAS CONCEIÇÃO
+   Identidade: Navy Blue, Azul Royal, Cinza & Branco
+   ========================================================================== */
+
+@import url('/forlife/style.css');
+
+/* Badges e Tags Exclusivas de Visão Simples */
+.badge-modality {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(29, 78, 216, 0.12);
+    color: #1D4ED8;
+    border: 1px solid rgba(29, 78, 216, 0.25);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.badge-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 44, 91, 0.08);
+    color: #002C5B;
+    border: 1px solid rgba(0, 44, 91, 0.18);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.brand-spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+
+.brand-spec-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #FFFFFF;
+}
+
+.brand-spec-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #60A5FA;
+    flex-shrink: 0;
+}
+
+.brand-spec-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-spec-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 700;
+}
+
+.brand-spec-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+/* Card de Tecnologia Desativado / Cinza Baixo */
+.tech-card.is-disabled-gray {
+    opacity: 0.45 !important;
+    filter: grayscale(1) !important;
+    cursor: not-allowed !important;
+    background: #F1F5F9 !important;
+    border: 1.5px dashed #CBD5E1 !important;
+    box-shadow: none !important;
+    position: relative;
+    pointer-events: none !important;
+}
+
+.tech-card.is-disabled-gray .tech-checkbox-badge {
+    display: none !important;
+}
+
+.tech-card.is-disabled-gray .tech-phrase-text {
+    color: #64748B !important;
+}
+
+.tech-disabled-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #E2E8F0;
+    color: #64748B;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+/* Ajustes Hero Visão Simples */
+.vs-hero-benefits {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+}
+
+@media (max-width: 600px) {
+    .vs-hero-benefits {
+        grid-template-columns: 1fr;
+    }
+}
+
+.vs-benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.vs-benefit-item i {
+    color: #10B981;
+    font-size: 15px;
+    flex-shrink: 0;
+}
