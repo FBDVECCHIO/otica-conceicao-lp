@@ -1,12 +1,13 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
-    { "src": "^/hub/?$", "dest": "/hub.html" },
-    { "src": "^/admin/?$", "dest": "/hub.html" },
-    { "src": "^/forlife/admin/?$", "dest": "/forlife/admin.html" },
-    { "src": "^/forlife/?$", "dest": "/forlife/index.html" },
-    { "handle": "filesystem" },
-    { "src": "^/(.*)$", "dest": "/forlife/index.html" }
+  "rewrites": [
+    { "source": "/admin", "destination": "/hub" },
+    { "source": "/hub", "destination": "/hub" },
+    { "source": "/forlife", "destination": "/forlife" },
+    { "source": "/forlife/admin", "destination": "/forlife/admin" },
+    { "source": "/forlife/:path*", "destination": "/forlife/:path*" },
+    { "source": "/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/:slug", "destination": "/forlife" }
   ]
 }
