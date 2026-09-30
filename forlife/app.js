@@ -1500,3 +1500,227 @@ try {
     }
 } catch (e) {}
 
+
+
+// ==========================================
+// CARROSSEL DE ARMAÇÕES VARIADAS FORLIFE
+// "Você tem seu estilo, nós temos todos!"
+// ==========================================
+function initFramesCarousel() {
+    const track = document.getElementById('frames-track');
+    const btnPrev = document.getElementById('frames-btn-prev');
+    const btnNext = document.getElementById('frames-btn-next');
+    const dotsContainer = document.getElementById('frames-dots');
+    const filterBtns = document.querySelectorAll('.frames-filter-btn');
+    const cards = document.querySelectorAll('.frame-card');
+
+    if (!track || !cards.length) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftPos = 0;
+    let isDragging = false;
+    let autoplayTimer = null;
+    let activeFilter = 'all';
+
+    // 1. Atualizar e Gerar Dots de Paginação
+    function updateDots() {
+        if (!dotsContainer) return;
+        dotsContainer.innerHTML = '';
+        const visibleCards = Array.from(cards).filter(c => !c.classList.contains('is-filtered-out'));
+        if (visibleCards.length <= 1) return;
+
+        visibleCards.forEach((card, idx) => {
+            const dot = document.createElement('span');
+            dot.className = 'frame-dot' + (idx === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', 'Ver modelo ' + (idx + 1));
+            dot.addEventListener('click', () => {
+                const targetLeft = card.offsetLeft - track.offsetLeft;
+                track.scrollTo({ left: targetLeft, behavior: 'smooth' });
+                highlightActiveDot(idx);
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function highlightActiveDot(index) {
+        if (!dotsContainer) return;
+        const dots = dotsContainer.querySelectorAll('.frame-dot');
+        dots.forEach((d, i) => {
+            if (i === index) d.classList.add('active');
+            else d.classList.remove('active');
+        });
+    }
+
+    function syncDotsOnScroll() {
+        if (!dotsContainer) return;
+        const visibleCards = Array.from(cards).filter(c => !c.classList.contains('is-filtered-out'));
+        if (!visibleCards.length) return;
+
+        const scrollCenter = track.scrollLeft + track.clientWidth / 2;
+        let closestIdx = 0;
+        let minDiff = Infinity;
+
+        visibleCards.forEach((c, idx) => {
+            const cardCenter = c.offsetLeft - track.offsetLeft + c.offsetWidth / 2;
+            const diff = Math.abs(scrollCenter - cardCenter);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestIdx = idx;
+            }
+        });
+
+        highlightActiveDot(closestIdx);
+    }
+
+    // Evento de scroll com debounce / requestAnimationFrame
+    let scrollTicking = false;
+    track.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+            window.requestAnimationFrame(() => {
+                syncDotsOnScroll();
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    }, { passive: true });
+
+    // 2. Navegação via Botões Anterior / Próximo (Desktop)
+    function getScrollStep() {
+        const visibleCards = Array.from(cards).filter(c => !c.classList.contains('is-filtered-out'));
+        if (!visibleCards.length) return 360;
+        return visibleCards[0].offsetWidth + 24;
+    }
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            pauseAutoplay();
+            track.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+            startAutoplay();
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            pauseAutoplay();
+            track.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+            startAutoplay();
+        });
+    }
+
+    // 3. Filtros por Abas (Todos, Feminino, Masculino, Unissex)
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.getAttribute('data-filter') || 'all';
+
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                if (activeFilter === 'all' || cat === activeFilter) {
+                    card.classList.remove('is-filtered-out');
+                } else {
+                    card.classList.add('is-filtered-out');
+                }
+            });
+
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+            updateDots();
+            syncDotsOnScroll();
+        });
+    });
+
+    // 4. Drag to scroll com Mouse no Desktop
+    track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = false;
+        startX = e.pageX - track.offsetLeft;
+        scrollLeftPos = track.scrollLeft;
+        track.style.cursor = 'grabbing';
+        pauseAutoplay();
+    });
+
+    track.addEventListener('mouseleave', () => {
+        isDown = false;
+        track.style.cursor = 'default';
+        startAutoplay();
+    });
+
+    track.addEventListener('mouseup', () => {
+        isDown = false;
+        track.style.cursor = 'default';
+        setTimeout(() => { isDragging = false; }, 50);
+        startAutoplay();
+    });
+
+    track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 5) isDragging = true;
+        track.scrollLeft = scrollLeftPos - walk;
+    });
+
+    // 5. Prevenir clique indevido nos links se o usuário estava arrastando
+    track.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    });
+
+    // 6. Autoplay Suave
+    function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(() => {
+            if (document.hidden) return;
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            if (track.scrollLeft >= maxScroll - 15) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+            }
+        }, 4500);
+    }
+
+    function stopAutoplay() {
+        if (autoplayTimer) clearInterval(autoplayTimer);
+        autoplayTimer = null;
+    }
+
+    function pauseAutoplay() {
+        stopAutoplay();
+    }
+
+    track.addEventListener('mouseenter', pauseAutoplay);
+    track.addEventListener('mouseleave', startAutoplay);
+    track.addEventListener('touchstart', pauseAutoplay, { passive: true });
+    track.addEventListener('touchend', startAutoplay, { passive: true });
+
+    // 7. Micro-ação dos Botões "Escolher no Cupom"
+    document.querySelectorAll('.btn-frame-choose').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const frameName = btn.getAttribute('data-frame') || '';
+            if (frameName) {
+                // Guarda preferência em localStorage e tenta preencher se houver campo
+                try {
+                    localStorage.setItem('otica_preferred_frame', frameName);
+                } catch(err) {}
+            }
+        });
+    });
+
+    // Inicialização
+    updateDots();
+    startAutoplay();
+}
+
+// Executar após carregamento do DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFramesCarousel);
+} else {
+    initFramesCarousel();
+}
