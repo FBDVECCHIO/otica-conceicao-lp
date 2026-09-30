@@ -50,25 +50,43 @@
         </div>
     </header>
 
-    <!-- BANNER 1: PREÇO - MULTIFOCAL DIGITAL DI CAPRI + ARMAÇÃO (Fundo Navy Blue) -->
+    <!-- BANNER 1: PREÇO & OFERTA PRINCIPAL (Fundo Navy Blue) -->
     <section class="banner-combo" id="combo">
         <div class="container">
             <div class="text-center">
-                <h1 class="section-title">Multifocal Digital Di Capri<br class="mobile-break"> + Armação</h1>
-                <p class="section-subtitle" style="color: rgba(255,255,255,0.88);">
+                <h1 class="section-title" id="forlife-hero-title">Multifocal Digital Di Capri<br class="mobile-break"> + Armação</h1>
+                <p class="section-subtitle" id="forlife-hero-subtitle" style="color: rgba(255,255,255,0.88);">
                     Lentes Multifocais Digitais Di Capri
                 </p>
+            </div>
+
+            <!-- Grid de Especificação de Marcas -->
+            <div class="brand-spec-grid" id="brand-spec-container">
+                <div class="brand-spec-card">
+                    <div class="brand-spec-icon"><i class="fas fa-glasses"></i></div>
+                    <div class="brand-spec-info">
+                        <span class="brand-spec-label">Armação Inclusa</span>
+                        <span class="brand-spec-value" id="forlife-frame-brand">Di Capri</span>
+                    </div>
+                </div>
+                <div class="brand-spec-card">
+                    <div class="brand-spec-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="brand-spec-info">
+                        <span class="brand-spec-label">Tecnologia em Lentes</span>
+                        <span class="brand-spec-value" id="forlife-lens-brand">Multifocais Digitais</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Card Destaque do Combo -->
             <div class="combo-card">
                 <div class="combo-grid">
                     <div class="combo-info">
-                        <h3>Lentes Multifocais Digitais Di Capri</h3>
-                        <div class="combo-card-badge">Combo Especial</div>
+                        <h3 id="forlife-combo-title">Lentes Multifocais Digitais Di Capri</h3>
+                        <div class="combo-card-badge" id="forlife-offer-badge">Combo Especial</div>
                         <ul class="combo-features">
-                            <li><i class="fas fa-check-circle"></i> Armação de grau inclusa à sua escolha</li>
-                            <li><i class="fas fa-check-circle"></i> Lentes Multifocais Digitais Di Capri</li>
+                            <li><i class="fas fa-check-circle"></i> <span id="forlife-feat-frame">Armação de grau inclusa à sua escolha</span></li>
+                            <li><i class="fas fa-check-circle"></i> <span id="forlife-feat-lens">Lentes Multifocais Digitais Di Capri</span></li>
                             <li><i class="fas fa-check-circle"></i> Amplo campo e rápida adaptação</li>
                             <li><i class="fas fa-check-circle"></i> Consultoria técnica especializada</li>
                         </ul>
@@ -92,7 +110,7 @@
                         </div>
                         
                         <!-- CTA Banner 1 WhatsApp 1-Clique em Destaque -->
-                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20cupom" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-highlight" data-track-element="CTA WhatsApp 1-Clique Banner 1">
+                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20cupom" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-highlight" id="forlife-hero-whatsapp" data-track-element="CTA WhatsApp 1-Clique Banner 1">
                             <i class="fab fa-whatsapp"></i> Cupom no WhatsApp em 1 Clique
                         </a>
 
@@ -107,6 +125,285 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER DE ARMAÇÕES: CARROSSEL VARIADO DE ESTILOS (MASCULINO, FEMININO & CORES) -->
+    <section class="banner-armacoes" id="armacoes">
+        <div class="container">
+            <div class="text-center armacoes-header">
+                <span class="section-tag navy">
+                    <i class="fas fa-glasses"></i> Catálogo Exclusivo
+                </span>
+                <h2 class="section-title">Você tem seu estilo, nós temos todos!</h2>
+                <p class="section-subtitle text-muted">
+                    São mais de 150 modelos a sua disposição, variando entre modelos e cores!
+                </p>
+                <div class="armacoes-counter-badge">
+                    <i class="fas fa-check-circle"></i> Todos os modelos inclusos no valor do Combo
+                </div>
+            </div>
+
+            <!-- Abas de Filtro Rápido -->
+            <div class="frames-filter-nav">
+                <button type="button" class="frames-filter-btn active" data-filter="all">
+                    <i class="fas fa-border-all"></i> Todos os Modelos
+                </button>
+                <button type="button" class="frames-filter-btn" data-filter="feminino">
+                    <i class="fas fa-venus"></i> Feminino
+                </button>
+                <button type="button" class="frames-filter-btn" data-filter="masculino">
+                    <i class="fas fa-mars"></i> Masculino
+                </button>
+                <button type="button" class="frames-filter-btn" data-filter="unissex">
+                    <i class="fas fa-genderless"></i> Unissex & Modernos
+                </button>
+            </div>
+
+            <!-- Container do Carrossel com Setas e Track -->
+            <div class="frames-carousel-wrapper">
+                <button type="button" class="frames-nav-btn frames-nav-prev" id="frames-btn-prev" aria-label="Modelo anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div class="frames-track" id="frames-track">
+                    <!-- Card 1: Gatinho Rose -->
+                    <div class="frame-card" data-category="feminino" data-frame-id="frame-1">
+                        <div class="frame-card-badge feminino"><i class="fas fa-venus"></i> Feminino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_gatinho_rose.jpg" alt="Armação Feminina Gatinho Rose Gold" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Gatinho Cat-Eye</span>
+                            <h3 class="frame-card-title">Gatinho Rose Elegance</h3>
+                            <p class="frame-card-desc">Design italiano em metal rose gold com ponte e sobrancelha vinho escovado.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #B76E79;" title="Rose Gold"></span>
+                                    <span class="color-dot" style="background: #111111;" title="Preto Nobre"></span>
+                                    <span class="color-dot" style="background: #5B0E2D;" title="Bordô Vinho"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Gatinho Rose Elegance">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Retangular Black -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-2">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_retangular_black.jpg" alt="Armação Masculina Retangular Preto Fosco" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Retangular Clássico</span>
+                            <h3 class="frame-card-title">Retangular Executive Black</h3>
+                            <p class="frame-card-desc">Acetato leve e fosco com dobradiças reforçadas e hastes ergonômicas.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #1A1A1A;" title="Preto Fosco"></span>
+                                    <span class="color-dot" style="background: #002C5B;" title="Navy Blue"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Grafite"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Retangular Executive Black">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Tartaruga Retrô -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-3">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_tartaruga_retro.jpg" alt="Armação Unissex Tartaruga Retrô" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Redondo Vintage</span>
+                            <h3 class="frame-card-title">Tartaruga Retrô Havana</h3>
+                            <p class="frame-card-desc">Aro arredondado atemporal em acetato demi amber com ponte em fechadura.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #8A4B1A;" title="Havana Mel"></span>
+                                    <span class="color-dot" style="background: #4A2511;" title="Tartaruga Escuro"></span>
+                                    <span class="color-dot" style="background: #2D3748;" title="Fumê"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Tartaruga Retrô Havana">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Cristal Transparente -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-4">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_crystal_modern.jpg" alt="Armação Unissex Transparente Cristal" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Transparente Crystal</span>
+                            <h3 class="frame-card-title">Crystal Urban Minimal</h3>
+                            <p class="frame-card-desc">Acetato translúcido contemporâneo com alma metálica interna esculpida.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #E2E8F0; border: 1px solid #CBD5E1;" title="Cristal Puro"></span>
+                                    <span class="color-dot" style="background: #F5EBE6;" title="Champagne Suave"></span>
+                                    <span class="color-dot" style="background: #718096;" title="Cinza Translúcido"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Crystal Urban Minimal">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Aviador Gold -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-5">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_aviador_gold.jpg" alt="Armação Masculina Aviador Dourado" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Aviador Clássico</span>
+                            <h3 class="frame-card-title">Aviador Gold Titanium</h3>
+                            <p class="frame-card-desc">Ponte dupla em liga metálica nobre ultra-leve com plaquetas anatômicas de silicone.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #D4AF37;" title="Dourado Polido"></span>
+                                    <span class="color-dot" style="background: #C0C0C0;" title="Prata Nobre"></span>
+                                    <span class="color-dot" style="background: #2D3748;" title="Chumbo Fosco"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Aviador Gold Titanium">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Hexagonal Blush -->
+                    <div class="frame-card" data-category="feminino" data-frame-id="frame-6">
+                        <div class="frame-card-badge feminino"><i class="fas fa-venus"></i> Feminino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_hexagonal_blush.jpg" alt="Armação Feminina Hexagonal Blush" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Geométrico Fashion</span>
+                            <h3 class="frame-card-title">Hexagonal Blush Chic</h3>
+                            <p class="frame-card-desc">Formato hexagonal moderno e delicado com acabamento em tons nude e rose gold.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #F4C2C2;" title="Blush Nude"></span>
+                                    <span class="color-dot" style="background: #B76E79;" title="Rose Gold"></span>
+                                    <span class="color-dot" style="background: #111111;" title="Dourado & Preto"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Hexagonal Blush Chic">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Clubmaster Vintage -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-7">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_clubmaster_vintage.jpg" alt="Armação Unissex Clubmaster Vintage" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Meio-Aro Browline</span>
+                            <h3 class="frame-card-title">Clubmaster Retro Prime</h3>
+                            <p class="frame-card-desc">Combinação icônica de sobrancelha em acetato preto brilhante e aro inferior dourado.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #111111;" title="Preto & Dourado"></span>
+                                    <span class="color-dot" style="background: #8A4B1A;" title="Tartaruga & Ouro"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Grafite & Prata"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Clubmaster Retro Prime">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Sport Flex -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-8">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_sport_flex.jpg" alt="Armação Masculina Esportiva Flex" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Esportivo Tech Flex</span>
+                            <h3 class="frame-card-title">Esportivo Tech Grip</h3>
+                            <p class="frame-card-desc">Polímero ultra-flexível resistente a impactos com detalhes em borracha antiderrapante.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #1A1A1A;" title="Preto & Vermelho"></span>
+                                    <span class="color-dot" style="background: #002C5B;" title="Azul Royal"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Cinza Chumbo"></span>
+                                </div>
+                            </div>
+                            <div class="frame-card-footer">
+                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
+                                <a href="#voucher" class="btn-frame-choose" data-frame="Esportivo Tech Grip">
+                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="frames-nav-btn frames-nav-next" id="frames-btn-next" aria-label="Próximo modelo">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Dots de Paginação -->
+            <div class="frames-dots-container" id="frames-dots"></div>
+
+            <!-- Rodapé da Seção com Micro-CTA e Informação de Loja -->
+            <div class="frames-footer-banner">
+                <div class="frames-footer-content">
+                    <div class="frames-footer-text">
+                        <strong>Não encontrou o que procurava aqui?</strong>
+                        <span>Temos mais de 150 armações nas nossas 3 lojas em Campinas com consultoria de visagismo gratuita!</span>
+                    </div>
+                    <a href="#voucher" class="btn-frames-footer">
+                        <i class="fas fa-ticket-alt"></i> Resgatar Meu Cupom e Ver Todas
+                    </a>
                 </div>
             </div>
         </div>
