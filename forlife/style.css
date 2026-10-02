@@ -2484,3 +2484,667 @@ body {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   BANNER 1 COMERCIAL INTEGRADO COM MODELOS DE ESTÚDIO & ALTA CONVERSÃO
+   Inspirado na referência oficial de alta performance
+   ========================================================================== */
+.hero-commercial-section {
+    background: radial-gradient(circle at 75% 30%, #002244 0%, #001226 70%, #000c1a 100%);
+    color: #FFFFFF;
+    padding: 38px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-commercial-container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-commercial-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+    padding-bottom: 30px;
+}
+
+/* Coluna 1: Informações e Conversão */
+.hero-content-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.hero-top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #93C5FD;
+    margin-bottom: 14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.hero-top-badge i {
+    color: #38BDF8;
+    font-size: 12px;
+}
+
+.hero-commercial-title {
+    font-size: clamp(28px, 3.8vw, 44px);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #FFFFFF;
+    margin: 0 0 4px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+/* Preço Gigante em Ciano Vibrante */
+.hero-price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 8px 0 14px;
+    line-height: 1;
+}
+
+.hero-price-currency {
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 800;
+    color: #00E5FF;
+    line-height: 1;
+}
+
+.hero-price-val {
+    font-size: clamp(66px, 9vw, 98px);
+    font-weight: 900;
+    color: #00E5FF;
+    line-height: 1;
+    letter-spacing: -3px;
+    text-shadow: 0 4px 30px rgba(0, 229, 255, 0.45);
+}
+
+.hero-price-cents {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 800;
+    color: #00E5FF;
+    line-height: 1;
+}
+
+.hero-commercial-subtitle {
+    font-size: 16px;
+    color: #E2E8F0;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+.hero-commercial-subtitle strong {
+    color: #FFFFFF;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: #38BDF8;
+    text-underline-offset: 3px;
+}
+
+/* Pílulas de Diferenciais */
+.hero-benefit-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.hero-pill-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 9999px;
+    padding: 7px 15px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #F1F5F9;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+}
+
+.hero-pill-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(0, 229, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.hero-pill-item i {
+    color: #00E5FF;
+    font-size: 13px;
+}
+
+/* Bloco de Parcelamento */
+.hero-installment-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    width: 100%;
+    max-width: 480px;
+    backdrop-filter: blur(8px);
+}
+
+.hero-installment-main {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.hero-inst-prefix {
+    font-size: 16px;
+    color: #CBD5E1;
+    font-weight: 600;
+}
+
+.hero-inst-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.hero-inst-or {
+    font-size: 14px;
+    color: #94A3B8;
+    margin-left: 4px;
+}
+
+.hero-installment-flags {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.hero-flag-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: #38BDF8;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Botão CTA Verde Esmeralda */
+.hero-cta-wrapper {
+    width: 100%;
+    max-width: 480px;
+}
+
+.hero-cta-button-emerald {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    padding: 18px 24px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-cta-button-emerald::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    animation: shineSweep 3.5s infinite;
+}
+
+@keyframes shineSweep {
+    0% { left: -100%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+}
+
+.hero-cta-button-emerald:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+    background: linear-gradient(135deg, #16A34A 0%, #047857 100%);
+}
+
+.hero-cta-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.hero-cta-title i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.hero-cta-button-emerald:hover .hero-cta-title i {
+    transform: translateX(4px);
+}
+
+.hero-cta-sub {
+    display: block;
+    font-size: 12.5px;
+    opacity: 0.95;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.hero-sub-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hero-btn-voucher-link {
+    color: #94A3B8;
+    font-size: 12.5px;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.hero-btn-voucher-link:hover {
+    color: #FFFFFF;
+}
+
+.voucher-scarcity-badge.on-dark {
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #FCA5A5;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+}
+
+/* Coluna 2: Foto de Estúdio Integrada & Efeitos */
+.hero-model-col {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-model-viewport {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+}
+
+.hero-model-image-wrap {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    background: radial-gradient(circle at center, #0B2545 0%, #001733 100%);
+}
+
+.hero-model-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.hero-model-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 45px rgba(0, 18, 38, 0.6);
+    border-radius: 28px;
+}
+
+/* Citação Manuscrita / Itálica Flutuante */
+.hero-quote-card {
+    position: absolute;
+    top: -14px;
+    right: -10px;
+    z-index: 5;
+    background: rgba(0, 23, 51, 0.88);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    padding: 10px 16px;
+    max-width: 250px;
+    font-style: italic;
+    font-size: 13px;
+    color: #F8FAFC;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.35;
+}
+
+.hero-quote-card .quote-icon {
+    color: #00E5FF;
+    font-size: 13px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Badges Flutuantes Glassmorphism */
+.hero-floating-glass-badge {
+    position: absolute;
+    z-index: 6;
+    background: rgba(0, 23, 51, 0.84);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #FFFFFF;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+    font-size: 12.5px;
+    font-weight: 700;
+    animation: floatBadge 4s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes floatBadge {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-8px); }
+}
+
+.glass-badge-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 229, 255, 0.18);
+    color: #00E5FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.glass-badge-text {
+    white-space: nowrap;
+}
+
+.badge-pos-top {
+    top: 14%;
+    left: -24px;
+}
+
+.badge-pos-mid {
+    top: 56%;
+    right: -24px;
+    animation-delay: 1.4s;
+}
+
+.badge-pos-bottom {
+    bottom: 5%;
+    left: -16px;
+    animation-delay: 2.8s;
+}
+
+/* Trust Bar Institucional */
+.hero-trust-bar {
+    background: #000F21;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 22px 0;
+    margin-top: 36px;
+}
+
+.hero-trust-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #FFFFFF;
+}
+
+.trust-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(0, 229, 255, 0.12);
+    color: #00E5FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.trust-info strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.25;
+}
+
+.trust-info span {
+    display: block;
+    font-size: 12.5px;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.trust-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Barra Flutuante Fixa Mobile (Rodapé em Celulares) */
+.mobile-sticky-bottom-bar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 74px;
+    }
+    .mobile-sticky-bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        background: rgba(0, 18, 38, 0.96);
+        backdrop-filter: blur(14px);
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 10px 16px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+        gap: 12px;
+    }
+
+    .mobile-sticky-info {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .mobile-sticky-label {
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #94A3B8;
+        font-weight: 700;
+    }
+
+    .mobile-sticky-price strong {
+        font-size: 16px;
+        font-weight: 800;
+        color: #00E5FF;
+    }
+
+    .mobile-sticky-cash {
+        font-size: 11px;
+        color: #CBD5E1;
+        margin-left: 4px;
+    }
+
+    .mobile-sticky-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: #FFFFFF !important;
+        text-decoration: none !important;
+        font-size: 13.5px;
+        font-weight: 800;
+        padding: 10px 18px;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}
+
+/* Responsividade do Banner 1 */
+@media (max-width: 992px) {
+    .hero-commercial-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        text-align: center;
+    }
+
+    .hero-content-col {
+        align-items: center;
+    }
+
+    .hero-benefit-pills {
+        justify-content: center;
+    }
+
+    .hero-price-display {
+        justify-content: center;
+    }
+
+    .hero-installment-main {
+        justify-content: center;
+    }
+
+    .hero-installment-flags {
+        justify-content: center;
+    }
+
+    .hero-sub-actions {
+        justify-content: center;
+    }
+
+    .hero-model-viewport {
+        max-width: 380px;
+    }
+
+    .badge-pos-top {
+        left: -8px;
+    }
+
+    .badge-pos-mid {
+        right: -8px;
+    }
+
+    .badge-pos-bottom {
+        left: -4px;
+    }
+
+    .hero-floating-glass-badge {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    .glass-badge-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+
+    .hero-quote-card {
+        top: -10px;
+        right: 0;
+        max-width: 220px;
+        font-size: 11.5px;
+        padding: 8px 12px;
+    }
+
+    .trust-divider {
+        display: none;
+    }
+
+    .hero-trust-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 20px;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-floating-glass-badge {
+        position: static;
+        animation: none;
+        margin: 6px 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .hero-model-viewport {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-quote-card {
+        position: static;
+        margin-bottom: 12px;
+        max-width: 100%;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}
+

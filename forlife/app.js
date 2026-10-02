@@ -34,6 +34,51 @@ const selectedAddons = {
     fotossensivel: false
 };
 
+// ==========================================
+// PRESETS VISUAIS DO BANNER 1 COMERCIAL
+// ==========================================
+const HERO_STYLES = {
+    multifocal_senhora: {
+        id: 'multifocal_senhora',
+        name: 'Multifocal (Jovem Senhora)',
+        image: '/assets/images/hero/hero_jovem_senhora.jpg',
+        titlePrefix: 'Óculos Multifocal Completo por',
+        quote: 'Mais qualidade de vida para todas as suas visões',
+        badge1: { icon: 'fas fa-eye', text: 'Visão nítida em todas as distâncias' },
+        badge2: { icon: 'fas fa-heart', text: 'Mais conforto no dia a dia' },
+        badge3: { icon: 'fas fa-crosshairs', text: 'Tecnologia com alta precisão' },
+        pill1: 'Armação inclusa',
+        pill2: 'Lentes multifocais digitais',
+        pill3: 'Sem adicionais obrigatórios'
+    },
+    visao_simples_jovens: {
+        id: 'visao_simples_jovens',
+        name: 'Visão Simples (Dois Jovens)',
+        image: '/assets/images/hero/hero_dois_jovens.jpg',
+        titlePrefix: 'Óculos Completo Visão Simples por',
+        quote: 'Foco perfeito e estilo moderno para o seu dia a dia',
+        badge1: { icon: 'fas fa-glasses', text: 'Nitidez total para longe e perto' },
+        badge2: { icon: 'fas fa-feather-alt', text: 'Lentes leves e confortáveis' },
+        badge3: { icon: 'fas fa-bolt', text: 'Montagem expressa com laboratório' },
+        pill1: 'Armação inclusa',
+        pill2: 'Lentes visão simples calibradas',
+        pill3: 'Sem adicionais obrigatórios'
+    },
+    promo_dobro_casal: {
+        id: 'promo_dobro_casal',
+        name: 'Promoção em Dobro (Casal)',
+        image: '/assets/images/hero/hero_casal_dobro.jpg',
+        titlePrefix: 'Lentes em Dobro + 2 Armações por',
+        quote: 'Economia inteligente e visão perfeita para os dois',
+        badge1: { icon: 'fas fa-user-friends', text: '2 pares completos com preço único' },
+        badge2: { icon: 'fas fa-sparkles', text: 'Mais de 150 modelos para escolher' },
+        badge3: { icon: 'fas fa-shield-alt', text: 'Garantia total de adaptação' },
+        pill1: '2 armações inclusas',
+        pill2: '2 pares de lentes calibradas',
+        pill3: 'Sem adicionais obrigatórios'
+    }
+};
+
 // Receita médica em Base64 (opcional)
 let prescriptionBase64 = "";
 
@@ -743,6 +788,19 @@ async function loadForlifeConfig() {
         const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
         const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : 'lentes_multifocais');
 
+        const urlParams = new URLSearchParams(window.location.search);
+        let heroStyle = urlParams.get('hero') || urlParams.get('heroStyle') || (cms && cms.heroStyle) || (lp && lp.heroStyle);
+        if (!heroStyle) {
+            const checkStr = `${activeLpInfo.slug} ${(lp && lp.name) || ''} ${(cms && cms.lensModality) || ''} ${(lp && lp.lensModality) || ''}`.toLowerCase();
+            if (checkStr.includes('dobro') || checkStr.includes('casal') || checkStr.includes('494')) {
+                heroStyle = 'promo_dobro_casal';
+            } else if (checkStr.includes('194') || checkStr.includes('visaosimples') || checkStr.includes('miopia') || checkStr.includes('jovens')) {
+                heroStyle = 'visao_simples_jovens';
+            } else {
+                heroStyle = 'multifocal_senhora';
+            }
+        }
+
         forlifeConfig = {
             comboPrice: price,
             installments: installments,
@@ -755,6 +813,7 @@ async function loadForlifeConfig() {
             lensBrand: lensBrand,
             offerType: offerType,
             lensModality: lensModality,
+            heroStyle: heroStyle,
             lpId: lp ? lp.id : activeLpInfo.slug,
             lpName: lp ? lp.name : ''
         };
@@ -808,10 +867,80 @@ async function loadForlifeConfig() {
 // ==========================================
 // PROPAGAÇÃO DINÂMICA DE MARCAS & OFERTAS
 // ==========================================
+// ==========================================
+// BANNER 1 COMERCIAL: FOTOS DE MODELOS & CONVERSÃO
+// ==========================================
+function applyHeroCommercialConfig() {
+    const styleKey = forlifeConfig.heroStyle || 'multifocal_senhora';
+    const preset = HERO_STYLES[styleKey] || HERO_STYLES.multifocal_senhora;
+    const frameBrand = forlifeConfig.frameBrand || 'Di Capri';
+    const lensBrand = forlifeConfig.lensBrand || 'Multifocais Digitais';
+    const offerType = forlifeConfig.offerType || 'combo_completo';
+
+    // 1. Imagem do modelo de estúdio
+    const modelImg = document.getElementById('hero-model-img');
+    if (modelImg && preset.image) {
+        modelImg.src = preset.image;
+        modelImg.alt = `Modelo ${preset.name} - Ópticas Conceição`;
+    }
+
+    // 2. Citação manuscrita flutuante
+    const quoteEl = document.getElementById('hero-quote-text');
+    if (quoteEl && preset.quote) {
+        quoteEl.textContent = preset.quote;
+    }
+
+    // 3. Badges flutuantes glassmorphism
+    [1, 2, 3].forEach(idx => {
+        const textEl = document.getElementById(`hero-glass-text-${idx}`);
+        const iconEl = document.getElementById(`hero-glass-icon-${idx}`);
+        const badgeData = preset[`badge${idx}`];
+        if (textEl && badgeData) textEl.textContent = badgeData.text;
+        if (iconEl && badgeData) iconEl.className = badgeData.icon;
+    });
+
+    // 4. Pílulas de diferenciais
+    [1, 2, 3].forEach(idx => {
+        const pillEl = document.getElementById(`hero-pill-${idx}`);
+        if (pillEl) {
+            const span = pillEl.querySelector('span');
+            if (span && preset[`pill${idx}`]) {
+                span.textContent = preset[`pill${idx}`];
+            }
+        }
+    });
+
+    // 5. Título Comercial Hero
+    const heroTitle = document.getElementById('forlife-hero-title');
+    if (heroTitle) {
+        if (offerType === 'so_lentes') {
+            heroTitle.innerHTML = `Lentes ${lensBrand}<br class="mobile-break"> Para Sua Armação por`;
+        } else {
+            heroTitle.innerHTML = `${preset.titlePrefix}`;
+        }
+    }
+
+    // 6. Subtítulo com Marcas
+    const heroSubtitle = document.getElementById('forlife-hero-subtitle');
+    if (heroSubtitle) {
+        if (offerType === 'so_lentes') {
+            heroSubtitle.innerHTML = `Lentes <strong class="dyn-lens-brand">${lensBrand}</strong> com montagem precisa e rápida adaptação`;
+        } else {
+            heroSubtitle.innerHTML = `Com armação <strong id="forlife-frame-brand" class="dyn-frame-brand">${frameBrand}</strong> + Lentes <strong id="forlife-lens-brand" class="dyn-lens-brand">${lensBrand}</strong>`;
+        }
+    }
+}
+
+// ==========================================
+// PROPAGAÇÃO DINÂMICA DE MARCAS & OFERTAS
+// ==========================================
 function applyBrandsToDOM() {
     const frameBrand = forlifeConfig.frameBrand || 'Di Capri';
     const lensBrand = forlifeConfig.lensBrand || 'Multifocais Digitais';
     const offerType = forlifeConfig.offerType || 'combo_completo';
+
+    // 0. Atualiza visual comercial do Banner 1
+    applyHeroCommercialConfig();
 
     // 1. Elementos com classes dinâmicas
     document.querySelectorAll('.dyn-frame-brand').forEach(el => {
@@ -829,8 +958,6 @@ function applyBrandsToDOM() {
     if (specLens) specLens.textContent = lensBrand;
 
     // 3. Títulos, Subtítulos e Tópicos do Combo
-    const heroTitle = document.getElementById('forlife-hero-title');
-    const heroSubtitle = document.getElementById('forlife-hero-subtitle');
     const comboTitle = document.getElementById('forlife-combo-title');
     const offerBadge = document.getElementById('forlife-offer-badge');
     const featFrame = document.getElementById('forlife-feat-frame');
@@ -838,15 +965,11 @@ function applyBrandsToDOM() {
 
     if (offerType === 'so_lentes') {
         if (offerBadge) offerBadge.textContent = 'Apenas Lentes';
-        if (heroTitle) heroTitle.innerHTML = `Lentes ${lensBrand}<br class="mobile-break"> Para Sua Armação`;
-        if (heroSubtitle) heroSubtitle.textContent = `Lentes ${lensBrand} com montagem precisa e rápida adaptação`;
         if (comboTitle) comboTitle.textContent = `Lentes ${lensBrand} + Sua Armação`;
         if (featFrame) featFrame.textContent = 'Montagem e adaptação técnica na sua armação atual';
         if (featLens) featLens.textContent = `Lentes ${lensBrand} calibradas com precisão digital`;
     } else {
         if (offerBadge) offerBadge.textContent = 'Combo Especial';
-        if (heroTitle) heroTitle.innerHTML = `${lensBrand}<br class="mobile-break"> + Armação ${frameBrand}`;
-        if (heroSubtitle) heroSubtitle.textContent = `Lentes ${lensBrand} com armação de grau ${frameBrand} inclusa`;
         if (comboTitle) comboTitle.textContent = `Lentes ${lensBrand} + Armação ${frameBrand}`;
         if (featFrame) featFrame.textContent = `Armação de grau ${frameBrand} inclusa à sua escolha`;
         if (featLens) featLens.textContent = `Lentes ${lensBrand} calibradas para seu grau`;
@@ -884,7 +1007,20 @@ function updatePricingUI() {
         }
     }
 
-    // 1. Atualizar Banner 2 (Combo)
+    // 1. Atualizar Banner 1 (Preço Gigante Ciano e Parcelamento)
+    const intPart = Math.floor(comboPrice);
+    const centsVal = (comboPrice % 1).toFixed(2);
+    const centsPart = centsVal === '0.00' ? ',00' : (',' + centsVal.split('.')[1]);
+    const heroPriceIntEl = document.getElementById('combo-cash-integer');
+    const heroPriceCentsEl = document.getElementById('combo-cash-cents');
+    if (heroPriceIntEl) heroPriceIntEl.textContent = intPart;
+    if (heroPriceCentsEl) heroPriceCentsEl.textContent = centsPart;
+
+    const heroInstTextEl = document.getElementById('hero-installment-text');
+    const heroCashTextEl = document.getElementById('hero-cash-text');
+    if (heroInstTextEl) heroInstTextEl.textContent = `${installments}x de R$ ${formatMoney(comboPrice / installments)}`;
+    if (heroCashTextEl) heroCashTextEl.textContent = `R$ ${formatMoney(comboPrice)} à vista`;
+
     const comboCashEl = document.getElementById('combo-cash-price');
     const comboInstCountEl = document.getElementById('combo-inst-count');
     const comboInstValEl = document.getElementById('combo-inst-val');
@@ -892,6 +1028,23 @@ function updatePricingUI() {
     if (comboCashEl) comboCashEl.textContent = `R$ ${formatMoney(comboPrice)}`;
     if (comboInstCountEl) comboInstCountEl.textContent = installments;
     if (comboInstValEl) comboInstValEl.textContent = `R$ ${formatMoney(comboPrice / installments)}`;
+
+    // Atualizar Barra Flutuante Mobile
+    const mobileInstEl = document.getElementById('mobile-sticky-installments');
+    const mobileCashEl = document.getElementById('mobile-sticky-cash-val');
+    const mobileBtn = document.getElementById('mobile-sticky-whatsapp-btn');
+    if (mobileInstEl) mobileInstEl.textContent = `${installments}x R$ ${formatMoney(comboPrice / installments)}`;
+    if (mobileCashEl) mobileCashEl.textContent = `R$ ${formatMoney(comboPrice)}`;
+    if (mobileBtn) {
+        const instVal = formatMoney(comboPrice / installments);
+        const cashVal = formatMoney(comboPrice);
+        const frameBrand = forlifeConfig.frameBrand || 'Di Capri';
+        const lensBrand = forlifeConfig.lensBrand || 'Multifocais Digitais';
+        const msg = encodeURIComponent(
+            `Olá! Vim pelo site das Ópticas Conceição e quero garantir o *Combo ${lensBrand} + Armação ${frameBrand}* por R$ ${cashVal} (${installments}x de R$ ${instVal} sem juros)!`
+        );
+        mobileBtn.href = `https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=${msg}`;
+    }
 
     // 2. Atualizar Banner 3 (Cards de Tecnologia)
     const priceAntirreflexoEl = document.getElementById('price-val-antirreflexo');

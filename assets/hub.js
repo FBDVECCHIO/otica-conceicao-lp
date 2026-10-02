@@ -41,6 +41,7 @@
             url: '/forlife',
             slug: '/forlife',
             template: 'forlife',
+            heroStyle: 'multifocal_senhora',
             offerType: 'combo_completo',
             lensModality: 'multifocal',
             frameBrand: 'Di Capri',
@@ -95,6 +96,7 @@
             url: '/194',
             slug: '/194',
             template: 'visaosimples',
+            heroStyle: 'visao_simples_jovens',
             offerType: 'combo_completo',
             lensModality: 'lentes_prontas',
             frameBrand: 'Coleção Conceição',
@@ -605,6 +607,7 @@
                 template: newLpData.template || 'visaosimples',
                 offerType: newLpData.offerType || 'combo_completo',
                 lensModality: newLpData.lensModality || 'lentes_prontas',
+                heroStyle: newLpData.heroStyle || 'multifocal_senhora',
                 frameBrand: newLpData.frameBrand || 'Coleção Conceição',
                 lensBrand: newLpData.lensBrand || 'Lentes Monofocais HD',
                 addonsActive: newLpData.addonsActive || {
@@ -631,6 +634,7 @@
                 installments: lp.installments,
                 offerType: lp.offerType,
                 lensModality: lp.lensModality,
+                heroStyle: lp.heroStyle,
                 frameBrand: lp.frameBrand,
                 lensBrand: lp.lensBrand,
                 showTechSection: lp.showTechSection !== false,
@@ -683,6 +687,7 @@
             if (updatedData.template) lp.template = updatedData.template;
             if (updatedData.offerType) lp.offerType = updatedData.offerType;
             if (updatedData.lensModality) lp.lensModality = updatedData.lensModality;
+            if (updatedData.heroStyle) lp.heroStyle = updatedData.heroStyle;
             if (updatedData.frameBrand) lp.frameBrand = updatedData.frameBrand;
             if (updatedData.lensBrand) lp.lensBrand = updatedData.lensBrand;
             if (updatedData.showTechSection !== undefined) lp.showTechSection = updatedData.showTechSection;
@@ -728,6 +733,7 @@
                 installments: lp.installments,
                 offerType: lp.offerType || 'combo_completo',
                 lensModality: lp.lensModality || 'lentes_prontas',
+                heroStyle: lp.heroStyle || 'multifocal_senhora',
                 frameBrand: lp.frameBrand || 'Coleção Conceição',
                 lensBrand: lp.lensBrand || 'Lentes Monofocais HD',
                 showTechSection: lp.showTechSection !== false,
@@ -1036,6 +1042,9 @@
             const slugParam = encodeURIComponent(rawSlug);
             const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
 
+            const heroStyleVal = lp.heroStyle || '';
+            const heroParam = heroStyleVal ? `&hero=${encodeURIComponent(heroStyleVal)}` : '';
+
             let basePath = '';
             if (template === 'visaosimples' || template === '194' || lp.id === '194' || lp.id === 'forlife-194') {
                 basePath = `/visaosimples/index.html?lp=${idParam}&slug=${slugParam}`;
@@ -1046,7 +1055,7 @@
                 basePath = `/forlife/index.html?lp=${idParam}&theme=${idParam}&slug=${slugParam}`;
             }
 
-            return basePath + cacheBuster;
+            return basePath + heroParam + cacheBuster;
         },
 
         updateIframe(lp, forceRefresh = false) {
@@ -2512,8 +2521,8 @@
             // Preenche os campos do formulário
             this.setInputValue('cms-combo-price', config.comboPrice);
             this.setInputValue('cms-installments', config.installments);
-            this.setInputValue('cms-offer-type', config.offerType || 'combo_completo');
-            this.setInputValue('cms-lens-modality', config.lensModality || 'lentes_prontas');
+            const heroStyleVal = config.heroStyle || (currentLp && currentLp.heroStyle) || (currentLp && currentLp.template === 'visaosimples' ? 'visao_simples_jovens' : 'multifocal_senhora');
+            this.setInputValue('cms-hero-style', heroStyleVal);
             this.setInputValue('cms-frame-brand', config.frameBrand || 'Coleção Conceição');
             this.setInputValue('cms-lens-brand', config.lensBrand || 'Lentes Monofocais HD');
             this.setInputValue('cms-antirreflexo', config.antirreflexo);
@@ -2579,6 +2588,7 @@
             const installments = parseInt(document.getElementById('cms-installments')?.value, 10) || 10;
             const offerType = document.getElementById('cms-offer-type')?.value || 'combo_completo';
             const lensModality = document.getElementById('cms-lens-modality')?.value || 'lentes_prontas';
+            const heroStyle = document.getElementById('cms-hero-style')?.value || 'multifocal_senhora';
             const frameBrand = (document.getElementById('cms-frame-brand')?.value || '').trim() || 'Coleção Conceição';
             const lensBrand = (document.getElementById('cms-lens-brand')?.value || '').trim() || 'Lentes Monofocais HD';
             const showTechSection = document.getElementById('cms-toggle-show-tech-section')?.checked ?? true;
@@ -2597,6 +2607,7 @@
                 installments,
                 offerType,
                 lensModality,
+                heroStyle,
                 frameBrand,
                 lensBrand,
                 showTechSection,
@@ -2627,6 +2638,7 @@
                     State.catalog[otherId].installments = installments;
                     State.catalog[otherId].offerType = offerType;
                     State.catalog[otherId].lensModality = lensModality;
+                    State.catalog[otherId].heroStyle = heroStyle;
                     State.catalog[otherId].frameBrand = frameBrand;
                     State.catalog[otherId].lensBrand = lensBrand;
                     State.catalog[otherId].showTechSection = showTechSection;
@@ -2640,12 +2652,14 @@
                 State.catalog[lpId].installments = installments;
                 State.catalog[lpId].offerType = offerType;
                 State.catalog[lpId].lensModality = lensModality;
+                State.catalog[lpId].heroStyle = heroStyle;
                 State.catalog[lpId].frameBrand = frameBrand;
                 State.catalog[lpId].lensBrand = lensBrand;
                 State.catalog[lpId].showTechSection = showTechSection;
                 State.catalog[lpId].addonsActive = addonsActive;
                 Catalog.saveCatalog();
                 Catalog.renderCatalogGrid();
+                Preview.updateIframe(State.catalog[lpId], true);
             }
 
             // Sincroniza com o Supabase se for a ForLife
@@ -3368,20 +3382,22 @@
 
             // Valores iniciais padrão
             const templateInput = modal.querySelector('#new-lp-template');
-            if (templateInput) templateInput.value = 'visaosimples';
+            if (templateInput) templateInput.value = 'forlife';
+            const heroStyleInput = modal.querySelector('#new-lp-hero-style');
+            if (heroStyleInput) heroStyleInput.value = 'multifocal_senhora';
             const offerTypeInput = modal.querySelector('#new-lp-offer-type');
             if (offerTypeInput) offerTypeInput.value = 'combo_completo';
             const modalityInput = modal.querySelector('#new-lp-lens-modality');
-            if (modalityInput) modalityInput.value = 'lentes_prontas';
+            if (modalityInput) modalityInput.value = 'multifocal';
             const frameBrandInput = modal.querySelector('#new-lp-frame-brand');
-            if (frameBrandInput) frameBrandInput.value = 'Coleção Conceição';
+            if (frameBrandInput) frameBrandInput.value = 'Di Capri';
             const lensBrandInput = modal.querySelector('#new-lp-lens-brand');
-            if (lensBrandInput) lensBrandInput.value = 'Lentes Monofocais HD';
+            if (lensBrandInput) lensBrandInput.value = 'Multifocais Digitais';
 
             const priceInput = modal.querySelector('#new-lp-price');
-            if (priceInput) priceInput.value = '194.00';
+            if (priceInput) priceInput.value = '297.00';
             const instInput = modal.querySelector('#new-lp-installments');
-            if (instInput) instInput.value = '6';
+            if (instInput) instInput.value = '10';
             const budgetInput = modal.querySelector('#new-lp-budget');
             if (budgetInput) budgetInput.value = '2000.00';
             const targetInput = modal.querySelector('#new-lp-target-leads');
@@ -3443,6 +3459,9 @@
 
             const templateInput = modal.querySelector('#new-lp-template');
             if (templateInput) templateInput.value = lp.template || ((lp.url && lp.url.includes('fila')) ? 'fila' : (lp.url && (lp.url.includes('194') || lp.url.includes('visaosimples')) ? 'visaosimples' : 'forlife'));
+
+            const heroStyleInput = modal.querySelector('#new-lp-hero-style');
+            if (heroStyleInput) heroStyleInput.value = lp.heroStyle || (lp.template === 'visaosimples' ? 'visao_simples_jovens' : 'multifocal_senhora');
 
             const offerTypeInput = modal.querySelector('#new-lp-offer-type');
             if (offerTypeInput) offerTypeInput.value = lp.offerType || 'combo_completo';
@@ -3598,15 +3617,16 @@
                         const campaignName = (modal.querySelector('#new-lp-campaign')?.value || '').trim() || `Campanha ${name}`;
                         const budget = parseFloat(modal.querySelector('#new-lp-budget')?.value) || 2000.00;
                         const targetLeads = parseInt(modal.querySelector('#new-lp-target-leads')?.value, 10) || 100;
-                        const template = modal.querySelector('#new-lp-template')?.value || 'visaosimples';
+                        const template = modal.querySelector('#new-lp-template')?.value || 'forlife';
+                        const heroStyle = modal.querySelector('#new-lp-hero-style')?.value || 'multifocal_senhora';
                         const offerType = modal.querySelector('#new-lp-offer-type')?.value || 'combo_completo';
-                        const lensModality = modal.querySelector('#new-lp-lens-modality')?.value || 'lentes_prontas';
-                        const frameBrand = (modal.querySelector('#new-lp-frame-brand')?.value || '').trim() || 'Coleção Conceição';
-                        const lensBrand = (modal.querySelector('#new-lp-lens-brand')?.value || '').trim() || 'Lentes Monofocais HD';
+                        const lensModality = modal.querySelector('#new-lp-lens-modality')?.value || 'multifocal';
+                        const frameBrand = (modal.querySelector('#new-lp-frame-brand')?.value || '').trim() || 'Di Capri';
+                        const lensBrand = (modal.querySelector('#new-lp-lens-brand')?.value || '').trim() || 'Multifocais Digitais';
                         const status = modal.querySelector('#new-lp-status')?.value || 'Ativa';
                         const showTechSection = modal.querySelector('#new-lp-tech-section')?.value !== 'false';
-                        const price = parseFloat(modal.querySelector('#new-lp-price')?.value) || 194.00;
-                        const installments = parseInt(modal.querySelector('#new-lp-installments')?.value, 10) || 6;
+                        const price = parseFloat(modal.querySelector('#new-lp-price')?.value) || 297.00;
+                        const installments = parseInt(modal.querySelector('#new-lp-installments')?.value, 10) || 10;
                         const color = modal.querySelector('#new-lp-color')?.value || '#002C5B';
                         const url = slug;
 
@@ -3619,6 +3639,7 @@
                             installments,
                             color,
                             template,
+                            heroStyle,
                             offerType,
                             lensModality,
                             frameBrand,
