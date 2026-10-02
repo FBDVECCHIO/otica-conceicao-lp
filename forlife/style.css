@@ -142,13 +142,13 @@ body {
    ========================================== */
 .header-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    width: 100%;
 }
 
 .header-promo-title {
-    font-size: 34px;
+    font-size: 32px; /* Reduzido em 2px para equilíbrio visual */
     font-weight: 800;
     color: #FFFFFF;
     letter-spacing: -0.5px;
@@ -1805,10 +1805,11 @@ body {
     .header-container {
         gap: 12px;
         flex-wrap: nowrap;
-        justify-content: center;
+        justify-content: space-between;
+        width: 100%;
     }
     .header-promo-title {
-        font-size: 20px !important;
+        font-size: 18px !important; /* Reduzido em 2px (era 20px) */
         letter-spacing: -0.3px;
         line-height: 1.1;
         white-space: nowrap;
@@ -2045,32 +2046,19 @@ body {
     line-height: 1.25;
 }
 
-.armacoes-counter-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 14px;
-    background: rgba(0, 44, 91, 0.05);
-    color: var(--navy-primary);
-    font-size: 14px;
-    font-weight: 700;
-    padding: 6px 18px;
-    border-radius: var(--radius-full);
-    border: 1px solid rgba(0, 44, 91, 0.12);
+.armacoes-counter-badge,
+.frames-filter-nav,
+.frame-card-footer {
+    display: none !important;
 }
 
-.armacoes-counter-badge i {
-    color: #16A34A;
+.armacoes-counter-badge {
+    display: none !important;
 }
 
 /* Abas de Filtro */
 .frames-filter-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
+    display: none !important;
 }
 
 .frames-filter-btn {
@@ -2238,7 +2226,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 0;
     padding: 8px 12px;
     background: var(--gray-subtle);
     border-radius: var(--radius-sm);
@@ -2504,10 +2492,11 @@ body {
 
 .hero-commercial-grid {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 40px;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 24px;
     align-items: center;
-    padding-bottom: 30px;
+    padding-bottom: 24px;
+    position: relative;
 }
 
 /* Coluna 1: Informações e Conversão */
@@ -2515,6 +2504,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    position: relative;
+    z-index: 4;
 }
 
 .hero-top-badge {
@@ -2550,43 +2541,55 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Preço Gigante em Ciano Vibrante */
-.hero-price-display {
+/* Preço com Parcelamento em Evidência Monumental e Total Pequeno */
+.hero-installment-highlight {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 8px 0 16px;
+}
+
+.hero-installment-main-row {
     display: flex;
     align-items: baseline;
-    gap: 6px;
-    margin: 8px 0 14px;
+    gap: 8px;
     line-height: 1;
+    flex-wrap: wrap;
 }
 
-.hero-price-currency {
-    font-size: clamp(30px, 4vw, 44px);
+.hero-inst-prefix-large {
+    font-size: clamp(22px, 3vw, 32px);
     font-weight: 800;
-    color: #00E5FF;
-    line-height: 1;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
 }
 
-.hero-price-val {
-    font-size: clamp(66px, 9vw, 98px);
+.hero-inst-val-cyan {
+    font-size: clamp(52px, 7.2vw, 82px);
     font-weight: 900;
     color: #00E5FF;
     line-height: 1;
-    letter-spacing: -3px;
-    text-shadow: 0 4px 30px rgba(0, 229, 255, 0.45);
+    letter-spacing: -2px;
+    text-shadow: 0 4px 28px rgba(0, 229, 255, 0.45);
 }
 
-.hero-price-cents {
-    font-size: clamp(24px, 3vw, 36px);
+.hero-inst-cash-sub {
+    font-size: clamp(14px, 1.8vw, 17px);
+    font-weight: 600;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.hero-inst-cash-sub strong {
+    color: #FFFFFF;
     font-weight: 800;
-    color: #00E5FF;
-    line-height: 1;
 }
 
 .hero-commercial-subtitle {
     font-size: 16px;
     color: #E2E8F0;
     line-height: 1.5;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
 }
 
 .hero-commercial-subtitle strong {
@@ -2602,7 +2605,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
 }
 
 .hero-pill-item {
@@ -2631,63 +2634,91 @@ body {
     font-size: 13px;
 }
 
-/* Bloco de Parcelamento */
-.hero-installment-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 14px;
-    padding: 14px 18px;
-    margin-bottom: 22px;
-    width: 100%;
-    max-width: 480px;
-    backdrop-filter: blur(8px);
-}
-
-.hero-installment-main {
+/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro */
+.hero-model-col {
+    position: relative;
     display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.hero-inst-prefix {
-    font-size: 16px;
-    color: #CBD5E1;
-    font-weight: 600;
-}
-
-.hero-inst-val {
-    font-size: 24px;
-    font-weight: 800;
-    color: #FFFFFF;
-}
-
-.hero-inst-or {
-    font-size: 14px;
-    color: #94A3B8;
-    margin-left: 4px;
-}
-
-.hero-installment-flags {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-}
-
-.hero-flag-tag {
-    font-size: 12px;
-    font-weight: 700;
-    color: #38BDF8;
-    display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    z-index: 2;
+    margin-left: -35px; /* Avanço sutil para envolvimento estilo macro */
+    width: 100%;
 }
 
-/* Botão CTA Verde Esmeralda */
+.hero-model-viewport {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-model-image-wrap {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.14) 0%, transparent 68%);
+}
+
+.hero-model-img {
+    width: 100%;
+    max-width: 580px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.55));
+    transition: opacity 0.3s ease;
+}
+
+.hero-model-vignette {
+    display: none;
+}
+
+/* Citação Manuscrita / Itálica Flutuante */
+.hero-quote-card {
+    position: absolute;
+    top: 10px;
+    right: 0px;
+    z-index: 5;
+    background: rgba(0, 23, 51, 0.88);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    padding: 10px 16px;
+    max-width: 250px;
+    font-style: italic;
+    font-size: 13px;
+    color: #F8FAFC;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.35;
+}
+
+.hero-quote-card .quote-icon {
+    color: #00E5FF;
+    font-size: 13px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Ocultar Badges Flutuantes sobre a Imagem */
+.hero-floating-glass-badge {
+    display: none !important;
+}
+
+/* Botão CTA Verde Esmeralda Abaixo da Imagem */
 .hero-cta-wrapper {
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
+    margin-top: 14px;
+    z-index: 5;
 }
 
 .hero-cta-button-emerald {
@@ -2714,12 +2745,6 @@ body {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
     animation: shineSweep 3.5s infinite;
-}
-
-@keyframes shineSweep {
-    0% { left: -100%; }
-    20% { left: 100%; }
-    100% { left: 100%; }
 }
 
 .hero-cta-button-emerald:hover {
@@ -2760,9 +2785,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 14px;
+    margin-top: 12px;
     gap: 10px;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .hero-btn-voucher-link {
@@ -2787,133 +2813,6 @@ body {
     align-items: center;
     gap: 6px;
     font-weight: 700;
-}
-
-/* Coluna 2: Foto de Estúdio Integrada & Efeitos */
-.hero-model-col {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-model-viewport {
-    position: relative;
-    width: 100%;
-    max-width: 480px;
-}
-
-.hero-model-image-wrap {
-    position: relative;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12);
-    background: radial-gradient(circle at center, #0B2545 0%, #001733 100%);
-}
-
-.hero-model-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    transition: opacity 0.3s ease;
-}
-
-.hero-model-vignette {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    box-shadow: inset 0 0 45px rgba(0, 18, 38, 0.6);
-    border-radius: 28px;
-}
-
-/* Citação Manuscrita / Itálica Flutuante */
-.hero-quote-card {
-    position: absolute;
-    top: -14px;
-    right: -10px;
-    z-index: 5;
-    background: rgba(0, 23, 51, 0.88);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
-    padding: 10px 16px;
-    max-width: 250px;
-    font-style: italic;
-    font-size: 13px;
-    color: #F8FAFC;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.35;
-}
-
-.hero-quote-card .quote-icon {
-    color: #00E5FF;
-    font-size: 13px;
-    margin-top: 2px;
-    flex-shrink: 0;
-}
-
-/* Badges Flutuantes Glassmorphism */
-.hero-floating-glass-badge {
-    position: absolute;
-    z-index: 6;
-    background: rgba(0, 23, 51, 0.84);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 14px;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #FFFFFF;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
-    font-size: 12.5px;
-    font-weight: 700;
-    animation: floatBadge 4s ease-in-out infinite alternate;
-    pointer-events: none;
-}
-
-@keyframes floatBadge {
-    0% { transform: translateY(0px); }
-    100% { transform: translateY(-8px); }
-}
-
-.glass-badge-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(0, 229, 255, 0.18);
-    color: #00E5FF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    flex-shrink: 0;
-}
-
-.glass-badge-text {
-    white-space: nowrap;
-}
-
-.badge-pos-top {
-    top: 14%;
-    left: -24px;
-}
-
-.badge-pos-mid {
-    top: 56%;
-    right: -24px;
-    animation-delay: 1.4s;
-}
-
-.badge-pos-bottom {
-    bottom: 5%;
-    left: -16px;
-    animation-delay: 2.8s;
 }
 
 /* Trust Bar Institucional */
@@ -3044,11 +2943,11 @@ body {
     }
 }
 
-/* Responsividade do Banner 1 */
+/* Responsividade do Banner 1 Macro */
 @media (max-width: 992px) {
     .hero-commercial-grid {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 28px;
         text-align: center;
     }
 
@@ -3056,59 +2955,45 @@ body {
         align-items: center;
     }
 
+    .hero-installment-highlight {
+        align-items: center;
+    }
+
+    .hero-installment-main-row {
+        justify-content: center;
+    }
+
     .hero-benefit-pills {
         justify-content: center;
     }
 
-    .hero-price-display {
-        justify-content: center;
+    .hero-model-col {
+        margin-left: 0;
+        width: 100%;
     }
 
-    .hero-installment-main {
-        justify-content: center;
+    .hero-model-viewport {
+        max-width: 440px;
     }
 
-    .hero-installment-flags {
-        justify-content: center;
+    .hero-model-img {
+        max-width: 400px;
+    }
+
+    .hero-model-cta-wrapper {
+        max-width: 440px;
     }
 
     .hero-sub-actions {
         justify-content: center;
     }
 
-    .hero-model-viewport {
-        max-width: 380px;
-    }
-
-    .badge-pos-top {
-        left: -8px;
-    }
-
-    .badge-pos-mid {
-        right: -8px;
-    }
-
-    .badge-pos-bottom {
-        left: -4px;
-    }
-
-    .hero-floating-glass-badge {
-        font-size: 11px;
-        padding: 6px 10px;
-    }
-
-    .glass-badge-icon {
-        width: 26px;
-        height: 26px;
-        font-size: 11px;
-    }
-
     .hero-quote-card {
-        top: -10px;
+        top: -6px;
         right: 0;
         max-width: 220px;
         font-size: 11.5px;
-        padding: 8px 12px;
+        padding: 7px 12px;
     }
 
     .trust-divider {
@@ -3124,23 +3009,20 @@ body {
 }
 
 @media (max-width: 480px) {
-    .hero-floating-glass-badge {
-        position: static;
-        animation: none;
-        margin: 6px 0;
-        width: 100%;
-        justify-content: center;
-    }
-
     .hero-model-viewport {
         display: flex;
         flex-direction: column;
         align-items: center;
+        max-width: 100%;
+    }
+
+    .hero-model-img {
+        max-width: 320px;
     }
 
     .hero-quote-card {
         position: static;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         max-width: 100%;
         width: 100%;
         justify-content: center;

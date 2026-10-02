@@ -41,7 +41,7 @@ const HERO_STYLES = {
     multifocal_senhora: {
         id: 'multifocal_senhora',
         name: 'Multifocal (Jovem Senhora)',
-        image: '/assets/images/hero/hero_jovem_senhora.jpg',
+        image: '/assets/images/hero/Jovem_senhora.png',
         titlePrefix: 'Óculos Multifocal Completo por',
         quote: 'Mais qualidade de vida para todas as suas visões',
         badge1: { icon: 'fas fa-eye', text: 'Visão nítida em todas as distâncias' },
@@ -54,7 +54,7 @@ const HERO_STYLES = {
     visao_simples_jovens: {
         id: 'visao_simples_jovens',
         name: 'Visão Simples (Dois Jovens)',
-        image: '/assets/images/hero/hero_dois_jovens.jpg',
+        image: '/assets/images/hero/Casal_jovem.png',
         titlePrefix: 'Óculos Completo Visão Simples por',
         quote: 'Foco perfeito e estilo moderno para o seu dia a dia',
         badge1: { icon: 'fas fa-glasses', text: 'Nitidez total para longe e perto' },
@@ -67,7 +67,7 @@ const HERO_STYLES = {
     promo_dobro_casal: {
         id: 'promo_dobro_casal',
         name: 'Promoção em Dobro (Casal)',
-        image: '/assets/images/hero/hero_casal_dobro.jpg',
+        image: '/assets/images/hero/Casal.png',
         titlePrefix: 'Lentes em Dobro + 2 Armações por',
         quote: 'Economia inteligente e visão perfeita para os dois',
         badge1: { icon: 'fas fa-user-friends', text: '2 pares completos com preço único' },
@@ -774,8 +774,11 @@ async function loadForlifeConfig() {
     const cms = activeLpInfo.cmsConfig;
 
     if (lp || cms) {
-        const price = (cms && cms.comboPrice) ? parseFloat(cms.comboPrice) : ((lp && lp.price) ? parseFloat(lp.price) : 297.00);
-        const installments = (cms && cms.installments) ? parseInt(cms.installments, 10) : ((lp && lp.installments) ? parseInt(lp.installments, 10) : 10);
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPrice = urlParams.get('price') ? parseFloat(urlParams.get('price')) : null;
+        const urlInstallments = urlParams.get('installments') ? parseInt(urlParams.get('installments'), 10) : null;
+        const price = urlPrice !== null ? urlPrice : ((cms && cms.comboPrice) ? parseFloat(cms.comboPrice) : ((lp && lp.price) ? parseFloat(lp.price) : 297.00));
+        const installments = urlInstallments !== null ? urlInstallments : ((cms && cms.installments) ? parseInt(cms.installments, 10) : ((lp && lp.installments) ? parseInt(lp.installments, 10) : 10));
         const antirreflexo = (cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00;
         const bluecut = (cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00;
         const fotossensivel = (cms && cms.fotossensivel !== undefined) ? parseFloat(cms.fotossensivel) : 120.00;
@@ -788,7 +791,7 @@ async function loadForlifeConfig() {
         const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
         const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : 'lentes_multifocais');
 
-        const urlParams = new URLSearchParams(window.location.search);
+        let heroTitle = urlParams.get('heroTitle') || (cms && cms.heroTitle) || (lp && lp.heroTitle) || '';
         let heroStyle = urlParams.get('hero') || urlParams.get('heroStyle') || (cms && cms.heroStyle) || (lp && lp.heroStyle);
         if (!heroStyle) {
             const checkStr = `${activeLpInfo.slug} ${(lp && lp.name) || ''} ${(cms && cms.lensModality) || ''} ${(lp && lp.lensModality) || ''}`.toLowerCase();
@@ -813,6 +816,7 @@ async function loadForlifeConfig() {
             lensBrand: lensBrand,
             offerType: offerType,
             lensModality: lensModality,
+            heroTitle: heroTitle,
             heroStyle: heroStyle,
             lpId: lp ? lp.id : activeLpInfo.slug,
             lpName: lp ? lp.name : ''
@@ -913,7 +917,9 @@ function applyHeroCommercialConfig() {
     // 5. Título Comercial Hero
     const heroTitle = document.getElementById('forlife-hero-title');
     if (heroTitle) {
-        if (offerType === 'so_lentes') {
+        if (forlifeConfig.heroTitle && forlifeConfig.heroTitle.trim()) {
+            heroTitle.innerHTML = forlifeConfig.heroTitle.trim();
+        } else if (offerType === 'so_lentes') {
             heroTitle.innerHTML = `Lentes ${lensBrand}<br class="mobile-break"> Para Sua Armação por`;
         } else {
             heroTitle.innerHTML = `${preset.titlePrefix}`;
@@ -1028,6 +1034,19 @@ function updatePricingUI() {
     if (comboCashEl) comboCashEl.textContent = `R$ ${formatMoney(comboPrice)}`;
     if (comboInstCountEl) comboInstCountEl.textContent = installments;
     if (comboInstValEl) comboInstValEl.textContent = `R$ ${formatMoney(comboPrice / installments)}`;
+
+    // Atualizar Botão WhatsApp Hero Banner 1
+    const heroWhatsappBtn = document.getElementById('forlife-hero-whatsapp');
+    if (heroWhatsappBtn) {
+        const instVal = formatMoney(comboPrice / installments);
+        const cashVal = formatMoney(comboPrice);
+        const frameBrand = forlifeConfig.frameBrand || 'Di Capri';
+        const lensBrand = forlifeConfig.lensBrand || 'Multifocais Digitais';
+        const msg = encodeURIComponent(
+            `Olá! Vim pela promoção do site das Ópticas Conceição e gostaria de garantir o *Combo ${lensBrand} + Armação ${frameBrand}* por R$ ${cashVal} (ou ${installments}x de R$ ${instVal} sem juros). Poderiam me atender?`
+        );
+        heroWhatsappBtn.href = `https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=${msg}`;
+    }
 
     // Atualizar Barra Flutuante Mobile
     const mobileInstEl = document.getElementById('mobile-sticky-installments');

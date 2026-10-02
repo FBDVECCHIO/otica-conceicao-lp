@@ -55,7 +55,7 @@
         <div class="container hero-commercial-container">
             <div class="hero-commercial-grid">
                 
-                <!-- Coluna 1: Informações Comerciais, Preço Gigante e Conversão -->
+                <!-- Coluna 1: Informações Comerciais, Parcelamento em Evidência e Benefícios -->
                 <div class="hero-content-col">
                     <!-- Badge de Topo -->
                     <div class="hero-top-badge" id="hero-commercial-badge">
@@ -67,11 +67,15 @@
                         Óculos Multifocal Completo por
                     </h1>
 
-                    <!-- Preço em Destaque Ciano Vibrante -->
-                    <div class="hero-price-display">
-                        <span class="hero-price-currency">R$</span>
-                        <span class="hero-price-val" id="combo-cash-integer">297</span>
-                        <span class="hero-price-cents" id="combo-cash-cents">,00</span>
+                    <!-- Preço com Parcelamento em Evidência Monumental e Total Pequeno -->
+                    <div class="hero-installment-highlight">
+                        <div class="hero-installment-main-row">
+                            <span class="hero-inst-prefix-large"><span id="combo-inst-count">10</span>x de</span>
+                            <span class="hero-inst-val-cyan" id="combo-inst-val">R$ 29,70</span>
+                        </div>
+                        <div class="hero-inst-cash-sub">
+                            ou <strong id="combo-cash-price">R$ 297,00</strong> à vista
+                        </div>
                     </div>
 
                     <!-- Subtítulo e Especificação de Marcas -->
@@ -91,21 +95,28 @@
                             <i class="fas fa-check-circle"></i> <span>Sem adicionais obrigatórios</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Bloco de Parcelamento e Condições -->
-                    <div class="hero-installment-card">
-                        <div class="hero-installment-main">
-                            <span class="hero-inst-prefix"><span id="combo-inst-count">10</span>x de</span>
-                            <span class="hero-inst-val" id="combo-inst-val">R$ 29,70</span>
-                            <span class="hero-inst-or">ou <span id="combo-cash-price">R$ 297,00</span> à vista</span>
+                <!-- Coluna 2: Foto do Modelo de Estúdio Macro Integrada & Botão WhatsApp Abaixo -->
+                <div class="hero-model-col">
+                    <div class="hero-model-viewport">
+                        <!-- Citação manuscrita / itálica flutuante -->
+                        <div class="hero-quote-card" id="hero-quote-card">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <span id="hero-quote-text">Mais qualidade de vida para todas as suas visões</span>
                         </div>
-                        <div class="hero-installment-flags">
-                            <span class="hero-flag-tag"><i class="fas fa-credit-card"></i> Sem juros no cartão</span>
-                            <span class="hero-flag-tag"><i class="fas fa-shield-alt"></i> Garantia de adaptação</span>
+
+                        <!-- Imagem do Modelo Macro em PNG -->
+                        <div class="hero-model-image-wrap">
+                            <img src="/assets/images/hero/Jovem_senhora.png" 
+                                 alt="Modelo usando óculos Ópticas Conceição" 
+                                 id="hero-model-img" 
+                                 class="hero-model-img" 
+                                 loading="eager">
                         </div>
                     </div>
 
-                    <!-- Botão CTA Verde Esmeralda de Alta Conversão -->
+                    <!-- Botão CTA Verde Esmeralda Posicionado Abaixo da Imagem -->
                     <div class="hero-cta-wrapper">
                         <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20garantir%20o%20Combo%20promocional%20das%20%C3%93pticas%20Concei%C3%A7%C3%A3o!" 
                            target="_blank" rel="noopener noreferrer" 
@@ -126,43 +137,6 @@
                                 <span class="scarcity-pulse-dot"></span>
                                 <span><strong class="scarcity-number">18</strong> Cupons Restantes</span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Coluna 2: Foto do Modelo de Estúdio Integrada com Efeito e Badges Flutuantes -->
-                <div class="hero-model-col">
-                    <div class="hero-model-viewport">
-                        <!-- Citação manuscrita / itálica flutuante -->
-                        <div class="hero-quote-card" id="hero-quote-card">
-                            <i class="fas fa-quote-left quote-icon"></i>
-                            <span id="hero-quote-text">Mais qualidade de vida para todas as suas visões</span>
-                        </div>
-
-                        <!-- Imagem do Modelo -->
-                        <div class="hero-model-image-wrap">
-                            <img src="/assets/images/hero/hero_jovem_senhora.jpg" 
-                                 alt="Modelo usando óculos Ópticas Conceição" 
-                                 id="hero-model-img" 
-                                 class="hero-model-img" 
-                                 loading="eager">
-                            <div class="hero-model-vignette"></div>
-                        </div>
-
-                        <!-- 3 Badges Flutuantes em Glassmorphism -->
-                        <div class="hero-floating-glass-badge badge-pos-top" id="hero-glass-badge-1">
-                            <div class="glass-badge-icon"><i class="fas fa-eye" id="hero-glass-icon-1"></i></div>
-                            <div class="glass-badge-text" id="hero-glass-text-1">Visão nítida em todas as distâncias</div>
-                        </div>
-
-                        <div class="hero-floating-glass-badge badge-pos-mid" id="hero-glass-badge-2">
-                            <div class="glass-badge-icon"><i class="fas fa-heart" id="hero-glass-icon-2"></i></div>
-                            <div class="glass-badge-text" id="hero-glass-text-2">Mais conforto no dia a dia</div>
-                        </div>
-
-                        <div class="hero-floating-glass-badge badge-pos-bottom" id="hero-glass-badge-3">
-                            <div class="glass-badge-icon"><i class="fas fa-crosshairs" id="hero-glass-icon-3"></i></div>
-                            <div class="glass-badge-text" id="hero-glass-text-3">Tecnologia com alta precisão</div>
                         </div>
                     </div>
                 </div>
@@ -220,25 +194,6 @@
                 <p class="section-subtitle text-muted">
                     São mais de 150 modelos a sua disposição, variando entre modelos e cores!
                 </p>
-                <div class="armacoes-counter-badge">
-                    <i class="fas fa-check-circle"></i> Todos os modelos inclusos no valor do Combo
-                </div>
-            </div>
-
-            <!-- Abas de Filtro Rápido -->
-            <div class="frames-filter-nav">
-                <button type="button" class="frames-filter-btn active" data-filter="all">
-                    <i class="fas fa-border-all"></i> Todos os Modelos
-                </button>
-                <button type="button" class="frames-filter-btn" data-filter="feminino">
-                    <i class="fas fa-venus"></i> Feminino
-                </button>
-                <button type="button" class="frames-filter-btn" data-filter="masculino">
-                    <i class="fas fa-mars"></i> Masculino
-                </button>
-                <button type="button" class="frames-filter-btn" data-filter="unissex">
-                    <i class="fas fa-genderless"></i> Unissex & Modernos
-                </button>
             </div>
 
             <!-- Container do Carrossel com Setas e Track -->
@@ -266,12 +221,6 @@
                                     <span class="color-dot" style="background: #5B0E2D;" title="Bordô Vinho"></span>
                                 </div>
                             </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Gatinho Rose Elegance">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -292,12 +241,6 @@
                                     <span class="color-dot" style="background: #002C5B;" title="Navy Blue"></span>
                                     <span class="color-dot" style="background: #4A5568;" title="Grafite"></span>
                                 </div>
-                            </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Retangular Executive Black">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -320,12 +263,6 @@
                                     <span class="color-dot" style="background: #2D3748;" title="Fumê"></span>
                                 </div>
                             </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Tartaruga Retrô Havana">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -346,12 +283,6 @@
                                     <span class="color-dot" style="background: #F5EBE6;" title="Champagne Suave"></span>
                                     <span class="color-dot" style="background: #718096;" title="Cinza Translúcido"></span>
                                 </div>
-                            </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Crystal Urban Minimal">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -374,12 +305,6 @@
                                     <span class="color-dot" style="background: #2D3748;" title="Chumbo Fosco"></span>
                                 </div>
                             </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Aviador Gold Titanium">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -400,12 +325,6 @@
                                     <span class="color-dot" style="background: #B76E79;" title="Rose Gold"></span>
                                     <span class="color-dot" style="background: #111111;" title="Dourado & Preto"></span>
                                 </div>
-                            </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Hexagonal Blush Chic">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -428,12 +347,6 @@
                                     <span class="color-dot" style="background: #4A5568;" title="Grafite & Prata"></span>
                                 </div>
                             </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Clubmaster Retro Prime">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -454,12 +367,6 @@
                                     <span class="color-dot" style="background: #002C5B;" title="Azul Royal"></span>
                                     <span class="color-dot" style="background: #4A5568;" title="Cinza Chumbo"></span>
                                 </div>
-                            </div>
-                            <div class="frame-card-footer">
-                                <span class="frame-combo-tag"><i class="fas fa-check"></i> Incluso no Combo</span>
-                                <a href="#voucher" class="btn-frame-choose" data-frame="Esportivo Tech Grip">
-                                    <span>Escolher no Cupom</span> <i class="fas fa-arrow-right"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
