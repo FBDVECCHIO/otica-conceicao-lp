@@ -2480,7 +2480,7 @@ body {
 .hero-commercial-section {
     background: radial-gradient(circle at 75% 30%, #002244 0%, #001226 70%, #000c1a 100%);
     color: #FFFFFF;
-    padding: 38px 0 0;
+    padding: 10px 0 0;
     position: relative;
     overflow: hidden;
 }
@@ -2492,20 +2492,21 @@ body {
 
 .hero-commercial-grid {
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 24px;
+    grid-template-columns: 1.18fr 0.82fr;
+    gap: 20px;
     align-items: center;
     padding-bottom: 24px;
     position: relative;
 }
 
-/* Coluna 1: Informações e Conversão */
+/* Coluna 1: Informações e Conversão (Elevada ~2cm no Desktop) */
 .hero-content-col {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
     z-index: 4;
+    margin-top: -70px;
 }
 
 .hero-top-badge {
@@ -2541,43 +2542,46 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Preço com Parcelamento em Evidência Monumental e Total Pequeno */
+/* Preço com Parcelamento em Evidência Monumental e Total Pequeno ao Lado Direito na Base */
 .hero-installment-highlight {
     display: flex;
     flex-direction: column;
-    gap: 4px;
     margin: 8px 0 16px;
 }
 
 .hero-installment-main-row {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 10px;
     line-height: 1;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .hero-inst-prefix-large {
-    font-size: clamp(22px, 3vw, 32px);
+    font-size: clamp(20px, 2.6vw, 30px);
     font-weight: 800;
     color: #FFFFFF;
     letter-spacing: -0.5px;
+    white-space: nowrap;
 }
 
 .hero-inst-val-cyan {
-    font-size: clamp(52px, 7.2vw, 82px);
+    font-size: clamp(44px, 5.8vw, 68px);
     font-weight: 900;
     color: #00E5FF;
     line-height: 1;
-    letter-spacing: -2px;
+    letter-spacing: -1.5px;
     text-shadow: 0 4px 28px rgba(0, 229, 255, 0.45);
+    white-space: nowrap;
 }
 
 .hero-inst-cash-sub {
-    font-size: clamp(14px, 1.8vw, 17px);
-    font-weight: 600;
+    font-size: clamp(13px, 1.4vw, 15px);
+    font-weight: 500;
     color: #94A3B8;
-    margin-top: 2px;
+    align-self: baseline;
+    margin-left: 4px;
+    white-space: nowrap;
 }
 
 .hero-inst-cash-sub strong {
@@ -2592,49 +2596,26 @@ body {
     margin: 0 0 18px;
 }
 
-.hero-commercial-subtitle strong {
-    color: #FFFFFF;
-    font-weight: 700;
-    text-decoration: underline;
-    text-decoration-color: #38BDF8;
-    text-underline-offset: 3px;
+/* Subtítulo: Marcas em Ciano vibrante e sem grifo */
+.hero-commercial-subtitle strong,
+.hero-commercial-subtitle .dyn-frame-brand,
+.hero-commercial-subtitle .dyn-lens-brand {
+    color: #00E5FF !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    font-style: normal !important;
 }
 
-/* Pílulas de Diferenciais */
+/* Ocultar Pílulas de Diferenciais / Benefícios em todas as LPs */
 .hero-benefit-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 18px;
+    display: none !important;
 }
 
 .hero-pill-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 9999px;
-    padding: 7px 15px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: #F1F5F9;
-    backdrop-filter: blur(6px);
-    transition: all 0.2s ease;
+    display: none !important;
 }
 
-.hero-pill-item:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(0, 229, 255, 0.4);
-    transform: translateY(-1px);
-}
-
-.hero-pill-item i {
-    color: #00E5FF;
-    font-size: 13px;
-}
-
-/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro */
+/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro (Quase toda a vertical) */
 .hero-model-col {
     position: relative;
     display: flex;
@@ -2642,14 +2623,14 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 2;
-    margin-left: -35px; /* Avanço sutil para envolvimento estilo macro */
+    margin-left: -35px;
     width: 100%;
 }
 
 .hero-model-viewport {
     position: relative;
     width: 100%;
-    max-width: 620px;
+    max-width: 720px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2667,10 +2648,12 @@ body {
 
 .hero-model-img {
     width: 100%;
-    max-width: 580px;
+    max-width: 700px;
+    max-height: 82vh;
     height: auto;
     display: block;
     object-fit: contain;
+    object-position: bottom center;
     filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.55));
     transition: opacity 0.3s ease;
 }
@@ -2679,33 +2662,9 @@ body {
     display: none;
 }
 
-/* Citação Manuscrita / Itálica Flutuante */
+/* Ocultar Citação Manuscrita / Itálica Flutuante */
 .hero-quote-card {
-    position: absolute;
-    top: 10px;
-    right: 0px;
-    z-index: 5;
-    background: rgba(0, 23, 51, 0.88);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
-    padding: 10px 16px;
-    max-width: 250px;
-    font-style: italic;
-    font-size: 13px;
-    color: #F8FAFC;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.35;
-}
-
-.hero-quote-card .quote-icon {
-    color: #00E5FF;
-    font-size: 13px;
-    margin-top: 2px;
-    flex-shrink: 0;
+    display: none !important;
 }
 
 /* Ocultar Badges Flutuantes sobre a Imagem */
@@ -2953,6 +2912,7 @@ body {
 
     .hero-content-col {
         align-items: center;
+        margin-top: 0;
     }
 
     .hero-installment-highlight {

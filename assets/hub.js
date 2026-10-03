@@ -543,6 +543,22 @@
             optNew.style.fontWeight = 'bold';
             optNew.style.color = '#002C5B';
             selector.appendChild(optNew);
+
+            // Popula filtros de LP no Leads e no Kanban
+            const filterLp = document.getElementById('filter-lp');
+            const kanbanFilterLp = document.getElementById('kanban-filter-lp');
+            [filterLp, kanbanFilterLp].forEach(sel => {
+                if (!sel) return;
+                const prev = sel.value;
+                sel.innerHTML = '<option value="">Todas as Landing Pages</option>';
+                Object.values(State.catalog).forEach(lp => {
+                    const opt = document.createElement('option');
+                    opt.value = lp.id;
+                    opt.textContent = lp.name;
+                    if (lp.id === prev) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+            });
         },
 
         setActiveLp(lpId, pushHistory = true) {
@@ -1370,16 +1386,26 @@
 
         belongsToLp(lead, lpId) {
             if (!lead) return false;
+            const target = (lpId || '').toString().replace(/^\/+/, '').toLowerCase();
+            const leadLp = (lead.lp_id || lead.lpId || 'forlife').toString().replace(/^\/+/, '').toLowerCase();
 
-            const leadLp = lead.lp_id || lead.lpId;
-
-            if (lpId === 'forlife') {
+            if (target === 'forlife') {
                 return !leadLp || leadLp === 'forlife';
-            } else if (lpId === 'fila') {
-                return leadLp === 'fila';
-            } else {
-                return leadLp === lpId;
             }
+            return leadLp === target || (lead.lp_name && lead.lp_name.toLowerCase().includes(target));
+        },
+
+        getLeadLpName(lead) {
+            if (!lead) return 'ForLife';
+            if (lead.lp_name) return lead.lp_name;
+            const raw = (lead.lp_id || lead.lpId || 'forlife').toString();
+            const clean = raw.replace(/^\/+/, '');
+            if (!clean || clean === 'forlife') return 'ForLife';
+            if (State.catalog && State.catalog[clean]) return State.catalog[clean].name;
+            if (State.catalog && State.catalog['/' + clean]) return State.catalog['/' + clean].name;
+            if (clean === '194' || clean === 'forlife-194') return 'Visão Simples 194';
+            if (clean === 'fila') return 'FILA Sport';
+            return clean;
         },
 
         async loadLeads() {
@@ -1387,8 +1413,8 @@
             if (tbody) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B);">
-                            <i class="fas fa-spinner fa-spin"></i> Carregando leads da campanha...
+                        <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B);">
+                            <i class="fas fa-spinner fa-spin"></i> Carregando base global de leads...
                         </td>
                     </tr>
                 `;
@@ -1462,15 +1488,49 @@
                 deletedCodes = new Set();
             }
 
+            const cleanedAtStr = localStorage.getItem('otica_leads_cleaned_at');
+            const cleanedAtTime = cleanedAtStr ? new Date(cleanedAtStr).getTime() : 0;
+
+            const isCleanedOut = (l) => {
+                if (l.code && deletedCodes.has(l.code)) return true;
+                if (cleanedAtTime > 0) {
+                    const lTime = l.created_at ? new Date(l.created_at).getTime() : (l.raw_created_at ? new Date(l.raw_created_at).getTime() : 0);
+                    if (lTime && lTime < cleanedAtTime) return true;
+                }
+                return false;
+            };
+
             // 3. Mescla e desduplica leads
             let merged = [];
             if (loadedFromCloud) {
-                merged = cloudLeads.filter(l => !l.code || !deletedCodes.has(l.code));
+                // Filtra registros limpos/excluídos
+                merged = cloudLeads.filter(l => !isCleanedOut(l));
+
+                // Se houver edições locais salvas para leads da nuvem, mescla os campos atualizados
+                const localMap = new Map();
+                localLeads.forEach(loc => {
+                    if (loc && loc.code) localMap.set(loc.code, loc);
+                });
+
+                merged = merged.map(cl => {
+                    const loc = localMap.get(cl.code);
+                    if (loc) {
+                        return {
+                            ...cl,
+                            saleStatus: loc.saleStatus || cl.saleStatus,
+                            saleValue: (loc.saleValue !== undefined && loc.saleValue !== '') ? loc.saleValue : cl.saleValue,
+                            store: loc.store || cl.store,
+                            seller: loc.seller || cl.seller,
+                            osNumber: loc.osNumber || cl.osNumber
+                        };
+                    }
+                    return cl;
+                });
 
                 const cloudCodes = new Set(merged.map(l => l.code));
                 localLeads.forEach(loc => {
                     const norm = this.normalizeLead(loc);
-                    if (norm.code && !cloudCodes.has(norm.code) && !deletedCodes.has(norm.code)) {
+                    if (norm.code && !cloudCodes.has(norm.code) && !isCleanedOut(norm)) {
                         merged.unshift(norm);
                         cloudCodes.add(norm.code);
 
@@ -1499,7 +1559,7 @@
             } else {
                 merged = localLeads
                     .map(l => this.normalizeLead(l))
-                    .filter(l => !l.code || !deletedCodes.has(l.code));
+                    .filter(l => !isCleanedOut(l));
             }
 
             State.allLeads = merged;
@@ -1555,25 +1615,27 @@
                 saleValue: l.sale_value || l.saleValue || '',
                 osNumber: l.os_number || l.osNumber || '',
                 saleStatus: l.sale_status || l.saleStatus || (l.sale_value ? 'Vendido' : 'Pendente'),
+                raw_created_at: l.created_at || l.raw_created_at || '',
                 lp_id: l.lp_id || l.lpId || 'forlife'
             };
         },
 
         applyFilters() {
-            const activeLpId = State.activeLpId;
+            const filterLp = document.getElementById('filter-lp');
             const searchInput = document.getElementById('search-leads');
             const filterStore = document.getElementById('filter-store');
             const filterSeller = document.getElementById('filter-seller');
             const filterStatus = document.getElementById('filter-status');
 
+            const lpVal = (filterLp ? filterLp.value : '').trim();
             const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
             const storeVal = (filterStore ? filterStore.value : '').trim();
             const sellerVal = (filterSeller ? filterSeller.value : '').trim();
             const statusVal = (filterStatus ? filterStatus.value : '').trim();
 
             State.filteredLeads = State.allLeads.filter(lead => {
-                // 1. Filtro de LP Ativa
-                if (!this.belongsToLp(lead, activeLpId)) return false;
+                // 1. Filtro de Landing Page (Global por padrão; filtra se houver seleção no dropdown)
+                if (lpVal && lpVal !== 'all' && !this.belongsToLp(lead, lpVal)) return false;
 
                 
                 // Filtro de Período
@@ -1632,6 +1694,9 @@
             this.pagination.currentPage = 1;
             this.renderTable(State.filteredLeads);
             this.updateKpis(State.filteredLeads);
+            if (typeof Kanban !== 'undefined' && typeof Kanban.render === 'function') {
+                Kanban.render();
+            }
         },
 
         updateTotalizer(leads) {
@@ -1701,11 +1766,10 @@
             if (btnNext) btnNext.disabled = (currentPage >= totalPages);
 
             if (leads.length === 0) {
-                const lp = Catalog.getActiveLp();
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
-                            Nenhum lead encontrado para a campanha <strong>${Utils.escapeHtml(lp.name)}</strong> com os filtros aplicados.
+                        <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-muted, #64748B); font-size: 14px;">
+                            Nenhum lead encontrado com os filtros aplicados.
                         </td>
                     </tr>
                 `;
@@ -1716,6 +1780,7 @@
             pageLeads.forEach((lead, index) => {
                 const cleanPhone = Utils.cleanDigits(lead.phone);
                 const isChecked = State.selectedLeadCodes.has(lead.code);
+                const leadLpName = this.getLeadLpName(lead);
 
                 // Tecnologias / Adicionais
                 const addonsHtml = (lead.addons && lead.addons.length > 0)
@@ -1753,7 +1818,7 @@
                 });
 
                 // Status de Venda Opções
-                const saleStatuses = ['Pendente', 'Em Atendimento', 'Vendido', 'Perdido'];
+                const saleStatuses = ['Pendente', 'Em Atendimento', 'Agendado', 'Vendido', 'Perdido'];
                 let statusOptions = '';
                 saleStatuses.forEach(st => {
                     const sel = (lead.saleStatus === st || (st === 'Vendido' && lead.saleValue > 0 && !lead.saleStatus)) ? 'selected' : '';
@@ -1774,6 +1839,11 @@
                     <td style="font-size: 11.5px; color: var(--text-muted, #64748B); white-space: nowrap;">${Utils.escapeHtml(lead.date)}</td>
                     <td style="font-weight: 700; color: #002C5B; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${Utils.escapeHtml(lead.name)}">
                         ${Utils.escapeHtml(lead.name)}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <span class="badge-lp-origin" title="${Utils.escapeHtml(leadLpName)}">
+                            ${Utils.escapeHtml(leadLpName)}
+                        </span>
                     </td>
                     <td style="text-align: center;">
                         <a href="https://api.whatsapp.com/send?phone=55${cleanPhone}&text=${encodeURIComponent(`Olá ${lead.name}! Aqui é da Ópticas Conceição. Recebemos seu voucher com o código ${lead.code}. Como podemos ajudar com seus novos óculos?`)}" target="_blank" class="btn-whatsapp-icon" title="Chamar no WhatsApp (${Utils.escapeHtml(lead.phone)})" style="color: #25D366; font-size: 18px;">
@@ -1834,7 +1904,7 @@
                 trDetails.style.backgroundColor = '#F8FAFC';
 
                 trDetails.innerHTML = `
-                    <td colspan="13" style="padding: 12px 18px; border-bottom: 2px solid #E2E8F0;">
+                    <td colspan="14" style="padding: 12px 18px; border-bottom: 2px solid #E2E8F0;">
                         <div class="details-content-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 12px;">
                             <div>
                                 <strong style="color:#64748B;">WhatsApp Completo:</strong><br>
@@ -1996,6 +2066,46 @@
             Utils.showToast('Lead excluído com sucesso.', 'info');
         },
 
+        async clearAllLeads(skipConfirm = false) {
+            if (!skipConfirm && !confirm("Deseja realmente limpar toda a base de leads de teste do Hub?\n\nEsta ação apagará permanentemente todos os registros de leads locais e desativará os mocks, deixando a base pronta para novos clientes reais.")) {
+                return;
+            }
+
+            // Registra todos os códigos atuais em deletedCodes para evitar re-sincronização de mocks
+            let deleted = [];
+            try {
+                deleted = JSON.parse(localStorage.getItem(STORAGE_KEYS.deletedCodes)) || [];
+            } catch (e) {}
+
+            State.allLeads.forEach(l => {
+                if (l.code && !deleted.includes(l.code)) deleted.push(l.code);
+            });
+
+            localStorage.setItem(STORAGE_KEYS.deletedCodes, JSON.stringify(deleted));
+            localStorage.setItem(STORAGE_KEYS.leadsFallback, JSON.stringify([]));
+            localStorage.setItem('otica_leads_cleaned_at', new Date().toISOString());
+
+            // Tenta deletar no Supabase se houver conexão
+            if (State.supabase) {
+                try {
+                    await State.supabase.from(SUPABASE_CONFIG.leadsTable).delete().neq('code', '__keep__');
+                } catch (err) {
+                    console.warn('[LPStudio] Aviso ao limpar tabela no Supabase:', err);
+                }
+            }
+
+            State.allLeads = [];
+            State.filteredLeads = [];
+            State.selectedLeadCodes.clear();
+
+            this.renderTable([]);
+            this.updateKpis([]);
+            if (typeof Kanban !== 'undefined' && typeof Kanban.render === 'function') {
+                Kanban.render([]);
+            }
+            Utils.showToast("Base de leads higienizada com sucesso! Nenhum dado de teste será recarregado.", "success");
+        },
+
         toggleRowDetails(code) {
             const row = document.getElementById(`details-lead-${code}`);
             const icon = document.getElementById(`icon-expand-${code}`);
@@ -2019,7 +2129,7 @@
                 });
             }
 
-            ['filter-store', 'filter-seller', 'filter-status'].forEach(id => {
+            ['filter-lp', 'filter-store', 'filter-seller', 'filter-status'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', () => this.applyFilters());
             });
@@ -2086,6 +2196,12 @@
                         btnRefresh.disabled = false;
                     }
                 });
+            }
+
+            // Botão de Limpar Base de Leads e Mocks
+            const btnClearLeads = document.getElementById('btn-clear-leads-db');
+            if (btnClearLeads) {
+                btnClearLeads.addEventListener('click', () => this.clearAllLeads());
             }
 
             // Exportação CSV
@@ -2315,6 +2431,214 @@
     // ==========================================================================
     // 8. MÓDULO: GESTÃO DE CONFIGURAÇÕES (CMS DA LP ATIVA)
     // ==========================================================================
+
+    // ==========================================================================
+    // 5.5 MÓDULO: PIPELINE KANBAN (FUNIL COMERCIAL & GESTÃO DE ATENDIMENTO)
+    // ==========================================================================
+    const Kanban = {
+        init() {
+            this.bindEvents();
+        },
+
+        bindEvents() {
+            const kanbanFilterLp = document.getElementById('kanban-filter-lp');
+            if (kanbanFilterLp) {
+                kanbanFilterLp.addEventListener('change', () => {
+                    this.render();
+                });
+            }
+
+            const refreshBtn = document.getElementById('btn-refresh-kanban');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', async () => {
+                    const icon = refreshBtn.querySelector('i');
+                    if (icon) icon.classList.add('fa-spin');
+                    refreshBtn.disabled = true;
+                    try {
+                        await Leads.loadLeads();
+                        this.render();
+                        Utils.showToast('Pipeline Kanban atualizado com sucesso!', 'success');
+                    } catch (e) {
+                        console.error('[LPStudio] Erro ao atualizar Kanban:', e);
+                    } finally {
+                        if (icon) icon.classList.remove('fa-spin');
+                        refreshBtn.disabled = false;
+                    }
+                });
+            }
+
+            // Drag & Drop nas colunas do Kanban
+            const columns = document.querySelectorAll('.kanban-column');
+            columns.forEach(col => {
+                const status = col.getAttribute('data-status');
+                const list = col.querySelector('.kanban-cards-list');
+                if (list) {
+                    list.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        col.classList.add('drag-over');
+                    });
+                    list.addEventListener('dragleave', (e) => {
+                        if (!col.contains(e.relatedTarget)) {
+                            col.classList.remove('drag-over');
+                        }
+                    });
+                    list.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        col.classList.remove('drag-over');
+                        const leadCode = e.dataTransfer.getData('text/plain');
+                        if (leadCode && status) {
+                            this.updateLeadStatus(leadCode, status);
+                        }
+                    });
+                }
+            });
+        },
+
+        getFilteredLeads() {
+            const filterEl = document.getElementById('kanban-filter-lp');
+            const targetLp = filterEl ? filterEl.value : '';
+            if (!targetLp) return State.allLeads || [];
+            return (State.allLeads || []).filter(l => Leads.belongsToLp(l, targetLp));
+        },
+
+        async updateLeadStatus(code, newStatus) {
+            const lead = State.allLeads.find(l => l.code === code);
+            if (!lead) return;
+
+            let normalized = newStatus;
+            const lower = (newStatus || '').toLowerCase();
+            if (lower.includes('atend') || lower === 'contatado') normalized = 'Em Atendimento';
+            else if (lower.includes('agend')) normalized = 'Agendado';
+            else if (lower.includes('vend') || lower.includes('conclu')) normalized = 'Vendido';
+            else if (lower.includes('perd') || lower.includes('cancel')) normalized = 'Perdido';
+            else if (lower.includes('pend')) normalized = 'Pendente';
+
+            lead.saleStatus = normalized;
+            if (normalized === 'Vendido' && !lead.saleValue) {
+                lead.saleValue = lead.totalPrice || 297.00;
+            }
+
+            // Salva no LocalStorage
+            try {
+                localStorage.setItem(STORAGE_KEYS.leadsFallback, JSON.stringify(State.allLeads));
+            } catch (e) {}
+
+            // Atualiza no Supabase se houver conexão
+            if (State.supabase) {
+                try {
+                    const updatePayload = {
+                        sale_status: newStatus,
+                        sale_value: lead.saleValue,
+                        os_number: lead.osNumber || ''
+                    };
+                    if (lead.id) {
+                        await State.supabase.from(SUPABASE_CONFIG.leadsTable).update(updatePayload).eq('id', lead.id);
+                    } else if (lead.code) {
+                        await State.supabase.from(SUPABASE_CONFIG.leadsTable).update(updatePayload).eq('code', lead.code);
+                    }
+                } catch (err) {
+                    console.warn('[LPStudio] Aviso ao atualizar status no Supabase:', err);
+                }
+            }
+
+            Utils.showToast(`Lead "${lead.name}" movido para "${newStatus}"!`, 'success');
+            this.render();
+            Leads.applyFilters();
+        },
+
+        render(leadsList) {
+            const allLeads = leadsList || this.getFilteredLeads();
+            const totalCountEl = document.getElementById('tab-kanban-count');
+            if (totalCountEl) totalCountEl.textContent = allLeads.length;
+
+            const stages = {
+                Pendente: [],
+                'Em Atendimento': [],
+                Agendado: [],
+                Vendido: [],
+                Perdido: []
+            };
+
+            allLeads.forEach(lead => {
+                let st = lead.saleStatus || 'Pendente';
+                if (st === 'Contatado') st = 'Em Atendimento';
+                if (st === 'Cancelado') st = 'Perdido';
+                if (st === 'Venda Concluída' || (lead.saleValue > 0 && !lead.saleStatus)) st = 'Vendido';
+
+                if (stages[st]) {
+                    stages[st].push(lead);
+                } else {
+                    stages.Pendente.push(lead);
+                }
+            });
+
+            const stageKeys = [
+                { key: 'Pendente', listId: 'kanban-list-pendente', countId: 'kanban-count-pendente' },
+                { key: 'Em Atendimento', listId: 'kanban-list-atendimento', countId: 'kanban-count-atendimento' },
+                { key: 'Agendado', listId: 'kanban-list-agendado', countId: 'kanban-count-agendado' },
+                { key: 'Vendido', listId: 'kanban-list-vendido', countId: 'kanban-count-vendido' },
+                { key: 'Perdido', listId: 'kanban-list-perdido', countId: 'kanban-count-perdido' }
+            ];
+
+            stageKeys.forEach(({ key, listId, countId }) => {
+                const listEl = document.getElementById(listId);
+                const countEl = document.getElementById(countId);
+                const items = stages[key] || [];
+
+                if (countEl) countEl.textContent = items.length;
+                if (!listEl) return;
+
+                if (items.length === 0) {
+                    listEl.innerHTML = `<div class="kanban-empty-hint">Nenhum lead nesta fase</div>`;
+                    return;
+                }
+
+                let html = '';
+                items.forEach(lead => {
+                    const cleanPhone = Utils.cleanDigits(lead.phone);
+                    const leadLpName = Leads.getLeadLpName(lead);
+                    const priceFormatted = Utils.formatCurrency(lead.totalPrice || 297.00);
+
+                    const statuses = ['Pendente', 'Em Atendimento', 'Agendado', 'Vendido', 'Perdido'];
+                    let selectOptions = '';
+                    statuses.forEach(s => {
+                        selectOptions += `<option value="${s}" ${s === key ? 'selected' : ''}>${s}</option>`;
+                    });
+
+                    html += `
+                        <div class="kanban-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${lead.code}')" data-code="${lead.code}">
+                            <div class="kanban-card-header">
+                                <span class="kanban-card-badge-lp" title="${Utils.escapeHtml(leadLpName)}">${Utils.escapeHtml(leadLpName)}</span>
+                                <span class="kanban-card-date">${Utils.escapeHtml(lead.date || '')}</span>
+                            </div>
+                            <div class="kanban-card-name" title="${Utils.escapeHtml(lead.name)}">
+                                ${Utils.escapeHtml(lead.name)}
+                            </div>
+                            <div class="kanban-card-meta">
+                                <div class="kanban-card-meta-row">
+                                    <span>Cupom: <strong>${Utils.escapeHtml(lead.code)}</strong></span>
+                                    <span class="kanban-card-price">${priceFormatted}</span>
+                                </div>
+                                <div style="color:#64748B; font-size:11px;">
+                                    ${Utils.escapeHtml(lead.store || 'Unidade Centro')}
+                                </div>
+                            </div>
+                            <div class="kanban-card-actions">
+                                <a href="https://api.whatsapp.com/send?phone=55${cleanPhone}&text=${encodeURIComponent(`Olá ${lead.name}! Aqui é da Ópticas Conceição. Recebemos seu voucher promocional ${lead.code}. Como podemos ajudar com seus novos óculos?`)}" target="_blank" class="kanban-btn-whatsapp" title="Chamar no WhatsApp">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                <select class="kanban-status-select" onchange="window.LPStudio.moveKanbanLead('${lead.code}', this.value)" title="Mover estágio">
+                                    ${selectOptions}
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                listEl.innerHTML = html;
+            });
+        }
+    };
 
     // ==========================================================================
     // 6. MÓDULO: COMPARATIVO DE PERFORMANCE ENTRE LANDING PAGES
@@ -3916,6 +4240,14 @@
             Utils.showToast(message, type);
         },
 
+        moveKanbanLead(code, status) {
+            Kanban.updateLeadStatus(code, status);
+        },
+
+        clearAllLeads(skipConfirm = false) {
+            Leads.clearAllLeads(skipConfirm);
+        },
+
         // Inicialização orquestrada
         init() {
             console.log('%c[LP Studio & Multi-Manager] Inicializando motor reativo v2.0.0...', 'color: #002C5B; font-weight: bold; font-size: 13px;');
@@ -3944,6 +4276,7 @@
             Preview.init();
             Preview.initHybridAndDrawer();
             Leads.init();
+            Kanban.init();
             CMS.init();
             Traffic.init();
             UTM.init();

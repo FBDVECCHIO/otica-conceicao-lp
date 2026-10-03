@@ -3418,3 +3418,273 @@ input, button, select, textarea {
     cursor: pointer;
 }
 
+/* ==========================================================================
+   PIPELINE KANBAN DE VENDAS & ATENDIMENTO
+   ========================================================================== */
+.kanban-panel-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.kanban-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: #FFFFFF;
+    padding: 16px 20px;
+    border-radius: var(--radius-md, 10px);
+    border: 1px solid var(--border-subtle, #E2E8F0);
+    box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 44, 91, 0.05));
+}
+
+.kanban-toolbar-info h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--navy-primary, #002C5B);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.kanban-toolbar-info p {
+    font-size: 13px;
+    color: var(--text-muted, #64748B);
+}
+
+.kanban-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(240px, 1fr));
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    align-items: flex-start;
+}
+
+.kanban-column {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.2s;
+}
+
+.kanban-column.drag-over {
+    border-color: #2563EB;
+    background: #EFF6FF;
+}
+
+.kanban-column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 2px solid transparent;
+    border-top-left-radius: 11px;
+    border-top-right-radius: 11px;
+    background: #FFFFFF;
+}
+
+.col-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.col-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.kanban-badge {
+    background: #F1F5F9;
+    color: #475569;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 9999px;
+}
+
+/* Cores por Fase */
+.col-pendente { border-bottom-color: #F59E0B; }
+.dot-pendente { background: #F59E0B; }
+
+.col-atendimento { border-bottom-color: #2563EB; }
+.dot-atendimento { background: #2563EB; }
+
+.col-agendado { border-bottom-color: #8B5CF6; }
+.dot-agendado { background: #8B5CF6; }
+
+.col-vendido { border-bottom-color: #10B981; }
+.dot-vendido { background: #10B981; }
+
+.col-perdido { border-bottom-color: #EF4444; }
+.dot-perdido { background: #EF4444; }
+
+.kanban-cards-list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 700px;
+}
+
+.kanban-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 44, 91, 0.1);
+    border-color: #CBD5E1;
+}
+
+.kanban-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.kanban-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.kanban-card-badge-lp {
+    font-size: 10px;
+    font-weight: 700;
+    background: #E0F2FE;
+    color: #0369A1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.kanban-card-date {
+    font-size: 10.5px;
+    color: #94A3B8;
+}
+
+.kanban-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #002C5B;
+    line-height: 1.25;
+}
+
+.kanban-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11.5px;
+    color: #475569;
+}
+
+.kanban-card-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.kanban-card-price {
+    font-weight: 800;
+    color: #002C5B;
+}
+
+.kanban-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid #F1F5F9;
+    gap: 6px;
+}
+
+.kanban-btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #25D366;
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 9px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.kanban-btn-whatsapp:hover {
+    background: #1EBE5D;
+}
+
+.kanban-status-select {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 6px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    background: #FFFFFF;
+    color: #1E293B;
+    cursor: pointer;
+    max-width: 125px;
+}
+
+.kanban-empty-hint {
+    padding: 24px 10px;
+    text-align: center;
+    color: #94A3B8;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Badge LP Origem na Tabela de Leads */
+.badge-lp-origin {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    background: #E0F2FE;
+    color: #0369A1;
+    padding: 2px 7px;
+    border-radius: 4px;
+    max-width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

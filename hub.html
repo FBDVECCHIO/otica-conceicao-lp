@@ -178,6 +178,10 @@
                 <i class="fas fa-users"></i>
                 <span>Leads (<span id="tab-leads-count">0</span>)</span>
             </button>
+            <button class="tab-btn" data-tab="tab-kanban" id="tab-btn-kanban">
+                <i class="fas fa-columns"></i>
+                <span>Pipeline Kanban (<span id="tab-kanban-count">0</span>)</span>
+            </button>
             <button class="tab-btn" data-tab="tab-cms" id="tab-btn-cms">
                 <i class="fas fa-sliders-h"></i>
                 <span>Configurações (CMS)</span>
@@ -392,6 +396,12 @@
 
                     <div class="filters-group">
                         <div class="filter-select-wrapper">
+                            <select id="filter-lp" aria-label="Filtrar por Landing Page de Origem">
+                                <option value="">Todas as Landing Pages</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-select-wrapper">
                             <select id="filter-store" aria-label="Filtrar por Unidade / Loja">
                                 <option value="">Todas as Lojas</option>
                                 <option value="Loja 01 - Matriz Centro">Loja 01 - Matriz Centro</option>
@@ -436,6 +446,10 @@
                                 <i class="fas fa-sync-alt"></i>
                                 <span>Atualizar</span>
                             </button>
+                            <button id="btn-clear-leads-db" class="btn-action btn-danger" title="Limpar base de leads e dados de teste" style="background:#EF4444; color:#FFF; border-color:#DC2626;">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Limpar Base</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -448,6 +462,7 @@
                                 <th style="width: 32px; text-align: center;"><i class="fas fa-info-circle" title="Detalhes"></i></th>
                                 <th style="width: 80px;">Data</th>
                                 <th>Cliente</th>
+                                <th style="width: 105px;">LP Origem</th>
                                 <th style="width: 38px; text-align: center;">Whats</th>
                                 <th style="width: 95px;">Combo / Adic.</th>
                                 <th style="width: 75px; text-align: center;">Receita</th>
@@ -465,7 +480,7 @@
                         <tbody id="leads-table-body">
                             <!-- Inserido dinamicamente via JS -->
                             <tr class="table-loading-row">
-                                <td colspan="13">
+                                <td colspan="14">
                                     <div class="table-state-box">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         <span>Carregando leads da base de dados...</span>
@@ -521,6 +536,95 @@
                                 Próxima <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             ABA KANBAN: PIPELINE DE ATENDIMENTO & VENDAS
+             ==================================================== -->
+        <section id="tab-kanban" class="hub-tab-panel">
+            <div class="kanban-panel-container">
+                <!-- Toolbar do Kanban -->
+                <div class="kanban-toolbar">
+                    <div class="kanban-toolbar-info">
+                        <h3><i class="fas fa-columns"></i> Pipeline de Atendimento &amp; Conversão (Kanban)</h3>
+                        <p class="text-muted">Acompanhe e movimente os leads em tempo real por cada estágio do funil comercial</p>
+                    </div>
+                    <div class="kanban-toolbar-actions">
+                        <div class="filter-select-wrapper">
+                            <select id="kanban-filter-lp" aria-label="Filtrar Kanban por LP">
+                                <option value="">Todas as Landing Pages</option>
+                            </select>
+                        </div>
+                        <button id="btn-refresh-kanban" class="btn-action btn-refresh" title="Atualizar dados do Kanban">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Atualizar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Board Kanban com as 5 Fases -->
+                <div class="kanban-board" id="kanban-board">
+                    <!-- Fase 1: Pendente -->
+                    <div class="kanban-column" data-status="Pendente">
+                        <div class="kanban-column-header col-pendente">
+                            <div class="col-title-wrap">
+                                <span class="status-indicator-dot dot-pendente"></span>
+                                <span class="col-title">Pendente</span>
+                            </div>
+                            <span class="kanban-badge" id="kanban-count-pendente">0</span>
+                        </div>
+                        <div class="kanban-cards-list" id="kanban-list-pendente"></div>
+                    </div>
+
+                    <!-- Fase 2: Em Atendimento -->
+                    <div class="kanban-column" data-status="Em Atendimento">
+                        <div class="kanban-column-header col-atendimento">
+                            <div class="col-title-wrap">
+                                <span class="status-indicator-dot dot-atendimento"></span>
+                                <span class="col-title">Em Atendimento</span>
+                            </div>
+                            <span class="kanban-badge" id="kanban-count-atendimento">0</span>
+                        </div>
+                        <div class="kanban-cards-list" id="kanban-list-atendimento"></div>
+                    </div>
+
+                    <!-- Fase 3: Agendado -->
+                    <div class="kanban-column" data-status="Agendado">
+                        <div class="kanban-column-header col-agendado">
+                            <div class="col-title-wrap">
+                                <span class="status-indicator-dot dot-agendado"></span>
+                                <span class="col-title">Agendado</span>
+                            </div>
+                            <span class="kanban-badge" id="kanban-count-agendado">0</span>
+                        </div>
+                        <div class="kanban-cards-list" id="kanban-list-agendado"></div>
+                    </div>
+
+                    <!-- Fase 4: Venda Concluída -->
+                    <div class="kanban-column" data-status="Vendido">
+                        <div class="kanban-column-header col-vendido">
+                            <div class="col-title-wrap">
+                                <span class="status-indicator-dot dot-vendido"></span>
+                                <span class="col-title">Venda Concluída</span>
+                            </div>
+                            <span class="kanban-badge" id="kanban-count-vendido">0</span>
+                        </div>
+                        <div class="kanban-cards-list" id="kanban-list-vendido"></div>
+                    </div>
+
+                    <!-- Fase 5: Perdido -->
+                    <div class="kanban-column" data-status="Perdido">
+                        <div class="kanban-column-header col-perdido">
+                            <div class="col-title-wrap">
+                                <span class="status-indicator-dot dot-perdido"></span>
+                                <span class="col-title">Perdido / Cancelado</span>
+                            </div>
+                            <span class="kanban-badge" id="kanban-count-perdido">0</span>
+                        </div>
+                        <div class="kanban-cards-list" id="kanban-list-perdido"></div>
                     </div>
                 </div>
             </div>

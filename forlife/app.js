@@ -79,6 +79,162 @@ const HERO_STYLES = {
     }
 };
 
+// ==========================================
+// FAQ E DEPOIMENTOS TEMÁTICOS POR CAMPANHA
+// ==========================================
+const CAMPAIGN_CONTENT = {
+    multifocal_senhora: {
+        faqTitle: 'Tira-Dúvidas Sobre o Combo ForLife Multifocal',
+        faqSubtitle: 'Confira as respostas diretas para as dúvidas mais comuns sobre lentes multifocais e adaptação:',
+        faqs: [
+            {
+                q: '1. O que está incluso no Combo ForLife por R$ {PRICE}?',
+                a: 'O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes Multifocais Digitais HD de alta definição com amplo campo visual para perto, meia-distância e longe.'
+            },
+            {
+                q: '2. Como funciona a adaptação com as Lentes Multifocais HD?',
+                a: 'Nossas lentes multifocais digitais são produzidas com tecnologia de alta definição (HD) que reduz as distorções laterais, facilitando a transição entre perto, meia-distância e longe. Contamos com 100% de garantia de adaptação e suporte técnico da nossa equipe.'
+            },
+            {
+                q: '3. E se eu não tiver a receita em mãos ou precisar atualizar?',
+                a: 'Sem problemas! Basta selecionar a opção "Preciso atualizar minha receita" ao gerar o seu cupom. Nossa equipe indicará clínicas parceiras de confiança em Campinas para realizar seu exame de vista.'
+            },
+            {
+                q: '4. Posso parcelar o valor do combo e das tecnologias adicionais?',
+                a: 'Sim! Tanto o combo base quanto as tecnologias adicionais podem ser parcelados em até 10x sem juros em todos os cartões de crédito aceitos na loja.'
+            },
+            {
+                q: '5. Como faço para escolher a minha armação?',
+                a: 'Você pode visitar nossa loja física no Centro de Campinas para experimentar dezenas de modelos, ou solicitar consultoria personalizada via WhatsApp, onde nossos consultores enviam fotos e vídeos de modelos adequados ao seu rosto.'
+            },
+            {
+                q: '6. Qual o prazo para confeccionar meus óculos multifocais?',
+                a: 'Graças ao nosso laboratório óptico especializado em Campinas, os prazos variam de 3 a 7 dias úteis, com rigoroso controle de centragem pupilar computadorizada antes da entrega.'
+            }
+        ],
+        reviews: [
+            {
+                text: '"Eu tinha muito receio de usar multifocal por causa de tontura, mas a adaptação com as Lentes HD das Ópticas Conceição foi imediata! Excelente atendimento e o preço do combo é imbatível."',
+                author: 'Carlos M.',
+                location: 'Centro, Campinas',
+                initials: 'CM'
+            },
+            {
+                text: '"Comprei o combo com o filtro azul Bluecut pois fico o dia todo no computador e leitura. Minhas dores de cabeça acabaram e a armação é linda e muito confortável. Recomendo de olhos fechados!"',
+                author: 'Maria Helena S.',
+                location: 'Cambuí, Campinas',
+                initials: 'MH'
+            },
+            {
+                text: '"Minha família compra na Conceição há mais de 30 anos. Essa campanha ForLife superou todas as expectativas em qualidade técnica, agilidade e economia. Parabéns pelo carinho!"',
+                author: 'Roberto F.',
+                location: 'Taquaral, Campinas',
+                initials: 'RF'
+            }
+        ]
+    },
+    visao_simples_jovens: {
+        faqTitle: 'Tira-Dúvidas Sobre o Combo Visão Simples',
+        faqSubtitle: 'Respostas diretas sobre lentes monofocais, armações modernas e montagem expressa:',
+        faqs: [
+            {
+                q: '1. O que está incluso no Combo Visão Simples por R$ {PRICE}?',
+                a: 'O combo acompanha uma armação completa à sua escolha entre centenas de modelos selecionados + 1 par de Lentes Monofocais Digitais calibradas para o seu grau de miopia, hipermetropia ou astigmatismo.'
+            },
+            {
+                q: '2. As lentes já vêm com antirreflexo e proteção?',
+                a: 'Sim! O combo já inclui tratamento antirreflexo de alta durabilidade e proteção contra raios UV, eliminando reflexos incômodos no celular, computador e luzes noturnas.'
+            },
+            {
+                q: '3. Qual o prazo para meus óculos ficarem prontos?',
+                a: 'Com nosso laboratório próprio de montagem computadorizada em Campinas, confeccionamos seus óculos em tempo recorde com precisão milimétrica.'
+            },
+            {
+                q: '4. E se eu ainda não tiver a receita do oftalmologista?',
+                a: 'Basta gerar seu cupom agora para travar o preço promocional. Ao falar com nossa equipe, auxiliamos no agendamento do exame com clínicas parceiras em Campinas.'
+            },
+            {
+                q: '5. Como escolher o modelo ideal de armação?',
+                a: 'Temos mais de 150 modelos leves (acetato nobre, metal fino, retangular, gatinho, redondos e esportivos) para você experimentar na loja ou receber consultoria com fotos pelo WhatsApp.'
+            },
+            {
+                q: '6. Posso parcelar em quantas vezes no cartão?',
+                a: 'Você pode parcelar o valor do combo em até 10x sem juros no cartão de crédito, sem qualquer acréscimo.'
+            }
+        ],
+        reviews: [
+            {
+                text: '"Precisava de um óculos novo urgente para a faculdade e trabalho no computador. A montagem foi super rápida, o antirreflexo é perfeito e paguei um valor super justo!"',
+                author: 'Lucas F.',
+                location: 'Barão Geraldo, Campinas',
+                initials: 'LF'
+            },
+            {
+                text: '"Achei a armação retangular fosca que procurava há meses! Lentes super finas, leves e confortáveis, além do atendimento atencioso da equipe das Ópticas Conceição."',
+                author: 'Amanda C.',
+                location: 'Cambuí, Campinas',
+                initials: 'AC'
+            },
+            {
+                text: '"Melhor custo-benefício de Campinas. Saí da loja enxergando tudo nítido e sem surpresas no caixa. Recomendo para quem usa computador o dia todo!"',
+                author: 'Gabriel S.',
+                location: 'Centro, Campinas',
+                initials: 'GS'
+            }
+        ]
+    },
+    promo_dobro_casal: {
+        faqTitle: 'Tira-Dúvidas Sobre a Promoção em Dobro',
+        faqSubtitle: 'Tudo o que você precisa saber sobre a campanha 2 Armações + 2 Pares de Lentes:',
+        faqs: [
+            {
+                q: '1. O que está incluso na Promoção em Dobro por R$ {PRICE}?',
+                a: 'A promoção contempla 2 armações completas à sua escolha + 2 pares de lentes calibradas pelo valor único anunciado! São 2 óculos prontos para uso.'
+            },
+            {
+                q: '2. Os 2 pares podem ser para receitas e pessoas diferentes?',
+                a: 'SIM! Você e seu cônjuge, namorado(a), amigo(a) ou familiar podem fazer óculos com receitas médicas completamente distintas aproveitando a mesma promoção.'
+            },
+            {
+                q: '3. Podemos escolher modelos de armações diferentes?',
+                a: 'Com certeza! Cada um escolhe livremente seu modelo favorito entre mais de 150 armações masculinas, femininas e unissex disponíveis no mostruário.'
+            },
+            {
+                q: '4. E se uma pessoa precisar de multifocal e a outra de visão simples?',
+                a: 'Nossa equipe faz a combinação sob medida no sistema com desconto promocional máximo para os dois pares.'
+            },
+            {
+                q: '5. Como funciona a garantia de adaptação para os dois óculos?',
+                a: 'Ambos os pares possuem garantia total de adaptação e suporte pós-venda gratuito para ajustes, trocas de plaquetas e higienização em nossas lojas em Campinas.'
+            },
+            {
+                q: '6. Em quantas vezes podemos parcelar?',
+                a: 'O valor total de R$ {PRICE} pode ser dividido em até 10x sem juros no cartão de crédito, facilitando a compra para o casal ou família.'
+            }
+        ],
+        reviews: [
+            {
+                text: '"Aproveitamos a promoção em dobro e fizemos os óculos dos dois no mesmo dia! Economizamos muito e o atendimento na Barão de Jaguara foi nota mil."',
+                author: 'Mariana & Tiago',
+                location: 'Castelo, Campinas',
+                initials: 'MT'
+            },
+            {
+                text: '"Excelente oportunidade! Cada um escolheu seu estilo de armação e as lentes ficaram perfeitas. Tradição e confiança que só uma ótica de 78 anos em Campinas tem."',
+                author: 'Fernando & Juliana',
+                location: 'Nova Campinas',
+                initials: 'FJ'
+            },
+            {
+                text: '"Fizemos nossos óculos com graus diferentes sem nenhuma complicação. O preço em 10x sem juros ficou muito leve no orçamento. Valeu a pena demais!"',
+                author: 'Patrícia & Rodrigo',
+                location: 'Mansões Santo Antônio, Campinas',
+                initials: 'PR'
+            }
+        ]
+    }
+};
+
 // Receita médica em Base64 (opcional)
 let prescriptionBase64 = "";
 
@@ -935,6 +1091,92 @@ function applyHeroCommercialConfig() {
             heroSubtitle.innerHTML = `Com armação <strong id="forlife-frame-brand" class="dyn-frame-brand">${frameBrand}</strong> + Lentes <strong id="forlife-lens-brand" class="dyn-lens-brand">${lensBrand}</strong>`;
         }
     }
+
+    // 7. Atualizar FAQ e Depoimentos temáticos de acordo com o estilo/campanha
+    applyThematicFaqAndReviews(styleKey, forlifeConfig);
+}
+
+// ==========================================
+// FAQ E DEPOIMENTOS DINÂMICOS POR CAMPANHA
+// ==========================================
+function applyThematicFaqAndReviews(styleKey, config) {
+    const content = CAMPAIGN_CONTENT[styleKey] || CAMPAIGN_CONTENT.multifocal_senhora;
+    if (!content) return;
+
+    const formattedPrice = (typeof formatMoney === 'function' && config && config.comboPrice) 
+        ? formatMoney(config.comboPrice) 
+        : (config && config.comboPrice ? Number(config.comboPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '297,00');
+
+    // 1. Atualizar FAQ
+    const faqSection = document.getElementById('faq');
+    if (faqSection) {
+        const titleEl = faqSection.querySelector('.section-title');
+        if (titleEl && content.faqTitle) {
+            titleEl.textContent = content.faqTitle;
+        }
+
+        const subtitleEl = faqSection.querySelector('.section-subtitle');
+        if (subtitleEl && content.faqSubtitle) {
+            subtitleEl.textContent = content.faqSubtitle;
+        }
+
+        const faqList = faqSection.querySelector('.faq-list');
+        if (faqList && Array.isArray(content.faqs) && content.faqs.length > 0) {
+            let html = '';
+            content.faqs.forEach(f => {
+                const questionText = f.q.replace(/\{PRICE\}/g, formattedPrice);
+                const answerText = f.a.replace(/\{PRICE\}/g, formattedPrice);
+                html += `
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>${questionText}</h4>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            ${answerText}
+                        </div>
+                    </div>
+                `;
+            });
+            faqList.innerHTML = html;
+            if (typeof setupFAQ === 'function') {
+                setupFAQ();
+            }
+        }
+    }
+
+    // 2. Atualizar Depoimentos / Avaliações
+    const reviewsSection = document.getElementById('avaliacoes');
+    if (reviewsSection) {
+        const reviewsGrid = reviewsSection.querySelector('.reviews-grid');
+        if (reviewsGrid && Array.isArray(content.reviews) && content.reviews.length > 0) {
+            let rHtml = '';
+            content.reviews.forEach(r => {
+                rHtml += `
+                    <div class="review-card">
+                        <div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="review-text">${r.text}</p>
+                        </div>
+                        <div class="review-author">
+                            <div class="author-avatar">${r.initials}</div>
+                            <div class="author-info">
+                                <h5>${r.author}</h5>
+                                <span>${r.location}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            reviewsGrid.innerHTML = rHtml;
+        }
+    }
 }
 
 // ==========================================
@@ -1389,7 +1631,8 @@ function setupFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
         const q = item.querySelector('.faq-question');
-        if (q) {
+        if (q && !q._hasFaqClick) {
+            q._hasFaqClick = true;
             q.addEventListener('click', () => {
                 const isActive = item.classList.contains('active');
                 faqItems.forEach(i => i.classList.remove('active'));
