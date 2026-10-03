@@ -463,7 +463,7 @@
             if (bar) bar.style.width = `${pct}%`;
         },
 
-        loadCatalog() {
+        async loadCatalog() {
             try {
                 const storedCatalog = localStorage.getItem(STORAGE_KEYS.catalog);
                 if (storedCatalog) {
@@ -481,13 +481,80 @@
                 console.error('[LPStudio] Erro ao carregar catálogo de LPs:', err);
                 State.catalog = { ...DEFAULT_LPS };
             }
+
+            // Sincronização em nuvem: recupera LPs criadas ou atualizadas em outro dispositivo
+            if (State.supabase) {
+                try {
+                    const { data, error } = await State.supabase
+                        .from(SUPABASE_CONFIG.leadsTable)
+                        .select('prescription_file')
+                        .eq('code', '__keep__')
+                        .maybeSingle();
+
+                    if (!error && data && data.prescription_file) {
+                        const cloudCatalog = JSON.parse(data.prescription_file);
+                        if (cloudCatalog && typeof cloudCatalog === 'object') {
+                            let updated = false;
+                            for (const [k, v] of Object.entries(cloudCatalog)) {
+                                if (!State.catalog[k] || JSON.stringify(State.catalog[k]) !== JSON.stringify(v)) {
+                                    State.catalog[k] = v;
+                                    updated = true;
+                                }
+                            }
+                            if (updated) {
+                                localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(State.catalog));
+                                this.renderCatalogGrid();
+                                this.populateSelector();
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[LPStudio] Sincronização de catálogo em segundo plano:', e);
+                }
+            }
         },
 
-        saveCatalog() {
+        async saveCatalog() {
             try {
                 localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(State.catalog));
             } catch (err) {
                 console.error('[LPStudio] Erro ao salvar catálogo no localStorage:', err);
+            }
+
+            // Sincroniza em nuvem para smartphones e visitantes externos
+            if (State.supabase) {
+                try {
+                    const catalogPayload = JSON.stringify(State.catalog);
+                    await State.supabase.from(SUPABASE_CONFIG.leadsTable).upsert({
+                        code: '__keep__',
+                        name: '__LP_CATALOG_SYNC__',
+                        phone: '00000000000',
+                        email: 'admin@opticaconceicao.com.br',
+                        city: 'Campinas',
+                        combo_price: 297,
+                        total_price: 297,
+                        addons: '[]',
+                        prescription_file: catalogPayload,
+                        has_prescription: false,
+                        store: 'Matriz',
+                        seller: 'Sistema'
+                    }, { onConflict: 'code' });
+
+                    const configRows = Object.values(State.catalog).map(lp => ({
+                        id: 'lp_' + lp.id,
+                        combo_price: parseFloat(lp.price) || 297.00,
+                        combo_installments: parseInt(lp.installments) || 10,
+                        addon_antirreflexo: 100.00,
+                        addon_bluecut: 100.00,
+                        addon_fotossensivel: 150.00,
+                        updated_at: new Date().toISOString()
+                    }));
+                    if (configRows.length > 0) {
+                        await State.supabase.from(SUPABASE_CONFIG.configTable).upsert(configRows, { onConflict: 'id' });
+                    }
+                } catch (cloudErr) {
+                    console.warn('[LPStudio] Erro ao sincronizar catálogo na nuvem:', cloudErr);
+                }
             }
         },
 
@@ -1454,7 +1521,7 @@
                     const { data, error } = await query;
 
                     if (!error && Array.isArray(data)) {
-                        cloudLeads = data.map(l => this.normalizeLead(l));
+                        cloudLeads = data.filter(l => l.code !== '__keep__').map(l => this.normalizeLead(l));
                         loadedFromCloud = true;
                     } else if (error) {
                         console.warn('[LPStudio] Aviso consulta forlife_leads:', error.message);
@@ -3027,18 +3094,32 @@
                 Preview.updateIframe(State.catalog[lpId], true);
             }
 
-            // Sincroniza com o Supabase se for a ForLife
-            if (State.supabase && lpId === 'forlife') {
+            // Sincroniza com o Supabase para a LP ativa e catálogo global
+            if (State.supabase) {
                 try {
-                    await State.supabase.from(SUPABASE_CONFIG.configTable).upsert({
-                        id: 1,
-                        combo_price: comboPrice,
-                        installments: installments,
-                        addon_antirreflexo: antirreflexo,
-                        addon_bluecut: bluecut,
-                        addon_fotossensivel: fotossensivel,
-                        updated_at: new Date().toISOString()
-                    });
+                    const rowsToUpsert = [
+                        {
+                            id: 'lp_' + lpId,
+                            combo_price: comboPrice,
+                            combo_installments: installments,
+                            addon_antirreflexo: antirreflexo,
+                            addon_bluecut: bluecut,
+                            addon_fotossensivel: fotossensivel,
+                            updated_at: new Date().toISOString()
+                        }
+                    ];
+                    if (lpId === 'forlife') {
+                        rowsToUpsert.push({
+                            id: 'main_config',
+                            combo_price: comboPrice,
+                            combo_installments: installments,
+                            addon_antirreflexo: antirreflexo,
+                            addon_bluecut: bluecut,
+                            addon_fotossensivel: fotossensivel,
+                            updated_at: new Date().toISOString()
+                        });
+                    }
+                    await State.supabase.from(SUPABASE_CONFIG.configTable).upsert(rowsToUpsert, { onConflict: 'id' });
                 } catch (err) {
                     console.warn('[LPStudio] Erro ao sincronizar forlife_config:', err);
                 }

@@ -931,24 +931,95 @@ function detectActiveLandingPage() {
     };
 }
 
+// Sincronização em nuvem do catálogo e configurações para smartphones e novos visitantes
+async function syncCloudCatalogAndConfig(slug) {
+    if (!supabaseClient) return null;
+    try {
+        const cleanSlug = (slug || '').replace(/^\/+|\/+$/g, '').toLowerCase();
+        
+        // 1. Sincroniza catálogo em nuvem caso necessário (visitante em smartphone / novo browser)
+        const stored = localStorage.getItem('otica_conceicao_lps_catalog');
+        let shouldFetchCatalog = !stored;
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (!parsed[cleanSlug] && !parsed['/' + cleanSlug] && cleanSlug !== 'forlife') {
+                    shouldFetchCatalog = true;
+                }
+            } catch (e) {
+                shouldFetchCatalog = true;
+            }
+        }
+
+        if (shouldFetchCatalog) {
+            const { data, error } = await supabaseClient
+                .from('forlife_leads')
+                .select('prescription_file')
+                .eq('code', '__keep__')
+                .maybeSingle();
+
+            if (!error && data && data.prescription_file) {
+                const cloudCat = JSON.parse(data.prescription_file);
+                if (cloudCat && typeof cloudCat === 'object') {
+                    localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(cloudCat));
+                }
+            }
+        }
+
+        // 2. Busca configuração em tempo real no forlife_config
+        const targetIds = ['lp_' + cleanSlug, cleanSlug];
+        if (cleanSlug === 'forlife' || cleanSlug === '') targetIds.push('main_config');
+        const { data: cfgData, error: cfgErr } = await supabaseClient
+            .from('forlife_config')
+            .select('*')
+            .in('id', targetIds);
+
+        if (!cfgErr && Array.isArray(cfgData) && cfgData.length > 0) {
+            const matched = cfgData.find(c => c.id === 'lp_' + cleanSlug) ||
+                            cfgData.find(c => c.id === cleanSlug) ||
+                            cfgData.find(c => c.id === 'main_config');
+            return matched;
+        }
+    } catch (err) {
+        console.warn('[ForLife] Fallback sincronização nuvem:', err);
+    }
+    return null;
+}
+
 // Carregar configurações de preços e parâmetros dinâmicos da LP
 async function loadForlifeConfig() {
     let loadedFromLocalLp = false;
+
+    // Sincroniza catálogo da nuvem antes de detectar a LP ativa (garante que smartphones tenham acesso imediato)
+    const urlParams = new URLSearchParams(window.location.search);
+    const themeParam = urlParams.get('theme') || urlParams.get('lp') || urlParams.get('slug') || '';
+    const initialSlug = themeParam || (window.location.pathname || '').replace(/^\/+|\/+$/g, '') || 'forlife';
+    const cloudCfg = await syncCloudCatalogAndConfig(initialSlug);
 
     // 1. Detectar LP ativa dinamicamente
     const activeLpInfo = detectActiveLandingPage();
     const lp = activeLpInfo.lp;
     const cms = activeLpInfo.cmsConfig;
 
-    if (lp || cms) {
-        const urlParams = new URLSearchParams(window.location.search);
+    if (lp || cms || cloudCfg) {
         const urlPrice = urlParams.get('price') ? parseFloat(urlParams.get('price')) : null;
         const urlInstallments = urlParams.get('installments') ? parseInt(urlParams.get('installments'), 10) : null;
-        const price = urlPrice !== null ? urlPrice : ((cms && cms.comboPrice) ? parseFloat(cms.comboPrice) : ((lp && lp.price) ? parseFloat(lp.price) : 297.00));
-        const installments = urlInstallments !== null ? urlInstallments : ((cms && cms.installments) ? parseInt(cms.installments, 10) : ((lp && lp.installments) ? parseInt(lp.installments, 10) : 10));
-        const antirreflexo = (cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00;
-        const bluecut = (cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00;
-        const fotossensivel = (cms && cms.fotossensivel !== undefined) ? parseFloat(cms.fotossensivel) : 120.00;
+        
+        let price = 297.00;
+        if (urlPrice !== null) price = urlPrice;
+        else if (cloudCfg && cloudCfg.combo_price) price = parseFloat(cloudCfg.combo_price);
+        else if (cms && cms.comboPrice) price = parseFloat(cms.comboPrice);
+        else if (lp && lp.price) price = parseFloat(lp.price);
+
+        let installments = 10;
+        if (urlInstallments !== null) installments = urlInstallments;
+        else if (cloudCfg && cloudCfg.combo_installments) installments = parseInt(cloudCfg.combo_installments, 10);
+        else if (cms && cms.installments) installments = parseInt(cms.installments, 10);
+        else if (lp && lp.installments) installments = parseInt(lp.installments, 10);
+
+        const antirreflexo = (cloudCfg && cloudCfg.addon_antirreflexo !== undefined) ? parseFloat(cloudCfg.addon_antirreflexo) : ((cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00);
+        const bluecut = (cloudCfg && cloudCfg.addon_bluecut !== undefined) ? parseFloat(cloudCfg.addon_bluecut) : ((cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00);
+        const fotossensivel = (cloudCfg && cloudCfg.addon_fotossensivel !== undefined) ? parseFloat(cloudCfg.addon_fotossensivel) : ((cms && cms.fotossensivel !== undefined) ? parseFloat(cms.fotossensivel) : 120.00);
 
         const showTechSection = (cms && cms.showTechSection !== undefined) ? cms.showTechSection : (lp && lp.showTechSection !== undefined ? lp.showTechSection : true);
         const addonsActive = (cms && cms.addonsActive) ? cms.addonsActive : ((lp && lp.addonsActive) ? lp.addonsActive : { antirreflexo: true, bluecut: true, fotossensivel: true });
@@ -1411,6 +1482,17 @@ function updatePricingUI() {
     
     if (summaryTotalEl) summaryTotalEl.textContent = `R$ ${formatMoney(totalPrice)}`;
     if (summaryInstEl) summaryInstEl.textContent = `ou até ${installments}x de R$ ${formatMoney(instVal)} sem juros`;
+
+    // Atualiza todos os botões e elementos de cupom para o preço exato da LP ativa
+    const formattedComboPrice = formatMoney(comboPrice);
+    const voucherButtons = document.querySelectorAll('.btn-voucher-action, [data-track-element="CTA Seção Avaliações"], .voucher-cta-btn, #review-voucher-btn');
+    voucherButtons.forEach(btn => {
+        btn.innerHTML = `<i class="fas fa-ticket-alt"></i> Quero Meu Cupom de R$ ${formattedComboPrice}`;
+    });
+    const dynPriceSpans = document.querySelectorAll('.dyn-voucher-price, .dyn-combo-price');
+    dynPriceSpans.forEach(el => {
+        el.textContent = formattedComboPrice;
+    });
 
     validateForm();
 }

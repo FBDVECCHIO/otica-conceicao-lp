@@ -129,7 +129,7 @@ body {
 .header-forlife {
     background-color: var(--navy-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 31px 0; /* Altura aumentada em 1 cm (+38px) mantendo o logo no tamanho atual */
+    padding: 16px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -2480,7 +2480,7 @@ body {
 .hero-commercial-section {
     background: radial-gradient(circle at 75% 30%, #002244 0%, #001226 70%, #000c1a 100%);
     color: #FFFFFF;
-    padding: 10px 0 0;
+    padding: 0;
     position: relative;
     overflow: hidden;
 }
@@ -2494,20 +2494,21 @@ body {
     display: grid;
     grid-template-columns: 1.08fr 0.92fr;
     gap: 12px;
-    align-items: center;
-    padding-bottom: 24px;
+    align-items: flex-end;
+    padding-bottom: 0;
     position: relative;
 }
 
-/* Coluna 1: Informações e Conversão (Elevada ~2cm no Desktop com Envolvimento Macro) */
+/* Coluna 1: Informações e Conversão (Elevada +2cm no Desktop com Envolvimento Macro) */
 .hero-content-col {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
     z-index: 4;
-    margin-top: -70px;
+    margin-top: -145px;
     margin-right: -30px;
+    margin-bottom: 20px;
 }
 
 .hero-top-badge {
@@ -2627,13 +2628,13 @@ body {
     display: none !important;
 }
 
-/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro (Até 88vh da vertical com Envolvimento) */
+/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro (Flush com a base da seção e altura otimizada) */
 .hero-model-col {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     z-index: 2;
     margin-left: -20px;
     width: 100%;
@@ -2646,22 +2647,22 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 }
 
 .hero-model-image-wrap {
     position: relative;
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.14) 0%, transparent 68%);
+    background: radial-gradient(circle at 50% 60%, rgba(0, 229, 255, 0.14) 0%, transparent 68%);
 }
 
 .hero-model-img {
     width: 100%;
     max-width: 760px;
-    max-height: 88vh;
+    max-height: clamp(480px, 72vh, 650px);
     height: auto;
     display: block;
     object-fit: contain;
@@ -2684,11 +2685,11 @@ body {
     display: none !important;
 }
 
-/* Botão CTA Verde Esmeralda Abaixo da Imagem */
+/* Botão CTA Verde Esmeralda Abaixo da Estrutura de Texto */
 .hero-cta-wrapper {
     width: 100%;
-    max-width: 520px;
-    margin-top: 14px;
+    max-width: 480px;
+    margin-top: 6px;
     z-index: 5;
 }
 
@@ -2791,8 +2792,8 @@ body {
     background: #000F21;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 22px 0;
-    margin-top: 36px;
+    padding: 18px 0;
+    margin-top: 0;
 }
 
 .hero-trust-container {
@@ -2926,6 +2927,7 @@ body {
         align-items: center;
         margin-top: 0;
         margin-right: 0;
+        margin-bottom: 0;
     }
 
     .hero-installment-highlight {
@@ -2940,6 +2942,11 @@ body {
         justify-content: center;
     }
 
+    .hero-cta-wrapper {
+        margin: 16px auto 0;
+        max-width: 440px;
+    }
+
     .hero-model-col {
         margin-left: 0;
         width: 100%;
@@ -2951,10 +2958,6 @@ body {
 
     .hero-model-img {
         max-width: 400px;
-    }
-
-    .hero-model-cta-wrapper {
-        max-width: 440px;
     }
 
     .hero-sub-actions {

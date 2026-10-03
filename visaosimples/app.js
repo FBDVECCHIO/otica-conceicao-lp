@@ -167,6 +167,33 @@ async function loadConfigFromStorage() {
             if (raw) catalog = JSON.parse(raw);
         } catch (e) {}
 
+        // Sincroniza em nuvem caso o visitante esteja em smartphone ou novo dispositivo
+        if (supabaseClient) {
+            try {
+                let shouldFetchCloud = !catalog || Object.keys(catalog).length === 0;
+                if (!shouldFetchCloud && !catalog[slug] && !catalog['/' + slug] && slug !== '194') {
+                    shouldFetchCloud = true;
+                }
+                if (shouldFetchCloud) {
+                    const { data: cloudCatData } = await supabaseClient
+                        .from('forlife_leads')
+                        .select('prescription_file')
+                        .eq('code', '__keep__')
+                        .maybeSingle();
+
+                    if (cloudCatData && cloudCatData.prescription_file) {
+                        const parsedCloud = JSON.parse(cloudCatData.prescription_file);
+                        if (parsedCloud && typeof parsedCloud === 'object') {
+                            catalog = { ...catalog, ...parsedCloud };
+                            localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(catalog));
+                        }
+                    }
+                }
+            } catch (cloudErr) {
+                console.warn('[VisaoSimples] Fallback nuvem catálogo:', cloudErr);
+            }
+        }
+
         // Busca por correspondência exata ou parcial de slug/id
         let lpEntry = catalog[slug] || catalog['/' + slug] || null;
         if (!lpEntry) {
@@ -218,6 +245,16 @@ async function loadConfigFromStorage() {
             if (parsed.lensBrand) vsConfig.lensBrand = parsed.lensBrand;
             if (parsed.showTechSection !== undefined) vsConfig.showTechSection = parsed.showTechSection;
             if (parsed.addonsActive) vsConfig.addonsActive = { ...vsConfig.addonsActive, ...parsed.addonsActive };
+        }
+
+        // Sobrescrita direta de parâmetros na URL (tem prioridade máxima)
+        if (urlParams.get('price')) {
+            const p = parseFloat(urlParams.get('price'));
+            if (!isNaN(p)) vsConfig.comboPrice = p;
+        }
+        if (urlParams.get('installments')) {
+            const inst = parseInt(urlParams.get('installments'), 10);
+            if (!isNaN(inst)) vsConfig.installments = inst;
         }
     } catch (err) {
         console.warn("[VisãoSimples] Usando configuração padrão:", err);
@@ -404,6 +441,17 @@ function updatePricingUI() {
 
     // Atualiza Link do CTA do WhatsApp da Hero
     updateHeroWhatsappLink(basePrice, installments);
+
+    // Atualiza todos os botões e elementos de cupom para o valor exato da LP ativa
+    const formattedPrice = fmtMoney(basePrice);
+    const voucherButtons = document.querySelectorAll('.btn-voucher-action, [data-track-element="CTA Seção Avaliações"], .voucher-cta-btn');
+    voucherButtons.forEach(btn => {
+        btn.innerHTML = `<i class="fas fa-ticket-alt"></i> Quero Meu Cupom de ${formattedPrice}`;
+    });
+    const dynPriceElements = document.querySelectorAll('.dyn-voucher-price');
+    dynPriceElements.forEach(el => {
+        el.textContent = basePrice.toFixed(2).replace('.', ',');
+    });
 }
 
 function updateHeroWhatsappLink(price, inst) {
