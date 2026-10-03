@@ -172,7 +172,7 @@
         <div class="hub-tabs-list">
             <button class="tab-btn active" data-tab="tab-preview" id="tab-btn-preview">
                 <i class="fas fa-desktop"></i>
-                <span>Visualizador Interativo</span>
+                <span>Visualizador</span>
             </button>
             <button class="tab-btn" data-tab="tab-leads" id="tab-btn-leads">
                 <i class="fas fa-users"></i>
@@ -180,7 +180,7 @@
             </button>
             <button class="tab-btn" data-tab="tab-kanban" id="tab-btn-kanban">
                 <i class="fas fa-columns"></i>
-                <span>Pipeline Kanban (<span id="tab-kanban-count">0</span>)</span>
+                <span>Pipeline (<span id="tab-kanban-count">0</span>)</span>
             </button>
             <button class="tab-btn" data-tab="tab-cms" id="tab-btn-cms">
                 <i class="fas fa-sliders-h"></i>
@@ -192,11 +192,11 @@
             </button>
             <button class="tab-btn" data-tab="tab-comparison" id="tab-btn-comparison">
                 <i class="fas fa-balance-scale"></i>
-                <span>Comparativo de Performance</span>
+                <span>Performance</span>
             </button>
             <button class="tab-btn" data-tab="tab-catalog" id="tab-btn-catalog">
                 <i class="fas fa-th-large"></i>
-                <span>Catálogo de LPs</span>
+                <span>LP's</span>
             </button>
         </div>
         <div class="hub-tabs-actions">
@@ -261,8 +261,7 @@
                         </div>
                         <div class="chrome-address-bar">
                             <i class="fas fa-lock chrome-lock-icon"></i>
-                            <span class="chrome-host">lp.opticasconceicao.com.br</span>
-                            <span class="chrome-path" id="chrome-address-path">/forlife</span>
+                            <span class="chrome-host">lp.opticasconceicao.com.br</span><span class="chrome-path" id="chrome-address-path">/forlife</span>
                         </div>
                         <div class="chrome-actions">
                             <button class="chrome-action-btn" id="chrome-reload-btn" title="Atualizar Prévia">
@@ -725,6 +724,14 @@
                                     <span class="help-text">Título de impacto acima do preço (ex: Óculos Multifocal Completo por)</span>
                                 </label>
                                 <input type="text" id="cms-hero-title" placeholder="ex: Óculos Multifocal Completo por">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cms-hero-supporting">
+                                    Frase de Apoio do Hero (Explicativo)
+                                    <span class="help-text">Texto explicativo posicionado logo abaixo da frase principal</span>
+                                </label>
+                                <input type="text" id="cms-hero-supporting" placeholder="ex: Armação de grau inclusa com lentes digitais de alta precisão">
                             </div>
 
                             <div class="cms-form-row-2col">
@@ -1480,26 +1487,26 @@
                             <input type="text" id="new-lp-name" placeholder="ex: Ray-Ban Aviador Completo" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-lp-slug">
-                                Slug da URL (Caminho da rota)
-                                <span class="required">*</span>
-                            </label>
-                            <div class="slug-input-wrapper">
-                                <span class="slug-prefix">lp.opticasconceicao.com.br/</span>
-                                <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-zA-Z0-9\-_]+" title="Apenas letras, números e traços">
+                        <div class="form-row" style="display:flex; gap:10px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-slug">
+                                    Slug da URL (Rota)
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="slug-input-wrapper">
+                                    <span class="slug-prefix">/</span>
+                                    <input type="text" id="new-lp-slug" placeholder="rayban" required pattern="[a-zA-Z0-9\-_]+" title="Apenas letras, números e traços">
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1.2;">
+                                <label for="new-lp-campaign">
+                                    Nome da Campanha
+                                </label>
+                                <input type="text" id="new-lp-campaign" placeholder="ex: Campanha Ray-Ban">
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-lp-campaign">
-                                Nome da Campanha Única
-                                <span class="required">*</span>
-                            </label>
-                            <input type="text" id="new-lp-campaign" placeholder="ex: Campanha Ray-Ban Verão" required>
-                        </div>
-
-                        <div class="form-row" style="display:flex; gap:12px;">
+                        <div class="form-row" style="display:flex; gap:10px;">
                             <div class="form-group" style="flex:1;">
                                 <label for="new-lp-budget">Orçamento Mídia (R$)</label>
                                 <div class="input-currency-wrapper">
@@ -1508,19 +1515,37 @@
                                 </div>
                             </div>
                             <div class="form-group" style="flex:1;">
-                                <label for="new-lp-target-leads">Meta de Leads</label>
+                                <label for="new-lp-target-leads">Meta Leads</label>
                                 <input type="number" id="new-lp-target-leads" min="1" placeholder="100" value="100">
+                            </div>
+                            <div class="form-group" style="flex:1.1;">
+                                <label for="new-lp-status">Status da LP</label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-status">
+                                        <option value="Ativa" selected>Ativa (Online)</option>
+                                        <option value="Rascunho">Rascunho</option>
+                                        <option value="Pausada">Pausada (Fora)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-lp-status">Status da LP</label>
-                            <div class="filter-select-wrapper">
-                                <select id="new-lp-status">
-                                    <option value="Ativa" selected>Ativa (Online)</option>
-                                    <option value="Rascunho">Rascunho</option>
-                                    <option value="Pausada">Pausada (Fora do Ar)</option>
-                                </select>
+                        <div class="form-row" style="display:flex; gap:10px; align-items:flex-end;">
+                            <div class="form-group" style="flex:1.2;">
+                                <label for="new-lp-tech-section">Tecnologias Extras</label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-tech-section">
+                                        <option value="true" selected>Ativado (Exibir)</option>
+                                        <option value="false">Desativado (Ocultar)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-color">Cor da Marca</label>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <input type="color" id="new-lp-color" value="#002C5B" style="width:36px; height:32px; border:none; border-radius:6px; cursor:pointer;">
+                                    <span style="font-size:11px; color:#64748B;">Tom da LP</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1529,43 +1554,48 @@
                     <div class="modal-col">
                         <div class="modal-section-title"><i class="fas fa-layer-group"></i> Template &amp; Especificações do Produto</div>
 
-                        <div class="form-group">
-                            <label for="new-lp-template">
-                                Template Base
-                                <span class="required">*</span>
-                            </label>
-                            <div class="filter-select-wrapper">
-                                <select id="new-lp-template" required>
-                                    <option value="visaosimples">Template Visão Simples (Miopia/Astigmatismo/194)</option>
-                                    <option value="forlife" selected>Template ForLife Multifocal</option>
-                                    <option value="fila">Template FILA Sport</option>
-                                    <option value="premium">Template Luxo Conceição</option>
-                                </select>
+                        <div class="form-row" style="display:flex; gap:10px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-template">
+                                    Template Base
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-template" required>
+                                        <option value="forlife" selected>Template ForLife Multifocal</option>
+                                        <option value="visaosimples">Template Visão Simples (Miopia/194)</option>
+                                        <option value="fila">Template FILA Sport</option>
+                                        <option value="premium">Template Luxo Conceição</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-hero-style">
+                                    Modelo do Banner 1
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="filter-select-wrapper">
+                                    <select id="new-lp-hero-style" required>
+                                        <option value="multifocal_senhora" selected>Multifocal (Jovem Senhora)</option>
+                                        <option value="visao_simples_jovens">Visão Simples (Dois Jovens)</option>
+                                        <option value="promo_dobro_casal">Promoção em Dobro (Casal)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-lp-hero-style">
-                                Modelo / Imagem do Banner 1
-                                <span class="required">*</span>
-                            </label>
-                            <div class="filter-select-wrapper">
-                                <select id="new-lp-hero-style" required>
-                                    <option value="multifocal_senhora" selected>Multifocal (Jovem Senhora com Óculos)</option>
-                                    <option value="visao_simples_jovens">Visão Simples (Dois Jovens com Óculos)</option>
-                                    <option value="promo_dobro_casal">Promoção em Dobro (Casal com Óculos)</option>
-                                </select>
+                        <div class="form-row" style="display:flex; gap:10px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-hero-title">Frase Principal do Hero</label>
+                                <input type="text" id="new-lp-hero-title" placeholder="ex: Óculos Multifocal Completo por">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="new-lp-hero-supporting">Frase de Apoio (Explicativo)</label>
+                                <input type="text" id="new-lp-hero-supporting" placeholder="ex: Armação inclusa + Lentes HD">
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-lp-hero-title">
-                                Frase Principal do Hero (Banner 1)
-                            </label>
-                            <input type="text" id="new-lp-hero-title" placeholder="ex: Óculos Multifocal Completo por">
-                        </div>
-
-                        <div class="form-row" style="display:flex; gap:12px;">
+                        <div class="form-row" style="display:flex; gap:10px;">
                             <div class="form-group" style="flex:1;">
                                 <label for="new-lp-offer-type">Tipo de Oferta</label>
                                 <div class="filter-select-wrapper">
@@ -1587,7 +1617,7 @@
                             </div>
                         </div>
 
-                        <div class="form-row" style="display:flex; gap:12px;">
+                        <div class="form-row" style="display:flex; gap:10px;">
                             <div class="form-group" style="flex:1;">
                                 <label for="new-lp-frame-brand">Marca da Armação</label>
                                 <input type="text" id="new-lp-frame-brand" placeholder="ex: Coleção Conceição">
@@ -1598,7 +1628,7 @@
                             </div>
                         </div>
 
-                        <div class="form-row" style="display:flex; gap:12px;">
+                        <div class="form-row" style="display:flex; gap:10px;">
                             <div class="form-group" style="flex:1;">
                                 <label for="new-lp-price">Preço Combo (R$)</label>
                                 <div class="input-currency-wrapper">
@@ -1609,25 +1639,6 @@
                             <div class="form-group" style="flex:1;">
                                 <label for="new-lp-installments">Parcelas Sem Juros</label>
                                 <input type="number" id="new-lp-installments" min="1" max="24" placeholder="10" value="10" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row" style="display:flex; gap:12px; align-items:center;">
-                            <div class="form-group" style="flex:1;">
-                                <label for="new-lp-tech-section">Bloco de Tecnologias Extras</label>
-                                <div class="filter-select-wrapper">
-                                    <select id="new-lp-tech-section">
-                                        <option value="true" selected>Ativado (Exibir no site)</option>
-                                        <option value="false">Desativado (Ocultar no site)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group" style="flex:1;">
-                                <label for="new-lp-color">Cor da Marca</label>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <input type="color" id="new-lp-color" value="#002C5B" style="width:38px; height:34px; border:none; border-radius:6px; cursor:pointer;">
-                                    <span style="font-size:11px; color:#64748B;">Cor de destaque</span>
-                                </div>
                             </div>
                         </div>
                     </div>

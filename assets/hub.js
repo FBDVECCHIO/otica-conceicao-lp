@@ -43,6 +43,7 @@
             template: 'forlife',
             heroStyle: 'multifocal_senhora',
             heroTitle: 'Óculos Multifocal Completo por',
+            heroSupporting: 'Armação de grau inclusa + Lentes multifocais digitais de alta precisão',
             offerType: 'combo_completo',
             lensModality: 'multifocal',
             frameBrand: 'Di Capri',
@@ -99,6 +100,7 @@
             template: 'visaosimples',
             heroStyle: 'visao_simples_jovens',
             heroTitle: 'Óculos Completo Visão Simples por',
+            heroSupporting: 'Armação completa inclusa + Lentes monofocais calibradas para o seu grau',
             offerType: 'combo_completo',
             lensModality: 'lentes_prontas',
             frameBrand: 'Coleção Conceição',
@@ -627,6 +629,7 @@
                 lensModality: newLpData.lensModality || 'lentes_prontas',
                 heroStyle: newLpData.heroStyle || 'multifocal_senhora',
                 heroTitle: newLpData.heroTitle || '',
+                heroSupporting: newLpData.heroSupporting || '',
                 frameBrand: newLpData.frameBrand || 'Coleção Conceição',
                 lensBrand: newLpData.lensBrand || 'Lentes Monofocais HD',
                 addonsActive: newLpData.addonsActive || {
@@ -655,6 +658,7 @@
                 lensModality: lp.lensModality,
                 heroStyle: lp.heroStyle,
                 heroTitle: lp.heroTitle,
+                heroSupporting: lp.heroSupporting,
                 frameBrand: lp.frameBrand,
                 lensBrand: lp.lensBrand,
                 showTechSection: lp.showTechSection !== false,
@@ -669,6 +673,18 @@
             if (cleanSlugKey && cleanSlugKey !== id) {
                 localStorage.setItem(STORAGE_KEYS.cmsConfigPrefix + cleanSlugKey, localStorage.getItem(cmsKey));
             }
+
+            // Garante que o slug/id não permaneça bloqueado em otica_deactivated_lps
+            try {
+                const deact = JSON.parse(localStorage.getItem('otica_deactivated_lps') || '{}');
+                delete deact[id];
+                delete deact[cleanSlugKey];
+                delete deact['/' + cleanSlugKey];
+                localStorage.setItem('otica_deactivated_lps', JSON.stringify(deact));
+                if (State.supabase) {
+                    State.supabase.from(SUPABASE_CONFIG.configTable).delete().eq('id', `lp_offline_${cleanSlugKey}`).then(() => {});
+                }
+            } catch (e) {}
 
             this.populateSelector();
             this.renderCatalogGrid();
@@ -709,6 +725,7 @@
             if (updatedData.lensModality) lp.lensModality = updatedData.lensModality;
             if (updatedData.heroStyle) lp.heroStyle = updatedData.heroStyle;
             if (updatedData.heroTitle !== undefined) lp.heroTitle = updatedData.heroTitle;
+            if (updatedData.heroSupporting !== undefined) lp.heroSupporting = updatedData.heroSupporting;
             if (updatedData.frameBrand) lp.frameBrand = updatedData.frameBrand;
             if (updatedData.lensBrand) lp.lensBrand = updatedData.lensBrand;
             if (updatedData.showTechSection !== undefined) lp.showTechSection = updatedData.showTechSection;
@@ -756,6 +773,7 @@
                 lensModality: lp.lensModality || 'lentes_prontas',
                 heroStyle: lp.heroStyle || 'multifocal_senhora',
                 heroTitle: lp.heroTitle || '',
+                heroSupporting: lp.heroSupporting || '',
                 frameBrand: lp.frameBrand || 'Coleção Conceição',
                 lensBrand: lp.lensBrand || 'Lentes Monofocais HD',
                 showTechSection: lp.showTechSection !== false,
@@ -953,11 +971,9 @@
                         <button type="button" class="btn-card-edit" data-edit-lp="${lp.id}" title="Editar Landing Page">
                             <i class="fas fa-edit"></i>
                         </button>
-                        ${Object.keys(State.catalog).length > 1 ? `
-                            <button type="button" class="btn-card-delete" data-delete-lp="${lp.id}" title="Excluir Landing Page">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        ` : ''}
+                        <button type="button" class="btn-card-delete" data-delete-lp="${lp.id}" title="Excluir Landing Page">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 `;
 
@@ -1059,8 +1075,8 @@
             if (!lp) return '/forlife/index.html';
 
             const template = (lp.template || '').toLowerCase();
-            const idParam = encodeURIComponent(lp.id);
-            const rawSlug = (lp.slug || lp.id).replace(/^\/+/, '');
+            const idParam = encodeURIComponent(String(lp.id || '').trim().replace(/\s+/g, ''));
+            const rawSlug = String(lp.slug || lp.id || '').trim().replace(/\s+/g, '').replace(/^\/+/, '');
             const slugParam = encodeURIComponent(rawSlug);
             const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
 
@@ -1068,6 +1084,8 @@
             const heroParam = heroStyleVal ? `&hero=${encodeURIComponent(heroStyleVal)}` : '';
             const heroTitleVal = lp.heroTitle || '';
             const heroTitleParam = heroTitleVal ? `&heroTitle=${encodeURIComponent(heroTitleVal)}` : '';
+            const heroSupportingVal = lp.heroSupporting || lp.heroSupportingText || '';
+            const heroSupportingParam = heroSupportingVal ? `&heroSupporting=${encodeURIComponent(heroSupportingVal)}` : '';
             const priceParam = lp.price ? `&price=${encodeURIComponent(lp.price)}` : '';
             const instParam = lp.installments ? `&installments=${encodeURIComponent(lp.installments)}` : '';
 
@@ -1081,7 +1099,7 @@
                 basePath = `/forlife/index.html?lp=${idParam}&theme=${idParam}&slug=${slugParam}`;
             }
 
-            return basePath + heroParam + heroTitleParam + priceParam + instParam + cacheBuster;
+            return basePath + heroParam + heroTitleParam + heroSupportingParam + priceParam + instParam + cacheBuster;
         },
 
         updateIframe(lp, forceRefresh = false) {
@@ -1109,7 +1127,8 @@
         updateUiInfo(lp) {
             if (!lp) return;
 
-            const cleanSlug = lp.slug || ('/' + lp.id);
+            const rawVal = lp.slug || ('/' + lp.id);
+            const cleanSlug = (rawVal.startsWith('/') ? rawVal : `/${rawVal}`).trim().replace(/\s+/g, '');
             const previewTargetUrl = this.resolvePreviewUrl(lp);
 
             // URL display
@@ -2859,6 +2878,8 @@
             this.setInputValue('cms-hero-style', heroStyleVal);
             const heroTitleVal = config.heroTitle !== undefined ? config.heroTitle : ((currentLp && currentLp.heroTitle) || '');
             this.setInputValue('cms-hero-title', heroTitleVal);
+            const heroSupportingVal = config.heroSupporting !== undefined ? config.heroSupporting : ((currentLp && (currentLp.heroSupporting || currentLp.heroSupportingText)) || '');
+            this.setInputValue('cms-hero-supporting', heroSupportingVal);
             this.setInputValue('cms-frame-brand', config.frameBrand || 'Coleção Conceição');
             this.setInputValue('cms-lens-brand', config.lensBrand || 'Lentes Monofocais HD');
             this.setInputValue('cms-antirreflexo', config.antirreflexo);
@@ -2926,6 +2947,7 @@
             const lensModality = document.getElementById('cms-lens-modality')?.value || 'lentes_prontas';
             const heroStyle = document.getElementById('cms-hero-style')?.value || 'multifocal_senhora';
             const heroTitle = (document.getElementById('cms-hero-title')?.value || '').trim();
+            const heroSupporting = (document.getElementById('cms-hero-supporting')?.value || '').trim();
             const frameBrand = (document.getElementById('cms-frame-brand')?.value || '').trim() || 'Coleção Conceição';
             const lensBrand = (document.getElementById('cms-lens-brand')?.value || '').trim() || 'Lentes Monofocais HD';
             const showTechSection = document.getElementById('cms-toggle-show-tech-section')?.checked ?? true;
@@ -2946,6 +2968,7 @@
                 lensModality,
                 heroStyle,
                 heroTitle,
+                heroSupporting,
                 frameBrand,
                 lensBrand,
                 showTechSection,
@@ -2978,6 +3001,7 @@
                     State.catalog[otherId].lensModality = lensModality;
                     State.catalog[otherId].heroStyle = heroStyle;
                     State.catalog[otherId].heroTitle = heroTitle;
+                    State.catalog[otherId].heroSupporting = heroSupporting;
                     State.catalog[otherId].frameBrand = frameBrand;
                     State.catalog[otherId].lensBrand = lensBrand;
                     State.catalog[otherId].showTechSection = showTechSection;
@@ -2993,6 +3017,7 @@
                 State.catalog[lpId].lensModality = lensModality;
                 State.catalog[lpId].heroStyle = heroStyle;
                 State.catalog[lpId].heroTitle = heroTitle;
+                State.catalog[lpId].heroSupporting = heroSupporting;
                 State.catalog[lpId].frameBrand = frameBrand;
                 State.catalog[lpId].lensBrand = lensBrand;
                 State.catalog[lpId].showTechSection = showTechSection;
@@ -3727,6 +3752,8 @@
             if (heroStyleInput) heroStyleInput.value = 'multifocal_senhora';
             const heroTitleInput = modal.querySelector('#new-lp-hero-title');
             if (heroTitleInput) heroTitleInput.value = '';
+            const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
+            if (heroSupportingInput) heroSupportingInput.value = '';
             const offerTypeInput = modal.querySelector('#new-lp-offer-type');
             if (offerTypeInput) offerTypeInput.value = 'combo_completo';
             const modalityInput = modal.querySelector('#new-lp-lens-modality');
@@ -3807,6 +3834,9 @@
 
             const heroTitleInput = modal.querySelector('#new-lp-hero-title');
             if (heroTitleInput) heroTitleInput.value = lp.heroTitle || '';
+
+            const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
+            if (heroSupportingInput) heroSupportingInput.value = lp.heroSupporting || lp.heroSupportingText || '';
 
             const offerTypeInput = modal.querySelector('#new-lp-offer-type');
             if (offerTypeInput) offerTypeInput.value = lp.offerType || 'combo_completo';
@@ -3930,18 +3960,30 @@
             // Sugestão automática de URL com base no nome e slug (somente na criação)
             const nameInput = modal.querySelector('#new-lp-name');
             const slugInput = modal.querySelector('#new-lp-slug');
+            const campInput = modal.querySelector('#new-lp-campaign');
 
-            if (nameInput && slugInput) {
+            if (nameInput) {
                 nameInput.addEventListener('input', () => {
                     const editId = (modal.querySelector('#edit-lp-id')?.value || '').trim();
-                    if (!editId && !slugInput.dataset.touched) {
+                    if (!editId && slugInput && !slugInput.dataset.touched) {
                         const s = Utils.slugify(nameInput.value);
                         slugInput.value = s;
                     }
+                    if (!editId && campInput && !campInput.dataset.touched) {
+                        campInput.value = nameInput.value ? `Campanha ${nameInput.value.trim()}` : '';
+                    }
                 });
+            }
 
+            if (slugInput) {
                 slugInput.addEventListener('input', () => {
                     slugInput.dataset.touched = 'true';
+                });
+            }
+
+            if (campInput) {
+                campInput.addEventListener('input', () => {
+                    campInput.dataset.touched = 'true';
                 });
             }
 
@@ -3965,6 +4007,7 @@
                         const template = modal.querySelector('#new-lp-template')?.value || 'forlife';
                         const heroStyle = modal.querySelector('#new-lp-hero-style')?.value || 'multifocal_senhora';
                         const heroTitle = (modal.querySelector('#new-lp-hero-title')?.value || '').trim();
+                        const heroSupporting = (modal.querySelector('#new-lp-hero-supporting')?.value || '').trim();
                         const offerType = modal.querySelector('#new-lp-offer-type')?.value || 'combo_completo';
                         const lensModality = modal.querySelector('#new-lp-lens-modality')?.value || 'multifocal';
                         const frameBrand = (modal.querySelector('#new-lp-frame-brand')?.value || '').trim() || 'Di Capri';
@@ -3987,6 +4030,7 @@
                             template,
                             heroStyle,
                             heroTitle,
+                            heroSupporting,
                             offerType,
                             lensModality,
                             frameBrand,

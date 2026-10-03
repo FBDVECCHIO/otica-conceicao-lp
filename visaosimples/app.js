@@ -53,30 +53,41 @@ async function checkLpOnlineStatus() {
         const path = window.location.pathname.replace(/^\/+|\/+$/g, '') || '194';
         const urlParams = new URLSearchParams(window.location.search);
         const themeId = urlParams.get('theme') || '';
+        const lpId = urlParams.get('lp') || '';
+        const slugId = urlParams.get('slug') || '';
 
-        // 1. Checa LocalStorage se desativada neste navegador
-        const raw = localStorage.getItem('otica_deactivated_lps');
-        if (raw) {
-            const deact = JSON.parse(raw);
-            if (Array.isArray(deact)) {
-                if (deact.includes(path) || deact.includes('/' + path) || (themeId && deact.includes(themeId))) return false;
-            } else if (typeof deact === 'object' && deact !== null) {
-                if (deact[path] || deact['/' + path] || (themeId && deact[themeId])) return false;
-            }
-        }
-
-        // 2. Checa catálogo local se status foi alterado para 'Pausada' / 'Inativa'
+        // 1. Checa catálogo local: se status da LP for 'Ativa', está 100% ONLINE
         const rawCat = localStorage.getItem('otica_conceicao_lps_catalog');
         if (rawCat) {
             const cat = JSON.parse(rawCat);
-            const lp = cat[path] || cat['/' + path];
-            if (lp && (lp.status === 'Pausada' || lp.status === 'Inativa' || lp.status === 'Desativada')) {
-                return false;
+            const foundLp = cat[path] || cat['/' + path] || (themeId && (cat[themeId] || cat['/' + themeId])) || (lpId && (cat[lpId] || cat['/' + lpId])) || (slugId && (cat[slugId] || cat['/' + slugId]));
+            if (foundLp) {
+                if (foundLp.status === 'Pausada' || foundLp.status === 'Inativa' || foundLp.status === 'Desativada') {
+                    return false;
+                }
+                if (foundLp.status === 'Ativa') {
+                    return true;
+                }
+            }
+        }
+
+        // 2. Checa LocalStorage se desativada neste navegador
+        const raw = localStorage.getItem('otica_deactivated_lps');
+        if (raw) {
+            const deact = JSON.parse(raw);
+            const checkKeys = [path, '/' + path];
+            if (themeId) checkKeys.push(themeId, '/' + themeId);
+            if (lpId) checkKeys.push(lpId, '/' + lpId);
+            if (slugId) checkKeys.push(slugId, '/' + slugId);
+
+            for (const k of checkKeys) {
+                if (Array.isArray(deact) && deact.includes(k)) return false;
+                if (typeof deact === 'object' && deact !== null && deact[k]) return false;
             }
         }
 
         // 3. Checa Supabase se houver registro de offline para este slug
-        if (supabaseClient) {
+        if (supabaseClient && path && path !== 'visaosimples/index.html' && path !== 'visaosimples' && path !== '194') {
             const { data } = await supabaseClient
                 .from('forlife_config')
                 .select('id')

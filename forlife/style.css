@@ -2492,14 +2492,14 @@ body {
 
 .hero-commercial-grid {
     display: grid;
-    grid-template-columns: 1.18fr 0.82fr;
-    gap: 20px;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 12px;
     align-items: center;
     padding-bottom: 24px;
     position: relative;
 }
 
-/* Coluna 1: Informações e Conversão (Elevada ~2cm no Desktop) */
+/* Coluna 1: Informações e Conversão (Elevada ~2cm no Desktop com Envolvimento Macro) */
 .hero-content-col {
     display: flex;
     flex-direction: column;
@@ -2507,6 +2507,7 @@ body {
     position: relative;
     z-index: 4;
     margin-top: -70px;
+    margin-right: -30px;
 }
 
 .hero-top-badge {
@@ -2540,6 +2541,17 @@ body {
     margin: 0 0 4px;
     font-family: 'Outfit', sans-serif;
     letter-spacing: -0.5px;
+}
+
+/* Frase de Apoio Explicativa do Hero */
+.hero-supporting-text {
+    font-size: clamp(14px, 1.35vw, 17px);
+    line-height: 1.5;
+    color: #E2E8F0;
+    margin: 4px 0 14px;
+    font-weight: 400;
+    max-width: 600px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 }
 
 /* Preço com Parcelamento em Evidência Monumental e Total Pequeno ao Lado Direito na Base */
@@ -2615,7 +2627,7 @@ body {
     display: none !important;
 }
 
-/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro (Quase toda a vertical) */
+/* Coluna 2: Foto de Estúdio Integrada & Efeitos Macro (Até 88vh da vertical com Envolvimento) */
 .hero-model-col {
     position: relative;
     display: flex;
@@ -2623,14 +2635,14 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 2;
-    margin-left: -35px;
+    margin-left: -20px;
     width: 100%;
 }
 
 .hero-model-viewport {
     position: relative;
     width: 100%;
-    max-width: 720px;
+    max-width: 780px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2648,8 +2660,8 @@ body {
 
 .hero-model-img {
     width: 100%;
-    max-width: 700px;
-    max-height: 82vh;
+    max-width: 760px;
+    max-height: 88vh;
     height: auto;
     display: block;
     object-fit: contain;
@@ -2913,6 +2925,7 @@ body {
     .hero-content-col {
         align-items: center;
         margin-top: 0;
+        margin-right: 0;
     }
 
     .hero-installment-highlight {
