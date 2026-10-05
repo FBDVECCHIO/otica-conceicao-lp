@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Óculos Completo Visão Simples (Miopia &amp; Astigmatismo) | Ópticas Conceição</title>
+    <title>Multifocal Digital Di Capri + Armação | Ópticas Conceição</title>
     
     <!-- Meta SEO & Open Graph -->
-    <meta name="description" id="meta-description" content="Combo Óculos Completo: Armação de Grau + Lentes Visão Simples por apenas R$ 194,00 ou 6x de R$ 32,33 sem juros nas Ópticas Conceição. 78 anos de tradição em Campinas.">
-    <meta property="og:title" id="og-title" content="Óculos Completo Visão Simples | Ópticas Conceição">
-    <meta property="og:description" id="og-description" content="Óculos completo por apenas R$ 194,00 à vista ou 6x de R$ 32,33. Resgate seu cupom exclusivo!">
+    <meta name="description" content="Combo Óculos Completo: Armação + Lentes Multifocais Digitais HD por apenas R$ 297,00 ou 10x de R$ 29,70 sem juros nas Ópticas Conceição. 78 anos de tradição em Campinas.">
+    <meta property="og:title" content="Combo ForLife | Ópticas Conceição - Armação + Lentes Multifocais HD">
+    <meta property="og:description" content="Óculos completo por apenas R$ 297,00 à vista ou 10x de R$ 29,70. Resgate seu cupom exclusivo!">
     <meta property="og:type" content="website">
 
     <!-- Meta Pixel Code -->
@@ -35,104 +35,343 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Supabase JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Estilos Customizados Visão Simples -->
-    <link rel="stylesheet" href="/visaosimples/style.css?v=20260928a">
+    <!-- Estilos Customizados ForLife (Navy, Cinza e Branco) -->
+    <link rel="stylesheet" href="/forlife/style.css?v=20260923d">
 </head>
 <body>
 
     <!-- CABEÇALHO (Header) -->
     <header class="header-forlife">
         <div class="container header-container">
-            <a href="/visaosimples" class="header-logo-link" title="Ópticas Conceição - Desde 1948">
+            <a href="/forlife" class="header-logo-link" title="Ópticas Conceição - Desde 1948">
                 <img src="/assets/images/logo_branco_clean.png?v=20260905h" alt="Ópticas Conceição Logo">
             </a>
-            <span class="header-promo-title">Lote promocional exclusivo!</span>
+            <span class="header-promo-title">Lote promocional!</span>
         </div>
     </header>
 
-    <!-- BANNER 1: PREÇO & OFERTA PRINCIPAL (Fundo Navy Blue) -->
-    <section class="banner-combo" id="combo">
-        <div class="container">
-            <div class="text-center">
-                <span class="badge-modality" id="hero-modality-badge">
-                    <i class="fas fa-eye"></i> Lentes Prontas (Estoque)
-                </span>
-                <h1 class="section-title" id="hero-title">
-                    Óculos Completo Visão Simples<br class="mobile-break"> + Armação
-                </h1>
-                <p class="section-subtitle" id="hero-subtitle" style="color: rgba(255,255,255,0.9);">
-                    Nitidez absoluta para Miopia, Astigmatismo, Hipermetropia ou Óculos de Leitura
-                </p>
-            </div>
-
-            <!-- Grid de Especificação de Marcas -->
-            <div class="brand-spec-grid" id="brand-spec-container">
-                <div class="brand-spec-card">
-                    <div class="brand-spec-icon"><i class="fas fa-glasses"></i></div>
-                    <div class="brand-spec-info">
-                        <span class="brand-spec-label">Armação Inclusa</span>
-                        <span class="brand-spec-value" id="spec-frame-brand">Coleção Conceição</span>
-                    </div>
-                </div>
-                <div class="brand-spec-card">
-                    <div class="brand-spec-icon"><i class="fas fa-bullseye"></i></div>
-                    <div class="brand-spec-info">
-                        <span class="brand-spec-label">Tecnologia em Lentes</span>
-                        <span class="brand-spec-value" id="spec-lens-brand">Lentes Monofocais HD</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card Destaque do Combo -->
-            <div class="combo-card">
-                <div class="combo-grid">
-                    <div class="combo-info">
-                        <h3 id="combo-card-title">Lentes Visão Simples + Armação</h3>
-                        <div class="combo-card-badge" id="combo-offer-type-badge">Combo Completo</div>
-                        <ul class="combo-features" id="combo-features-list">
-                            <li><i class="fas fa-check-circle"></i> <span id="feat-frame-text">Armação de receituário inclusa à sua escolha</span></li>
-                            <li><i class="fas fa-check-circle"></i> <span id="feat-lens-text">Lentes de Visão Simples calibradas para seu grau</span></li>
-                            <li><i class="fas fa-check-circle"></i> Foco perfeito para Miopia, Astigmatismo ou Perto</li>
-                            <li><i class="fas fa-check-circle"></i> Laboratório próprio de montagem e entrega expressa</li>
-                        </ul>
+    <!-- BANNER 1: PREÇO & OFERTA PRINCIPAL COM MODELO INTEGRADO (Fundo Navy Blue) -->
+    <section class="banner-combo hero-commercial-section" id="combo">
+        <div class="container hero-commercial-container">
+            <div class="hero-commercial-grid">
+                
+                <!-- Coluna 1: Informações Comerciais, Parcelamento em Evidência e Benefícios -->
+                <div class="hero-content-col">
+                    <!-- Badge de Topo -->
+                    <div class="hero-top-badge" id="hero-commercial-badge">
+                        <i class="fas fa-map-marker-alt"></i> OFERTA ESPECIAL | CAMPINAS
                     </div>
 
-                    <div class="combo-pricing-box">
-                        <div class="pricing-title">Valor Especial do Combo</div>
+                    <!-- Título Dinâmico da Oferta -->
+                    <h1 class="hero-commercial-title" id="forlife-hero-title">
+                        Óculos Multifocal Completo por
+                    </h1>
 
-                        <!-- Valor Principal em Destaque: Parcelado -->
-                        <div class="pricing-installment-primary">
-                            <span class="pricing-inst-prefix"><span id="combo-inst-count">6</span>x de</span>
-                            <span class="pricing-inst-val-main" id="combo-inst-val">R$ 32,33</span>
-                        </div>
-                        <div class="pricing-installment-tag-box">
-                            <span class="pricing-installment-tag"><i class="fas fa-check"></i> Sem juros no cartão</span>
-                        </div>
+                    <!-- Frase de Apoio Explicativa do Hero (Banner 1) -->
+                    <p class="hero-supporting-text" id="forlife-hero-supporting" style="display: none;"></p>
 
-                        <!-- Valor Menor Secundário: Total à vista -->
-                        <div class="pricing-cash-secondary">
-                            ou <span id="combo-cash-price">R$ 194,00</span> à vista
+                    <!-- Preço com Parcelamento em Evidência Monumental e Total ao Lado Direito na Base -->
+                    <div class="hero-installment-highlight">
+                        <div class="hero-installment-main-row">
+                            <span class="hero-inst-prefix-large"><span id="combo-inst-count">10</span>x de</span>
+                            <span class="hero-inst-val-cyan" id="combo-inst-val">R$ 29,70</span>
+                            <span class="hero-inst-cash-sub">ou <strong id="combo-cash-price">R$ 297,00</strong> à vista</span>
                         </div>
+                    </div>
+
+                    <!-- Subtítulo e Especificação de Marcas -->
+                    <p class="hero-commercial-subtitle" id="forlife-hero-subtitle">
+                        Com armação <strong id="forlife-frame-brand" class="dyn-frame-brand">Di Capri</strong> + Lentes <strong id="forlife-lens-brand" class="dyn-lens-brand">Multifocais Digitais</strong>
+                    </p>
+
+                    <!-- Botão CTA Verde Esmeralda & Escassez de Cupons Abaixo da Estrutura de Texto -->
+                    <div class="hero-cta-wrapper">
+                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20garantir%20o%20Combo%20promocional%20das%20%C3%93pticas%20Concei%C3%A7%C3%A3o!" 
+                           target="_blank" rel="noopener noreferrer" 
+                           class="hero-cta-button-emerald" 
+                           id="forlife-hero-whatsapp" 
+                           data-track-element="CTA Comercial WhatsApp Banner 1">
+                            <div class="hero-cta-content">
+                                <span class="hero-cta-title">QUERO MEU ÓCULOS COMPLETO <i class="fas fa-arrow-right"></i></span>
+                                <span class="hero-cta-sub"><i class="fab fa-whatsapp"></i> Fale direto no WhatsApp &bull; Atendimento Imediato</span>
+                            </div>
+                        </a>
                         
-                        <!-- CTA Banner 1 WhatsApp 1-Clique em Destaque -->
-                        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20gostaria%20de%20garantir%20o%20cupom%20de%20R$%20194,00" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-highlight" id="btn-hero-whatsapp" data-track-element="CTA WhatsApp 1-Clique Visão Simples">
-                            <i class="fab fa-whatsapp"></i> Cupom no WhatsApp em 1 Clique
-                        </a>
-
-                        <!-- CTA Secundário no Site -->
-                        <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Oferta Combo Visão Simples" style="width: 100%; margin-top: 10px; background: rgba(0, 44, 91, 0.08); color: var(--navy-primary); box-shadow: none; border: 1.5px solid var(--navy-primary);">
-                            <i class="fas fa-ticket-alt"></i> Ou Gerar Cupom no Formulário
-                        </a>
-                        <div style="margin-top: 12px;">
-                            <div class="voucher-scarcity-badge on-light">
+                        <div class="hero-sub-actions">
+                            <a href="#voucher" class="hero-btn-voucher-link">
+                                <i class="fas fa-ticket-alt"></i> Prefere cupom no formulário? Clique aqui
+                            </a>
+                            <div class="voucher-scarcity-badge on-dark">
                                 <span class="scarcity-pulse-dot"></span>
-                                <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                                <span><strong class="scarcity-number">18</strong> Cupons Restantes</span>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Coluna 2: Foto do Modelo de Estúdio Macro Integrada Ocupando Toda a Vertical -->
+                <div class="hero-model-col">
+                    <div class="hero-model-viewport">
+                        <!-- Imagem do Modelo Macro em PNG -->
+                        <div class="hero-model-image-wrap">
+                            <img src="/assets/images/hero/Jovem_senhora.png" 
+                                 alt="Modelo usando óculos Ópticas Conceição" 
+                                 id="hero-model-img" 
+                                 class="hero-model-img" 
+                                 loading="eager">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Trust Bar Institucional (Abaixo do Hero) -->
+        <div class="hero-trust-bar">
+            <div class="container hero-trust-container">
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fas fa-landmark"></i></div>
+                    <div class="trust-info">
+                        <strong>78 anos em Campinas</strong>
+                        <span>Tradição óptica desde 1948</span>
+                    </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fas fa-users"></i></div>
+                    <div class="trust-info">
+                        <strong>+100 mil clientes</strong>
+                        <span>Atendidos com excelência</span>
+                    </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fas fa-store-alt"></i></div>
+                    <div class="trust-info">
+                        <strong>Lojas físicas &amp; Lab Próprio</strong>
+                        <span>Atendimento presencial em Campinas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Elementos ocultos para compatibilidade com rotinas legadas -->
+        <div style="display:none;" aria-hidden="true" id="legacy-forlife-compat">
+            <span id="forlife-combo-title">Lentes Multifocais Digitais</span>
+            <span id="forlife-offer-badge">Combo Especial</span>
+            <span id="forlife-feat-frame">Armação de grau inclusa</span>
+            <span id="forlife-feat-lens">Lentes Multifocais Digitais</span>
+            <div id="brand-spec-container"></div>
+        </div>
+    </section>
+
+    <!-- BANNER DE ARMAÇÕES: CARROSSEL VARIADO DE ESTILOS (MASCULINO, FEMININO & CORES) -->
+    <section class="banner-armacoes" id="armacoes">
+        <div class="container">
+            <div class="text-center armacoes-header">
+                <span class="section-tag navy">
+                    <i class="fas fa-glasses"></i> Catálogo Exclusivo
+                </span>
+                <h2 class="section-title">Você tem seu estilo, nós temos todos!</h2>
+                <p class="section-subtitle text-muted">
+                    São mais de 150 modelos a sua disposição, variando entre modelos e cores!
+                </p>
+            </div>
+
+            <!-- Container do Carrossel com Setas e Track -->
+            <div class="frames-carousel-wrapper">
+                <button type="button" class="frames-nav-btn frames-nav-prev" id="frames-btn-prev" aria-label="Modelo anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div class="frames-track" id="frames-track">
+                    <!-- Card 1: Gatinho Rose -->
+                    <div class="frame-card" data-category="feminino" data-frame-id="frame-1">
+                        <div class="frame-card-badge feminino"><i class="fas fa-venus"></i> Feminino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_gatinho_rose.jpg" alt="Armação Feminina Gatinho Rose Gold" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Gatinho Cat-Eye</span>
+                            <h3 class="frame-card-title">Gatinho Rose Elegance</h3>
+                            <p class="frame-card-desc">Design italiano em metal rose gold com ponte e sobrancelha vinho escovado.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #B76E79;" title="Rose Gold"></span>
+                                    <span class="color-dot" style="background: #111111;" title="Preto Nobre"></span>
+                                    <span class="color-dot" style="background: #5B0E2D;" title="Bordô Vinho"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Retangular Black -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-2">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_retangular_black.jpg" alt="Armação Masculina Retangular Preto Fosco" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Retangular Clássico</span>
+                            <h3 class="frame-card-title">Retangular Executive Black</h3>
+                            <p class="frame-card-desc">Acetato leve e fosco com dobradiças reforçadas e hastes ergonômicas.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #1A1A1A;" title="Preto Fosco"></span>
+                                    <span class="color-dot" style="background: #002C5B;" title="Navy Blue"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Grafite"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Tartaruga Retrô -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-3">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_tartaruga_retro.jpg" alt="Armação Unissex Tartaruga Retrô" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Redondo Vintage</span>
+                            <h3 class="frame-card-title">Tartaruga Retrô Havana</h3>
+                            <p class="frame-card-desc">Aro arredondado atemporal em acetato demi amber com ponte em fechadura.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #8A4B1A;" title="Havana Mel"></span>
+                                    <span class="color-dot" style="background: #4A2511;" title="Tartaruga Escuro"></span>
+                                    <span class="color-dot" style="background: #2D3748;" title="Fumê"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Cristal Transparente -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-4">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_crystal_modern.jpg" alt="Armação Unissex Transparente Cristal" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Transparente Crystal</span>
+                            <h3 class="frame-card-title">Crystal Urban Minimal</h3>
+                            <p class="frame-card-desc">Acetato translúcido contemporâneo com alma metálica interna esculpida.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #E2E8F0; border: 1px solid #CBD5E1;" title="Cristal Puro"></span>
+                                    <span class="color-dot" style="background: #F5EBE6;" title="Champagne Suave"></span>
+                                    <span class="color-dot" style="background: #718096;" title="Cinza Translúcido"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Aviador Gold -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-5">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_aviador_gold.jpg" alt="Armação Masculina Aviador Dourado" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Aviador Clássico</span>
+                            <h3 class="frame-card-title">Aviador Gold Titanium</h3>
+                            <p class="frame-card-desc">Ponte dupla em liga metálica nobre ultra-leve com plaquetas anatômicas de silicone.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #D4AF37;" title="Dourado Polido"></span>
+                                    <span class="color-dot" style="background: #C0C0C0;" title="Prata Nobre"></span>
+                                    <span class="color-dot" style="background: #2D3748;" title="Chumbo Fosco"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Hexagonal Blush -->
+                    <div class="frame-card" data-category="feminino" data-frame-id="frame-6">
+                        <div class="frame-card-badge feminino"><i class="fas fa-venus"></i> Feminino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_hexagonal_blush.jpg" alt="Armação Feminina Hexagonal Blush" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Geométrico Fashion</span>
+                            <h3 class="frame-card-title">Hexagonal Blush Chic</h3>
+                            <p class="frame-card-desc">Formato hexagonal moderno e delicado com acabamento em tons nude e rose gold.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #F4C2C2;" title="Blush Nude"></span>
+                                    <span class="color-dot" style="background: #B76E79;" title="Rose Gold"></span>
+                                    <span class="color-dot" style="background: #111111;" title="Dourado & Preto"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Clubmaster Vintage -->
+                    <div class="frame-card" data-category="unissex" data-frame-id="frame-7">
+                        <div class="frame-card-badge unissex"><i class="fas fa-genderless"></i> Unissex</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_clubmaster_vintage.jpg" alt="Armação Unissex Clubmaster Vintage" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Meio-Aro Browline</span>
+                            <h3 class="frame-card-title">Clubmaster Retro Prime</h3>
+                            <p class="frame-card-desc">Combinação icônica de sobrancelha em acetato preto brilhante e aro inferior dourado.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #111111;" title="Preto & Dourado"></span>
+                                    <span class="color-dot" style="background: #8A4B1A;" title="Tartaruga & Ouro"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Grafite & Prata"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Sport Flex -->
+                    <div class="frame-card" data-category="masculino" data-frame-id="frame-8">
+                        <div class="frame-card-badge masculino"><i class="fas fa-mars"></i> Masculino</div>
+                        <div class="frame-card-media">
+                            <img src="/assets/images/armacoes/frame_sport_flex.jpg" alt="Armação Masculina Esportiva Flex" class="frame-card-img" loading="lazy">
+                        </div>
+                        <div class="frame-card-body">
+                            <span class="frame-style-tag">Esportivo Tech Flex</span>
+                            <h3 class="frame-card-title">Esportivo Tech Grip</h3>
+                            <p class="frame-card-desc">Polímero ultra-flexível resistente a impactos com detalhes em borracha antiderrapante.</p>
+                            <div class="frame-colors-box">
+                                <span class="frame-colors-label">Cores disponíveis:</span>
+                                <div class="frame-color-dots">
+                                    <span class="color-dot" style="background: #1A1A1A;" title="Preto & Vermelho"></span>
+                                    <span class="color-dot" style="background: #002C5B;" title="Azul Royal"></span>
+                                    <span class="color-dot" style="background: #4A5568;" title="Cinza Chumbo"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="frames-nav-btn frames-nav-next" id="frames-btn-next" aria-label="Próximo modelo">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Dots de Paginação -->
+            <div class="frames-dots-container" id="frames-dots"></div>
+
+            <!-- Rodapé da Seção com Micro-CTA e Informação de Loja -->
+            <div class="frames-footer-banner">
+                <div class="frames-footer-content">
+                    <div class="frames-footer-text">
+                        <strong>Não encontrou o que procurava aqui?</strong>
+                        <span>Temos mais de 150 armações nas nossas 3 lojas em Campinas com consultoria de visagismo gratuita!</span>
+                    </div>
+                    <a href="#voucher" class="btn-frames-footer">
+                        <i class="fas fa-ticket-alt"></i> Resgatar Meu Cupom e Ver Todas
+                    </a>
                 </div>
             </div>
         </div>
@@ -145,14 +384,14 @@
                 <span class="section-tag navy">
                     <i class="fas fa-microchip"></i> Upgrades Opcionais
                 </span>
-                <h2 class="section-title">Tecnologias Extras para Lentes</h2>
+                <h2 class="section-title">Tecnologias Extras</h2>
                 <p class="section-subtitle text-muted">
-                    Potencialize suas lentes de visão simples com proteção avançada
+                    Potencialize suas lentes!
                 </p>
             </div>
 
             <!-- Grid de Cards Selecionáveis -->
-            <div class="tech-grid" id="tech-grid-container">
+            <div class="tech-grid">
                 <!-- Card 1: Antirreflexo -->
                 <div class="tech-card" data-addon="antirreflexo" id="card-addon-antirreflexo">
                     <div class="tech-header">
@@ -186,10 +425,12 @@
                         </div>
                     </div>
 
+                    <!-- Frase de Destaque Centralizada -->
                     <div class="tech-phrase-box">
-                        <p class="tech-phrase-text">Transparência total sem reflexos de luz.</p>
+                        <p class="tech-phrase-text">Estética e proteção superior.</p>
                     </div>
 
+                    <!-- Accordion Spring: Conhecer o benefício -->
                     <div class="tech-accordion">
                         <button type="button" class="tech-accordion-btn" data-track-element="Aba Antirreflexo" aria-expanded="false">
                             <span>Conhecer o benefício</span>
@@ -197,14 +438,14 @@
                         </button>
                         <div class="tech-accordion-content">
                             <div class="tech-accordion-body">
-                                <p>Elimina reflexos indesejados de lâmpadas, telas e faróis à noite. Garante fotos sem reflexo branco nos olhos e mais conforto em ambientes iluminados.</p>
+                                <p>O tratamento antirreflexo elimina os reflexos indesejados nas lentes causados por faróis e luzes artificiais. Garante até 99% de transparência para uma visão mais nítida e segura ao dirigir à noite, além de fotos sem reflexos brancos nos olhos.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="tech-price-footer">
                         <span class="tech-price-label">Adicional:</span>
-                        <span class="tech-price-val" id="price-val-antirreflexo">+ R$ 60,00</span>
+                        <span class="tech-price-val" id="price-val-antirreflexo">+ R$ 100,00</span>
                     </div>
                 </div>
 
@@ -241,10 +482,12 @@
                         </div>
                     </div>
 
+                    <!-- Frase de Destaque Centralizada -->
                     <div class="tech-phrase-box">
-                        <p class="tech-phrase-text">Proteção total para celular e computador.</p>
+                        <p class="tech-phrase-text">Olhos mais relaxados.</p>
                     </div>
 
+                    <!-- Accordion Spring: Conhecer o benefício -->
                     <div class="tech-accordion">
                         <button type="button" class="tech-accordion-btn" data-track-element="Aba Blue Cut" aria-expanded="false">
                             <span>Conhecer o benefício</span>
@@ -252,14 +495,14 @@
                         </button>
                         <div class="tech-accordion-content">
                             <div class="tech-accordion-body">
-                                <p>Bloqueia a luz azul nociva emitida por computadores e celulares, reduzindo dor de cabeça, ardência nos olhos e melhorando a qualidade do sono.</p>
+                                <p>A tecnologia Bluecut bloqueia a luz azul nociva emitida por computadores, celulares e luzes LED. Reduz a fadiga ocular, ardência nos olhos e dores de cabeça, além de melhorar a qualidade do sono após longas horas de trabalho digital.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="tech-price-footer">
                         <span class="tech-price-label">Adicional:</span>
-                        <span class="tech-price-val" id="price-val-bluecut">+ R$ 70,00</span>
+                        <span class="tech-price-val" id="price-val-bluecut">+ R$ 100,00</span>
                     </div>
                 </div>
 
@@ -296,10 +539,12 @@
                         </div>
                     </div>
 
+                    <!-- Frase de Destaque Centralizada -->
                     <div class="tech-phrase-box">
-                        <p class="tech-phrase-text">Óculos de grau e solar em uma só lente.</p>
+                        <p class="tech-phrase-text">Praticidade e conforto extra.</p>
                     </div>
 
+                    <!-- Accordion Spring: Conhecer o benefício -->
                     <div class="tech-accordion">
                         <button type="button" class="tech-accordion-btn" data-track-element="Aba Fotossensível" aria-expanded="false">
                             <span>Conhecer o benefício</span>
@@ -307,39 +552,39 @@
                         </button>
                         <div class="tech-accordion-content">
                             <div class="tech-accordion-body">
-                                <p>Lentes que escurecem automaticamente com a luz solar e voltam a ficar 100% transparentes em ambientes internos. Conforto e proteção UV o dia todo.</p>
+                                <p>Lentes inteligentes que se adaptam à luz: permanecem 100% transparentes e cristalinas em ambientes internos e escurecem automaticamente sob o sol como óculos solares. Praticidade 2 em 1: grau e proteção UV sem trocar de armação.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="tech-price-footer">
                         <span class="tech-price-label">Adicional:</span>
-                        <span class="tech-price-val" id="price-val-fotossensivel">+ R$ 120,00</span>
+                        <span class="tech-price-val" id="price-val-fotossensivel">+ R$ 150,00</span>
                     </div>
                 </div>
             </div>
 
-            <!-- CTA Banner 2: Gerar Voucher -->
+            <!-- CTA Banner 3: Gerar Voucher -->
             <div class="voucher-cta-group">
                 <a href="#voucher" class="btn-voucher-action" data-track-element="CTA Seção Tecnologias">
-                    <i class="fas fa-ticket-alt"></i> Gerar meu Cupom com Esta Oferta
+                    <i class="fas fa-ticket-alt"></i> Gerar meu Cupom + Tecnologia
                 </a>
                 <div class="voucher-scarcity-badge on-light">
                     <span class="scarcity-pulse-dot"></span>
-                    <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                    <span><strong class="scarcity-number">18</strong> Cupons Disponíveis</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BANNER 3: RESGATE DE CUPOM & FORMULÁRIO (Fundo Navy Blue) -->
+        <!-- BANNER 3: RESGATE DE CUPOM & RESUMO (Fundo Navy Blue) -->
     <section class="banner-voucher" id="voucher">
         <div class="container">
             <div class="text-center">
                 <span class="section-tag white">
-                    <i class="fas fa-ticket-alt"></i> Resgate Oficial
+                    <i class="fas fa-ticket-alt"></i> Resgate Exclusivo
                 </span>
-                <h2 class="section-title">Garanta o Seu Desconto com Cupom</h2>
+                <h2 class="section-title">Garanta o Seu Combo com Cupom</h2>
             </div>
 
             <div class="voucher-layout">
@@ -348,8 +593,8 @@
                     <h3 class="summary-title"><i class="fas fa-receipt"></i> Resumo do seu Pedido</h3>
                     
                     <div class="summary-line">
-                        <span id="summary-combo-title">Combo Visão Simples (Armação + Lentes)</span>
-                        <span id="summary-combo-price">R$ 194,00</span>
+                        <span>Combo Especial (Multifocal Di Capri + Armação)</span>
+                        <span id="summary-combo-price">R$ 297,00</span>
                     </div>
 
                     <div style="margin-top: 14px; font-size: 13px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.75); letter-spacing: 0.5px;">
@@ -362,8 +607,8 @@
 
                     <div class="summary-total-box">
                         <div class="summary-total-label">Total do Combo:</div>
-                        <div class="summary-total-price" id="summary-total-price-val">R$ 194,00</div>
-                        <div class="summary-total-installments" id="summary-total-inst-val">ou até 6x de R$ 32,33 sem juros</div>
+                        <div class="summary-total-price" id="summary-total-price-val">R$ 297,00</div>
+                        <div class="summary-total-installments" id="summary-total-inst-val">ou até 10x de R$ 29,70 sem juros</div>
                     </div>
                 </div>
 
@@ -398,22 +643,24 @@
                                 <label for="client-store">Escolha a loja (Opcional):</label>
                                 <select id="client-store" class="form-input" data-track-element="Seletor Loja de Retirada" style="cursor: pointer; background-color: #FFFFFF; font-weight: 600;">
                                     <option value="" selected>Selecione a loja onde quer ir (ou combine no WhatsApp)...</option>
-                                    <!-- Preenchido dinamicamente via app.js -->
+                                    <!-- Preenchido dinamicamente via app.js com lojas cadastradas no ADM -->
                                 </select>
                             </div>
 
-                            <!-- CHECKBOXES DE RECEITA MÉDICA -->
+                            <!-- CHECKBOXES DE RECEITA MÉDICA (OPÇÕES EXCLUSIVAS) -->
                             <div class="form-group">
-                                <label style="margin-bottom: 8px;">Sua receita médica (Opcional):</label>
+                                <label style="margin-bottom: 8px;">Sua receita (Opcional):</label>
                                 <div class="recipe-selection-box">
+                                    <!-- Opção 1: Possuo receita -->
                                     <label class="recipe-option-card" id="card-recipe-have">
                                         <input type="radio" name="recipe_status" id="recipe-option-have" value="have">
                                         <span class="recipe-option-text">Possuo receita</span>
                                     </label>
 
+                                    <!-- Upload / Foto revelado se marcado -->
                                     <div id="prescription-upload-area">
                                         <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary); margin-bottom: 6px;">
-                                            Anexar imagem ou foto da receita (Opcional):
+                                            Tirar foto ou anexar imagem da receita (Opcional):
                                         </div>
                                         <input type="file" id="prescription-file" accept="image/*,application/pdf" capture="environment" class="form-input" style="padding: 8px; cursor: pointer;">
                                         <div id="prescription-preview-box" style="margin-top: 8px; display: none; align-items: center; gap: 8px;">
@@ -422,9 +669,10 @@
                                         </div>
                                     </div>
 
+                                    <!-- Opção 2: Preciso atualizar -->
                                     <label class="recipe-option-card" id="card-recipe-need">
                                         <input type="radio" name="recipe_status" id="recipe-option-need" value="need">
-                                        <span class="recipe-option-text">Preciso atualizar minha receita</span>
+                                        <span class="recipe-option-text">Preciso atualizar</span>
                                     </label>
                                 </div>
                             </div>
@@ -435,17 +683,17 @@
                         </form>
                     </div>
 
-                    <!-- Box de Sucesso do Voucher -->
+                    <!-- Box de Sucesso do Voucher (Aparece após o envio) -->
                     <div class="voucher-success-box" id="voucher-success-box">
                         <div style="font-size: 50px; color: var(--navy-primary); margin-bottom: 12px;">
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <h3 style="font-size: 24px; color: var(--navy-primary); margin-bottom: 8px;">Parabéns, <span id="voucher-user-name"></span>!</h3>
                         <p style="font-size: 14px; color: var(--text-muted);">
-                            Seu cupom exclusivo de <strong>Visão Simples</strong> foi gerado e registrado com sucesso!
+                            Seu cupom exclusivo do <strong>Combo ForLife</strong> foi gerado e registrado com sucesso!
                         </p>
 
-                        <div class="voucher-code-badge" id="voucher-code-display">VS194-XXXX</div>
+                        <div class="voucher-code-badge" id="voucher-code-display">FORLIFE-XXXX</div>
                         <div>
                             <span class="voucher-validity-tag">
                                 <i class="fas fa-clock"></i> Cupom válido por 7 dias!
@@ -465,15 +713,16 @@
         </div>
     </section>
 
-    <!-- BANNER 4: HISTÓRIA & AUTORIDADE - 78 ANOS (Fundo Branco) -->
+    <!-- BANNER 4: HISTÓRIA DA CONCEIÇÃO - 78 ANOS (Fundo Branco) -->
     <section class="banner-autoridade light-mode" id="autoridade">
         <div class="container">
             <div class="autoridade-content">
                 <span class="section-tag navy">
-                    <i class="fas fa-award"></i> Tradição &amp; Confiança Desde 1948
+                    <i class="fas fa-award"></i> Tradição & Confiança Desde 1948
                 </span>
                 <h2 class="section-title">Há <span>78 anos</span> cuidando da saúde visual de Campinas e região</h2>
 
+                <!-- Cards com Estatísticas de Autoridade -->
                 <div class="autoridade-stats-grid">
                     <div class="stat-box">
                         <div class="stat-number">78 Anos</div>
@@ -481,7 +730,7 @@
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">+100 Mil</div>
-                        <div class="stat-label">Clientes atendidos com alta satisfação</div>
+                        <div class="stat-label">Clientes atendidos com adaptação garantida</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">100%</div>
@@ -489,97 +738,161 @@
                     </div>
                 </div>
 
+                <!-- CTA Banner 3: Gerar Voucher + Cupons Disponíveis -->
                 <div class="voucher-cta-group">
                     <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA História Conceição">
                         <i class="fas fa-ticket-alt"></i> Gerar meu Cupom
                     </a>
                     <div class="voucher-scarcity-badge on-light">
                         <span class="scarcity-pulse-dot"></span>
-                        <span><strong class="scarcity-number">15</strong> Cupons Disponíveis</span>
+                        <span><strong class="scarcity-number">18</strong> Cupons Disponíveis</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BANNER 5: TIRA-DÚVIDAS / FAQ DE VISÃO SIMPLES (Fundo Navy Blue) -->
+
+
+    <!-- BANNER 5: TIRA-DÚVIDAS / FAQ (Fundo Navy Blue) -->
     <section class="banner-faq" id="faq">
         <div class="container">
             <div class="text-center">
                 <span class="section-tag white">
                     <i class="fas fa-question-circle"></i> Perguntas Frequentes
                 </span>
-                <h2 class="section-title">Tira-Dúvidas Sobre o Combo Visão Simples</h2>
+                <h2 class="section-title">Tira-Dúvidas Sobre o Combo ForLife</h2>
                 <p class="section-subtitle" style="color: rgba(255,255,255,0.88);">
-                    Respostas diretas para as dúvidas mais comuns sobre lentes de visão simples:
+                    Confira as respostas diretas para as dúvidas mais comuns dos nossos clientes:
                 </p>
             </div>
 
             <div class="faq-list">
+                <!-- Tópico 1 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>1. O que está incluso no Combo Visão Simples de R$ 194,00?</h4>
+                        <h4>1. O que está incluso no Combo ForLife por R$ 297,00?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes de Visão Simples calibradas para seu grau (miopia, astigmatismo, hipermetropia ou leitura).
+                        O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes Multifocais Digitais HD de alta definição com amplo campo visual.
                     </div>
                 </div>
 
+                <!-- Tópico 2 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>2. Para quais tipos de grau esse combo é indicado?</h4>
+                        <h4>2. Como funciona a adaptação com as Lentes Multifocais HD?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        É indicado para graus de visão simples padrão (miopia até -4,00, hipermetropia até +4,00 e astigmatismo até -2,00). Para graus mais elevados ou lentes ultrafinas personalizadas, nossa equipe no laboratório oferece opções surfaçadas com condições especiais de fábrica.
+                        Nossas lentes multifocais digitais são produzidas com tecnologia de alta definição (HD) que reduz as distorções laterais, facilitando a transição entre perto, meia-distância e longe. Contamos com 100% de garantia de adaptação e suporte técnico da nossa equipe.
                     </div>
                 </div>
 
+                <!-- Tópico 3 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>3. Posso fazer apenas as lentes se já tiver minha armação?</h4>
+                        <h4>3. E se eu não tiver a receita em mãos ou precisar atualizar?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        Sim! Nossos consultores avaliam a sua armação atual e realizam a montagem precisa no laboratório próprio da Conceição com garantia de ajuste perfeito.
+                        Sem problemas! Basta selecionar a opção "Preciso atualizar minha receita" ao gerar o seu cupom. Nossa equipe prestará toda a consultoria para indicar clínicas parceiras de confiança em Campinas para realizar seu exame de vista.
                     </div>
                 </div>
 
+                <!-- Tópico 4 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>4. E se eu não tiver receita médica em mãos?</h4>
+                        <h4>4. Posso parcelar o valor do combo e das tecnologias adicionais?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        Basta selecionar "Preciso atualizar minha receita" ao gerar o cupom. Nossa equipe indicará clínicas parceiras de confiança e médicos oftalmologistas próximos em Campinas para você realizar seu exame com comodidade.
+                        Sim! Tanto o combo base de R$ 297,00 quanto as tecnologias adicionais podem ser parcelados em até 10x sem juros em todos os cartões de crédito aceitos na loja.
                     </div>
                 </div>
 
+                <!-- Tópico 5 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>5. Como funciona o parcelamento de R$ 194,00 em até 6x?</h4>
+                        <h4>5. Como faço para escolher a minha armação?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        Você pode parcelar o valor total em até 6x de R$ 32,33 sem juros em qualquer cartão de crédito aceito em nossas lojas físicas.
+                        Você pode visitar nossa loja física no Centro de Campinas para experimentar dezenas de modelos, ou solicitar consultoria personalizada via WhatsApp, onde nossos consultores enviam fotos e vídeos de modelos que combinam com o formato do seu rosto.
                     </div>
                 </div>
 
+                <!-- Tópico 6 -->
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>6. Qual o prazo para meus óculos ficarem prontos?</h4>
+                        <h4>6. Qual a vantagem do tratamento Antirreflexo?</h4>
                         <i class="fas fa-chevron-down faq-icon"></i>
                     </div>
                     <div class="faq-answer">
-                        Como contamos com estoque de lentes e laboratório próprio de montagem computadorizada em Campinas, a maioria dos óculos de visão simples é entregue com extrema agilidade, muitas vezes em poucas horas ou no dia seguinte!
+                        O Antirreflexo elimina o brilho incômodo de lâmpadas e faróis de carros à noite, oferece maior nitidez para leitura e deixa os olhos visíveis e transparentes em fotos e chamadas de vídeo.
                     </div>
+                </div>
+
+                <!-- Tópico 7 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>7. Para que serve o Filtro de Luz Azul (Bluecut)?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Ele filtra a luz azul prejudicial emitida por computadores, celulares e TVs, diminuindo significativamente a fadiga ocular, ardência, dores de cabeça e a insônia após longas horas de tela.
+                    </div>
+                </div>
+
+                <!-- Tópico 8 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>8. As lentes Fotossensíveis substituem os óculos de sol com grau?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sim! Elas são totalmente inteligentes: permanecem 100% claras dentro de casa ou no escritório e escurecem automaticamente ao entrar em contato com os raios solares em áreas externas.
+                    </div>
+                </div>
+
+                <!-- Tópico 9 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>9. Qual o prazo para confeccionar meus óculos?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Graças ao nosso laboratório óptico especializado, os prazos variam de 3 a 7 dias úteis, com rigoroso controle de centragem óptica milimétrica antes da entrega.
+                    </div>
+                </div>
+
+                <!-- Tópico 10 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>10. Onde fica a loja para atendimento presencial?</h4>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Estamos localizados na Rua Barão de Jaguara, 1109 - Centro - Campinas/SP, com estacionamento conveniado próximo e equipe pronta para recepcioná-lo.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA FAQ -->
+            <div class="voucher-cta-group">
+                <a href="#voucher" class="btn-voucher-action btn-white btn-trigger-traditional" data-track-element="CTA Tira-Dúvidas FAQ">
+                    <i class="fas fa-ticket-alt"></i> Gerar meu Cupom Agora
+                </a>
+                <div class="voucher-scarcity-badge on-dark">
+                    <span class="scarcity-pulse-dot"></span>
+                    <span><strong class="scarcity-number">18</strong> Cupons Disponíveis</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BANNER 5: AVALIAÇÕES POSITIVAS - SATISFAÇÃO COMPROVADA (Fundo Branco) -->
+    <!-- BANNER 6: AVALIAÇÕES POSITIVAS (Fundo Branco) -->
     <section class="banner-avaliacoes" id="avaliacoes">
         <div class="container">
             <div class="text-center">
@@ -604,7 +917,7 @@
                             <i class="fas fa-star"></i>
                         </div>
                         <p class="review-text">
-                            "Fiz meus óculos para miopia e astigmatismo na Conceição e a nitidez é perfeita! A entrega foi super rápida e o preço do combo com armação inclusa não tem concorrência em Campinas."
+                            "Eu tinha muito receio de usar multifocal por causa de tontura, mas a adaptação com as Lentes HD das Ópticas Conceição foi imediata! Excelente atendimento e o preço do combo é imbatível."
                         </p>
                     </div>
                     <div class="review-author">
@@ -627,7 +940,7 @@
                             <i class="fas fa-star"></i>
                         </div>
                         <p class="review-text">
-                            "Comprei o combo com o filtro azul BlueCut pois fico o dia todo no computador. Minhas dores de cabeça acabaram e a armação é linda e muito confortável. Recomendo de olhos fechados!"
+                            "Comprei o combo com o filtro azul Bluecut pois fico o dia todo no computador. Minhas dores de cabeça acabaram e a armação é linda e muito confortável. Recomendo de olhos fechados!"
                         </p>
                     </div>
                     <div class="review-author">
@@ -650,7 +963,7 @@
                             <i class="fas fa-star"></i>
                         </div>
                         <p class="review-text">
-                            "Minha família compra na Conceição há mais de 30 anos. Essa campanha superou todas as expectativas em qualidade técnica, precisão do laboratório e economia. Parabéns pelo carinho!"
+                            "Minha família compra na Conceição há mais de 30 anos. Essa campanha ForLife superou todas as expectativas em qualidade técnica, agilidade e economia. Parabéns pelo carinho!"
                         </p>
                     </div>
                     <div class="review-author">
@@ -665,8 +978,8 @@
 
             <!-- CTA Avaliações -->
             <div class="voucher-cta-group">
-                <a href="#voucher" class="btn-voucher-action" data-track-element="CTA Seção Avaliações">
-                    <i class="fas fa-ticket-alt"></i> Quero Meu Cupom de R$ <span class="dyn-voucher-price">194,00</span>
+                <a href="#voucher" class="btn-voucher-action btn-trigger-traditional" data-track-element="CTA Seção Avaliações">
+                    <i class="fas fa-ticket-alt"></i> Quero Meu Cupom de R$ <span class="dyn-voucher-price">297,00</span>
                 </a>
                 <div class="voucher-scarcity-badge on-light">
                     <span class="scarcity-pulse-dot"></span>
@@ -676,7 +989,7 @@
         </div>
     </section>
 
-    <!-- BANNER 6: CONTATOS & COMO CHEGAR - VENHA NOS VISITAR (Fundo Navy Blue) -->
+    <!-- BANNER 7: CONTATOS & COMO CHEGAR (Fundo Navy Blue) -->
     <section class="banner-localizacao" id="contato">
         <div class="container">
             <div class="text-center">
@@ -729,7 +1042,7 @@
                         <div class="contact-details">
                             <h4>Central de Atendimento</h4>
                             <p>
-                                Telefone &amp; WhatsApp: <strong>(19) 97805-6552</strong><br>
+                                Telefone & WhatsApp: <strong>(19) 97805-6552</strong><br>
                                 E-mail: <strong>mkt@opticaconceicao.com.br</strong>
                             </p>
                         </div>
@@ -771,12 +1084,44 @@
 
     <!-- RODAPÉ (Footer) -->
     <footer class="footer-forlife">
-        <div class="container text-center">
-            <p>&copy; 2026 Ópticas Conceição. Desde 1948 cuidando da sua saúde visual em Campinas e região.</p>
+        <div class="container">
+            <p>
+                &copy; 2026 Ópticas Conceição. Todos os direitos reservados. Fotos meramente ilustrativas. Campanha ForLife válida por tempo limitado ou enquanto durarem os estoques dos combos promocionais de lentes e armações.
+            </p>
+            <a href="/forlife/admin" class="footer-admin-link" title="Painel Administrativo" aria-label="Painel Administrativo">
+                <i class="fas fa-cog"></i>
+            </a>
         </div>
     </footer>
 
-    <!-- Scripts da Aplicação -->
-    <script src="/visaosimples/app.js?v=20260928a"></script>
+    <!-- BOTÃO FLUTUANTE DISCRETO PARA SUBIR A PÁGINA -->
+    <button id="scroll-top-btn" class="scroll-top-btn" data-track-element="Voltar ao Topo" title="Voltar ao topo" aria-label="Voltar ao topo">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Script de Comportamento ForLife -->
+    <!-- BARRA FLUTUANTE FIXA MOBILE (Aparece apenas em smartphones) -->
+    <div class="mobile-sticky-bottom-bar" id="mobile-sticky-bottom-bar">
+        <div class="mobile-sticky-info">
+            <span class="mobile-sticky-label">Combo Completo</span>
+            <div class="mobile-sticky-price">
+                <strong id="mobile-sticky-installments">10x R$ 29,70</strong>
+                <span class="mobile-sticky-cash">ou <span id="mobile-sticky-cash-val">R$ 297,00</span></span>
+            </div>
+        </div>
+        <a href="https://api.whatsapp.com/send?1=pt_BR&phone=5519978056552&text=Ol%C3%A1,%20quero%20garantir%20o%20Combo%20promocional%20das%20%C3%93pticas%20Concei%C3%A7%C3%A3o!" 
+           class="mobile-sticky-btn" 
+           id="mobile-sticky-whatsapp-btn"
+           target="_blank" rel="noopener noreferrer">
+            <span>QUERO GARANTIR</span>
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Script de Comportamento ForLife -->
+    <script src="/forlife/app.js?v=20261002a"></script>
 </body>
 </html>

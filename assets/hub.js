@@ -713,6 +713,15 @@
             const cleanSlug = '/' + slugVal.replace(/^\/+/, '');
             const cleanUrl = cleanSlug;
 
+            let heroStyleResolved = newLpData.heroStyle || '';
+            if (!heroStyleResolved || heroStyleResolved === 'multifocal_senhora') {
+                if (newLpData.template === 'visaosimples' || cleanSlug.includes('194') || newLpData.lensModality === 'lentes_prontas' || newLpData.lensModality === 'visao_simples_surfacada') {
+                    heroStyleResolved = 'visao_simples_jovens';
+                } else if (!heroStyleResolved) {
+                    heroStyleResolved = 'multifocal_senhora';
+                }
+            }
+
             const lp = {
                 id,
                 name: newLpData.name.trim(),
@@ -720,17 +729,17 @@
                 slug: cleanSlug,
                 status: newLpData.status || 'Ativa',
                 color: newLpData.color || '#002C5B',
-                price: parseFloat(newLpData.price) || 297.00,
-                installments: parseInt(newLpData.installments, 10) || 10,
+                price: parseFloat(newLpData.price) || (heroStyleResolved === 'visao_simples_jovens' ? 194.00 : 297.00),
+                installments: parseInt(newLpData.installments, 10) || (heroStyleResolved === 'visao_simples_jovens' ? 6 : 10),
                 description: newLpData.description || `Campanha promocional para ${newLpData.name.trim()}.`,
-                template: newLpData.template || 'visaosimples',
+                template: newLpData.template || (heroStyleResolved === 'visao_simples_jovens' ? 'visaosimples' : 'forlife'),
                 offerType: newLpData.offerType || 'combo_completo',
-                lensModality: newLpData.lensModality || 'lentes_prontas',
-                heroStyle: newLpData.heroStyle || 'multifocal_senhora',
-                heroTitle: newLpData.heroTitle || '',
-                heroSupporting: newLpData.heroSupporting || '',
-                frameBrand: newLpData.frameBrand || 'Coleção Conceição',
-                lensBrand: newLpData.lensBrand || 'Lentes Monofocais HD',
+                lensModality: newLpData.lensModality || (heroStyleResolved === 'visao_simples_jovens' ? 'lentes_prontas' : 'multifocal'),
+                heroStyle: heroStyleResolved,
+                heroTitle: newLpData.heroTitle || (heroStyleResolved === 'visao_simples_jovens' ? 'Óculos Completo Visão Simples por' : 'Óculos Completo Multifocal por'),
+                heroSupporting: newLpData.heroSupporting || (heroStyleResolved === 'visao_simples_jovens' ? 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' : 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.'),
+                frameBrand: newLpData.frameBrand || (heroStyleResolved === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri'),
+                lensBrand: newLpData.lensBrand || (heroStyleResolved === 'visao_simples_jovens' ? 'Lentes Monofocais HD' : 'Multifocais Digitais'),
                 addonsActive: newLpData.addonsActive || {
                     antirreflexo: true,
                     bluecut: true,
@@ -1197,12 +1206,10 @@
             const instParam = lp.installments ? `&installments=${encodeURIComponent(lp.installments)}` : '';
 
             let basePath = '';
-            if (template === 'visaosimples' || template === '194' || lp.id === '194' || lp.id === 'forlife-194') {
-                basePath = `/visaosimples/index.html?lp=${idParam}&slug=${slugParam}`;
-            } else if (template === 'fila' || lp.id === 'fila') {
+            if (template === 'fila' || lp.id === 'fila') {
                 basePath = `/index.html?lp=${idParam}`;
             } else {
-                // Padrão forlife / multifocal
+                // Padrão unificado moderno de alta conversão (forlife, visaosimples, 194, 294, etc.)
                 basePath = `/forlife/index.html?lp=${idParam}&theme=${idParam}&slug=${slugParam}`;
             }
 
@@ -1277,10 +1284,10 @@
                 statusBadge.style.color = lp.status === 'Ativa' ? '#03543F' : '#92400E';
             }
 
-            // Botão Abrir Externo
+            // Botão Abrir Externo (Abre a URL pública limpa da LP, ex: /294)
             const btnOpen = document.getElementById('btn-open-lp-external');
             if (btnOpen) {
-                btnOpen.href = previewTargetUrl;
+                btnOpen.href = this.resolvePublicUrl(lp);
                 btnOpen.target = '_blank';
             }
         },
@@ -1612,11 +1619,19 @@
             const lead = State.allLeads.find(l => l.code === code);
             if (!lead) return;
 
-            lead.saleStatus = newStatus;
+            let normalized = newStatus;
+            const lower = (newStatus || '').toLowerCase();
+            if (lower.includes('atend') || lower === 'contatado') normalized = 'Em Atendimento';
+            else if (lower.includes('agend')) normalized = 'Agendado';
+            else if (lower.includes('vend') || lower.includes('conclu')) normalized = 'Vendido';
+            else if (lower.includes('perd') || lower.includes('cancel')) normalized = 'Perdido';
+            else if (lower.includes('pend')) normalized = 'Pendente';
+
+            lead.saleStatus = normalized;
             const valInput = document.getElementById(`input-val-${code}`);
 
             // Se mudou para Vendido e não tem valor de venda preenchido, sugere o valor total
-            if (newStatus === 'Vendido' && (!lead.saleValue || parseFloat(lead.saleValue) <= 0)) {
+            if (normalized === 'Vendido' && (!lead.saleValue || parseFloat(lead.saleValue) <= 0)) {
                 lead.saleValue = lead.totalPrice || 297.00;
                 if (valInput) valInput.value = lead.saleValue;
             }
@@ -1632,7 +1647,7 @@
             // Re-renderiza o Pipeline (Kanban) e KPIs em tempo real
             Kanban.render();
             this.updateKpis(State.filteredLeads);
-            Utils.showToast(`Status do lead "${lead.name}" alterado para "${newStatus}"!`, 'success');
+            Utils.showToast(`Status do lead "${lead.name}" alterado para "${normalized === 'Vendido' ? 'Venda Concluída' : normalized}"!`, 'success');
         },
 
         async loadLeads() {
@@ -1932,9 +1947,18 @@
 
                 // 4. Filtro de Status
                 if (statusVal && statusVal !== 'all') {
-                    if (statusVal === 'Vendido' && !lead.saleValue && lead.saleStatus !== 'Vendido') return false;
-                    if (statusVal === 'Pendente' && (lead.saleValue || lead.saleStatus === 'Vendido')) return false;
-                    if (statusVal === 'Receita' && !lead.hasPrescription) return false;
+                    const normalizedStatus = (statusVal === 'Venda Concluída' || statusVal === 'Vendido') ? 'Vendido' : (statusVal === 'Contatado' ? 'Em Atendimento' : (statusVal === 'Cancelado' ? 'Perdido' : statusVal));
+                    let leadSt = lead.saleStatus || 'Pendente';
+                    if (leadSt === 'Venda Concluída' || (lead.saleValue > 0 && !lead.saleStatus)) leadSt = 'Vendido';
+                    if (leadSt === 'Contatado') leadSt = 'Em Atendimento';
+                    if (leadSt === 'Cancelado') leadSt = 'Perdido';
+
+                    if (normalizedStatus === 'Vendido' && leadSt !== 'Vendido') return false;
+                    if (normalizedStatus === 'Pendente' && leadSt !== 'Pendente') return false;
+                    if (normalizedStatus === 'Em Atendimento' && leadSt !== 'Em Atendimento') return false;
+                    if (normalizedStatus === 'Agendado' && leadSt !== 'Agendado') return false;
+                    if (normalizedStatus === 'Perdido' && leadSt !== 'Perdido') return false;
+                    if (normalizedStatus === 'Receita' && !lead.hasPrescription) return false;
                 }
 
                 // 5. Busca por texto livre
@@ -2084,11 +2108,17 @@
                 });
 
                 // Status de Venda Opções
-                const saleStatuses = ['Pendente', 'Em Atendimento', 'Agendado', 'Vendido', 'Perdido'];
+                const saleStatuses = [
+                    { value: 'Pendente', label: 'Pendente' },
+                    { value: 'Em Atendimento', label: 'Em Atendimento' },
+                    { value: 'Agendado', label: 'Agendado' },
+                    { value: 'Vendido', label: 'Venda Concluída' },
+                    { value: 'Perdido', label: 'Perdido' }
+                ];
                 let statusOptions = '';
                 saleStatuses.forEach(st => {
-                    const sel = (lead.saleStatus === st || (st === 'Vendido' && lead.saleValue > 0 && !lead.saleStatus)) ? 'selected' : '';
-                    statusOptions += `<option value="${st}" ${sel}>${st}</option>`;
+                    const isSelected = (lead.saleStatus === st.value || (st.value === 'Vendido' && (lead.saleStatus === 'Venda Concluída' || (lead.saleValue > 0 && !lead.saleStatus))));
+                    statusOptions += `<option value="${st.value}" ${isSelected ? 'selected' : ''}>${st.label}</option>`;
                 });
 
                 // Linha Principal
@@ -4255,6 +4285,60 @@
             if (campInput) {
                 campInput.addEventListener('input', () => {
                     campInput.dataset.touched = 'true';
+                });
+            }
+
+            // Sincronização inteligente de template, heroStyle, marcas e preços na criação/edição
+            const templateInput = modal.querySelector('#new-lp-template');
+            const heroStyleInput = modal.querySelector('#new-lp-hero-style');
+            if (templateInput) {
+                templateInput.addEventListener('change', () => {
+                    const tVal = templateInput.value;
+                    const modalityInput = modal.querySelector('#new-lp-lens-modality');
+                    const frameBrandInput = modal.querySelector('#new-lp-frame-brand');
+                    const lensBrandInput = modal.querySelector('#new-lp-lens-brand');
+                    const priceInput = modal.querySelector('#new-lp-price');
+                    const instInput = modal.querySelector('#new-lp-installments');
+                    const heroTitleInput = modal.querySelector('#new-lp-hero-title');
+                    const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
+
+                    if (tVal === 'visaosimples') {
+                        if (heroStyleInput) heroStyleInput.value = 'visao_simples_jovens';
+                        if (modalityInput) modalityInput.value = 'lentes_prontas';
+                        if (frameBrandInput && (!frameBrandInput.value || frameBrandInput.value === 'Di Capri')) frameBrandInput.value = 'Coleção Conceição';
+                        if (lensBrandInput && (!lensBrandInput.value || lensBrandInput.value === 'Multifocais Digitais' || lensBrandInput.value === 'Multifocal Di Capri HD')) lensBrandInput.value = 'Lentes Monofocais HD';
+                        if (priceInput && (!priceInput.value || priceInput.value === '297.00')) priceInput.value = '194.00';
+                        if (instInput && (!instInput.value || instInput.value === '10')) instInput.value = '6';
+                        if (heroTitleInput && !heroTitleInput.value) heroTitleInput.value = 'Óculos Completo Visão Simples por';
+                        if (heroSupportingInput && !heroSupportingInput.value) heroSupportingInput.value = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
+                    } else if (tVal === 'forlife') {
+                        if (heroStyleInput) heroStyleInput.value = 'multifocal_senhora';
+                        if (modalityInput) modalityInput.value = 'multifocal';
+                        if (frameBrandInput && (!frameBrandInput.value || frameBrandInput.value === 'Coleção Conceição')) frameBrandInput.value = 'Di Capri';
+                        if (lensBrandInput && (!lensBrandInput.value || lensBrandInput.value === 'Lentes Monofocais HD')) lensBrandInput.value = 'Multifocal Di Capri HD';
+                        if (priceInput && (!priceInput.value || priceInput.value === '194.00')) priceInput.value = '297.00';
+                        if (instInput && (!instInput.value || instInput.value === '6')) instInput.value = '10';
+                        if (heroTitleInput && !heroTitleInput.value) heroTitleInput.value = 'Óculos Completo Multifocal por';
+                        if (heroSupportingInput && !heroSupportingInput.value) heroSupportingInput.value = 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.';
+                    }
+                });
+            }
+
+            if (heroStyleInput) {
+                heroStyleInput.addEventListener('change', () => {
+                    const hVal = heroStyleInput.value;
+                    const heroTitleInput = modal.querySelector('#new-lp-hero-title');
+                    const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
+                    if (hVal === 'visao_simples_jovens') {
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal'))) heroTitleInput.value = 'Óculos Completo Visão Simples por';
+                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('multifocais'))) heroSupportingInput.value = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
+                    } else if (hVal === 'promo_dobro_casal') {
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal') || heroTitleInput.value.includes('Visão Simples'))) heroTitleInput.value = 'Lentes em Dobro + 2 Armações por';
+                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('Armação leve'))) heroSupportingInput.value = '2 Armações à escolha + 2 Pares de Lentes calibradas para você e seu acompanhante.';
+                    } else if (hVal === 'multifocal_senhora') {
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Visão Simples') || heroTitleInput.value.includes('Dobro'))) heroTitleInput.value = 'Óculos Completo Multifocal por';
+                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('resistente'))) heroSupportingInput.value = 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.';
+                    }
                 });
             }
 

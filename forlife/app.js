@@ -84,15 +84,15 @@ const HERO_STYLES = {
 // ==========================================
 const CAMPAIGN_CONTENT = {
     multifocal_senhora: {
-        faqTitle: 'Tira-Dúvidas Sobre o Combo ForLife Multifocal',
+        faqTitle: 'Tira-Dúvidas Sobre o Combo Multifocal',
         faqSubtitle: 'Confira as respostas diretas para as dúvidas mais comuns sobre lentes multifocais e adaptação:',
         faqs: [
             {
-                q: '1. O que está incluso no Combo ForLife por R$ {PRICE}?',
-                a: 'O combo inclui uma armação de receituário à sua escolha no mostruário selecionado da loja + um par de Lentes Multifocais Digitais HD de alta definição com amplo campo visual para perto, meia-distância e longe.'
+                q: '1. O que está incluso no Combo por R$ {PRICE}?',
+                a: 'O combo inclui uma armação de grau à sua escolha {FRAME_BRAND} no mostruário selecionado da loja + um par de Lentes {LENS_BRAND} de alta definição com amplo campo visual para perto, meia-distância e longe.'
             },
             {
-                q: '2. Como funciona a adaptação com as Lentes Multifocais HD?',
+                q: '2. Como funciona a adaptação com as Lentes Multifocais?',
                 a: 'Nossas lentes multifocais digitais são produzidas com tecnologia de alta definição (HD) que reduz as distorções laterais, facilitando a transição entre perto, meia-distância e longe. Contamos com 100% de garantia de adaptação e suporte técnico da nossa equipe.'
             },
             {
@@ -101,11 +101,11 @@ const CAMPAIGN_CONTENT = {
             },
             {
                 q: '4. Posso parcelar o valor do combo e das tecnologias adicionais?',
-                a: 'Sim! Tanto o combo base quanto as tecnologias adicionais podem ser parcelados em até 10x sem juros em todos os cartões de crédito aceitos na loja.'
+                a: 'Sim! Tanto o combo base de R$ {PRICE} quanto as tecnologias adicionais podem ser parcelados em até {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros em todos os cartões de crédito aceitos na loja.'
             },
             {
                 q: '5. Como faço para escolher a minha armação?',
-                a: 'Você pode visitar nossa loja física no Centro de Campinas para experimentar dezenas de modelos, ou solicitar consultoria personalizada via WhatsApp, onde nossos consultores enviam fotos e vídeos de modelos adequados ao seu rosto.'
+                a: 'Você pode visitar nossa loja física no Centro de Campinas para experimentar dezenas de modelos da {FRAME_BRAND}, ou solicitar consultoria personalizada via WhatsApp, onde nossos consultores enviam fotos e vídeos de modelos adequados ao seu rosto.'
             },
             {
                 q: '6. Qual o prazo para confeccionar meus óculos multifocais?',
@@ -114,19 +114,19 @@ const CAMPAIGN_CONTENT = {
         ],
         reviews: [
             {
-                text: '"Eu tinha muito receio de usar multifocal por causa de tontura, mas a adaptação com as Lentes HD das Ópticas Conceição foi imediata! Excelente atendimento e o preço do combo é imbatível."',
+                text: '"Eu tinha muito receio de usar multifocal por causa de tontura, mas a adaptação com as Lentes {LENS_BRAND} das Ópticas Conceição foi imediata! Excelente atendimento e o preço do combo de R$ {PRICE} é imbatível."',
                 author: 'Carlos M.',
                 location: 'Centro, Campinas',
                 initials: 'CM'
             },
             {
-                text: '"Comprei o combo com o filtro azul Bluecut pois fico o dia todo no computador e leitura. Minhas dores de cabeça acabaram e a armação é linda e muito confortável. Recomendo de olhos fechados!"',
+                text: '"Comprei o combo com o filtro azul Bluecut pois fico o dia todo no computador e leitura. Minhas dores de cabeça acabaram e a armação {FRAME_BRAND} é linda e muito confortável. Recomendo de olhos fechados!"',
                 author: 'Maria Helena S.',
                 location: 'Cambuí, Campinas',
                 initials: 'MH'
             },
             {
-                text: '"Minha família compra na Conceição há mais de 30 anos. Essa campanha ForLife superou todas as expectativas em qualidade técnica, agilidade e economia. Parabéns pelo carinho!"',
+                text: '"Minha família compra na Conceição há mais de 30 anos. Essa campanha superou todas as expectativas em qualidade técnica, agilidade e o parcelamento em {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros. Parabéns pelo carinho!"',
                 author: 'Roberto F.',
                 location: 'Taquaral, Campinas',
                 initials: 'RF'
@@ -139,7 +139,7 @@ const CAMPAIGN_CONTENT = {
         faqs: [
             {
                 q: '1. O que está incluso no Combo Visão Simples por R$ {PRICE}?',
-                a: 'O combo acompanha uma armação completa à sua escolha entre centenas de modelos selecionados + 1 par de Lentes Monofocais Digitais calibradas para o seu grau de miopia, hipermetropia ou astigmatismo.'
+                a: 'O combo acompanha uma armação completa {FRAME_BRAND} à sua escolha entre centenas de modelos selecionados + 1 par de Lentes {LENS_BRAND} calibradas para o seu grau de miopia, hipermetropia ou astigmatismo.'
             },
             {
                 q: '2. As lentes já vêm com antirreflexo e proteção?',
@@ -151,32 +151,32 @@ const CAMPAIGN_CONTENT = {
             },
             {
                 q: '4. E se eu ainda não tiver a receita do oftalmologista?',
-                a: 'Basta gerar seu cupom agora para travar o preço promocional. Ao falar com nossa equipe, auxiliamos no agendamento do exame com clínicas parceiras em Campinas.'
+                a: 'Basta gerar seu cupom agora para travar o preço promocional de R$ {PRICE}. Ao falar com nossa equipe, auxiliamos no agendamento do exame com clínicas parceiras em Campinas.'
             },
             {
                 q: '5. Como escolher o modelo ideal de armação?',
-                a: 'Temos mais de 150 modelos leves (acetato nobre, metal fino, retangular, gatinho, redondos e esportivos) para você experimentar na loja ou receber consultoria com fotos pelo WhatsApp.'
+                a: 'Temos mais de 150 modelos leves da {FRAME_BRAND} (acetato nobre, metal fino, retangular, gatinho, redondos e esportivos) para você experimentar na loja ou receber consultoria com fotos pelo WhatsApp.'
             },
             {
                 q: '6. Posso parcelar em quantas vezes no cartão?',
-                a: 'Você pode parcelar o valor do combo em até 10x sem juros no cartão de crédito, sem qualquer acréscimo.'
+                a: 'Você pode parcelar o valor do combo de R$ {PRICE} em até {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros no cartão de crédito, sem qualquer acréscimo.'
             }
         ],
         reviews: [
             {
-                text: '"Precisava de um óculos novo urgente para a faculdade e trabalho no computador. A montagem foi super rápida, o antirreflexo é perfeito e paguei um valor super justo!"',
+                text: '"Precisava de um óculos novo urgente para a faculdade e trabalho no computador. A montagem das lentes {LENS_BRAND} foi super rápida, o antirreflexo é perfeito e paguei apenas R$ {PRICE} no combo completo!"',
                 author: 'Lucas F.',
                 location: 'Barão Geraldo, Campinas',
                 initials: 'LF'
             },
             {
-                text: '"Achei a armação retangular fosca que procurava há meses! Lentes super finas, leves e confortáveis, além do atendimento atencioso da equipe das Ópticas Conceição."',
+                text: '"Achei a armação {FRAME_BRAND} que procurava há meses! Lentes super finas, leves e confortáveis, parceladas em {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros. Atendimento nota 10!"',
                 author: 'Amanda C.',
                 location: 'Cambuí, Campinas',
                 initials: 'AC'
             },
             {
-                text: '"Melhor custo-benefício de Campinas. Saí da loja enxergando tudo nítido e sem surpresas no caixa. Recomendo para quem usa computador o dia todo!"',
+                text: '"Melhor custo-benefício de Campinas. Saí da loja enxergando tudo nítido e sem surpresas no caixa: exatamente R$ {PRICE} pelo óculos completo com armação e lentes!"',
                 author: 'Gabriel S.',
                 location: 'Centro, Campinas',
                 initials: 'GS'
@@ -189,7 +189,7 @@ const CAMPAIGN_CONTENT = {
         faqs: [
             {
                 q: '1. O que está incluso na Promoção em Dobro por R$ {PRICE}?',
-                a: 'A promoção contempla 2 armações completas à sua escolha + 2 pares de lentes calibradas pelo valor único anunciado! São 2 óculos prontos para uso.'
+                a: 'A promoção contempla 2 armações completas {FRAME_BRAND} à sua escolha + 2 pares de lentes {LENS_BRAND} calibradas pelo valor único anunciado! São 2 óculos prontos para uso.'
             },
             {
                 q: '2. Os 2 pares podem ser para receitas e pessoas diferentes?',
@@ -197,7 +197,7 @@ const CAMPAIGN_CONTENT = {
             },
             {
                 q: '3. Podemos escolher modelos de armações diferentes?',
-                a: 'Com certeza! Cada um escolhe livremente seu modelo favorito entre mais de 150 armações masculinas, femininas e unissex disponíveis no mostruário.'
+                a: 'Com certeza! Cada um escolhe livremente seu modelo favorito da {FRAME_BRAND} entre mais de 150 armações masculinas, femininas e unissex disponíveis no mostruário.'
             },
             {
                 q: '4. E se uma pessoa precisar de multifocal e a outra de visão simples?',
@@ -209,24 +209,24 @@ const CAMPAIGN_CONTENT = {
             },
             {
                 q: '6. Em quantas vezes podemos parcelar?',
-                a: 'O valor total de R$ {PRICE} pode ser dividido em até 10x sem juros no cartão de crédito, facilitando a compra para o casal ou família.'
+                a: 'O valor total de R$ {PRICE} pode ser dividido em até {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros no cartão de crédito, facilitando a compra para o casal ou família.'
             }
         ],
         reviews: [
             {
-                text: '"Aproveitamos a promoção em dobro e fizemos os óculos dos dois no mesmo dia! Economizamos muito e o atendimento na Barão de Jaguara foi nota mil."',
+                text: '"Aproveitamos a promoção em dobro e fizemos os óculos dos dois por R$ {PRICE}! Economizamos muito e o atendimento na Barão de Jaguara foi nota mil."',
                 author: 'Mariana & Tiago',
                 location: 'Castelo, Campinas',
                 initials: 'MT'
             },
             {
-                text: '"Excelente oportunidade! Cada um escolheu seu estilo de armação e as lentes ficaram perfeitas. Tradição e confiança que só uma ótica de 78 anos em Campinas tem."',
+                text: '"Excelente oportunidade! Cada um escolheu seu estilo de armação {FRAME_BRAND} e as lentes {LENS_BRAND} ficaram perfeitas. Tradição e confiança que só uma ótica de 78 anos em Campinas tem."',
                 author: 'Fernando & Juliana',
                 location: 'Nova Campinas',
                 initials: 'FJ'
             },
             {
-                text: '"Fizemos nossos óculos com graus diferentes sem nenhuma complicação. O preço em 10x sem juros ficou muito leve no orçamento. Valeu a pena demais!"',
+                text: '"Fizemos nossos óculos com graus diferentes sem nenhuma complicação. O preço em {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros ficou muito leve no orçamento. Valeu a pena demais!"',
                 author: 'Patrícia & Rodrigo',
                 location: 'Mansões Santo Antônio, Campinas',
                 initials: 'PR'
@@ -871,11 +871,12 @@ function detectActiveLandingPage() {
     } catch (e) {}
 
     const DEFAULT_CATALOG = {
-        forlife: { id: 'forlife', name: 'ForLife Multifocal Di Capri', slug: '/forlife', price: 297.00, installments: 10 },
-        'forlife-194': { id: 'forlife-194', name: 'ForLife Especial 194', slug: '/forlife-194', price: 194.00, installments: 6 },
-        '194': { id: '194', name: 'ForLife Especial 194', slug: '/194', price: 194.00, installments: 6 },
-        varilux: { id: 'varilux', name: 'Varilux Comfort Max', slug: '/varilux', price: 349.00, installments: 10 },
-        zeiss: { id: 'zeiss', name: 'Zeiss SmartLife Digital', slug: '/zeiss', price: 420.00, installments: 12 }
+        forlife: { id: 'forlife', name: 'ForLife Multifocal Di Capri', slug: '/forlife', price: 297.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Di Capri', lensBrand: 'Multifocal Di Capri HD' },
+        'forlife-194': { id: 'forlife-194', name: 'ForLife Especial 194', slug: '/forlife-194', price: 194.00, installments: 6, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
+        '194': { id: '194', name: 'ForLife Especial 194', slug: '/194', price: 194.00, installments: 6, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
+        '294': { id: '294', name: 'ForLife Especial 294', slug: '/294', price: 294.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Di Capri', lensBrand: 'Multifocal Di Capri HD', heroTitle: 'Óculos Completo Multifocal por', heroSupporting: 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.' },
+        varilux: { id: 'varilux', name: 'Varilux Comfort Max', slug: '/varilux', price: 349.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Varilux Premium', lensBrand: 'Varilux Comfort Max HD' },
+        zeiss: { id: 'zeiss', name: 'Zeiss SmartLife Digital', slug: '/zeiss', price: 420.00, installments: 12, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Zeiss Titanium', lensBrand: 'Zeiss SmartLife Digital' }
     };
 
     let matchedLp = null;
@@ -1029,6 +1030,11 @@ async function loadForlifeConfig() {
         else if (cloudCfg && cloudCfg.combo_installments) installments = parseInt(cloudCfg.combo_installments, 10);
         else if (cms && cms.installments) installments = parseInt(cms.installments, 10);
         else if (lp && lp.installments) installments = parseInt(lp.installments, 10);
+        else if (price <= 200) installments = 6;
+
+        if (price <= 200 && installments === 10) {
+            installments = 6;
+        }
 
         const antirreflexo = (cloudCfg && cloudCfg.addon_antirreflexo !== undefined) ? parseFloat(cloudCfg.addon_antirreflexo) : ((cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00);
         const bluecut = (cloudCfg && cloudCfg.addon_bluecut !== undefined) ? parseFloat(cloudCfg.addon_bluecut) : ((cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00);
@@ -1037,24 +1043,43 @@ async function loadForlifeConfig() {
         const showTechSection = (cms && cms.showTechSection !== undefined) ? cms.showTechSection : (lp && lp.showTechSection !== undefined ? lp.showTechSection : true);
         const addonsActive = (cms && cms.addonsActive) ? cms.addonsActive : ((lp && lp.addonsActive) ? lp.addonsActive : { antirreflexo: true, bluecut: true, fotossensivel: true });
 
-        const frameBrand = (cms && cms.frameBrand) ? cms.frameBrand : ((lp && lp.frameBrand) ? lp.frameBrand : 'Di Capri');
-        const lensBrand = (cms && cms.lensBrand) ? cms.lensBrand : ((lp && lp.lensBrand) ? lp.lensBrand : 'Multifocais Digitais');
-        const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
-        const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : 'lentes_multifocais');
-
-        let heroTitle = urlParams.get('heroTitle') || (cms && cms.heroTitle) || (lp && lp.heroTitle) || '';
-        let heroSupporting = urlParams.get('heroSupporting') || (cms && (cms.heroSupporting || cms.heroSupportingText)) || (lp && (lp.heroSupporting || lp.heroSupportingText)) || '';
         let heroStyle = urlParams.get('hero') || urlParams.get('heroStyle') || (cms && cms.heroStyle) || (lp && lp.heroStyle);
-        if (!heroStyle) {
-            const checkStr = `${activeLpInfo.slug} ${(lp && lp.name) || ''} ${(cms && cms.lensModality) || ''} ${(lp && lp.lensModality) || ''}`.toLowerCase();
+        if (!heroStyle || heroStyle === 'multifocal_senhora') {
+            const checkStr = `${activeLpInfo.slug} ${(lp && lp.name) || ''} ${(cms && cms.lensModality) || ''} ${(lp && lp.lensModality) || ''} ${(lp && lp.template) || ''}`.toLowerCase();
             if (checkStr.includes('dobro') || checkStr.includes('casal') || checkStr.includes('494')) {
                 heroStyle = 'promo_dobro_casal';
-            } else if (checkStr.includes('194') || checkStr.includes('visaosimples') || checkStr.includes('miopia') || checkStr.includes('jovens')) {
+            } else if (checkStr.includes('194') || checkStr.includes('visaosimples') || checkStr.includes('miopia') || checkStr.includes('jovens') || checkStr.includes('prontas') || checkStr.includes('surfacada')) {
                 heroStyle = 'visao_simples_jovens';
-            } else {
+            } else if (!heroStyle) {
                 heroStyle = 'multifocal_senhora';
             }
         }
+
+        let heroTitle = urlParams.get('heroTitle') || (cms && cms.heroTitle) || (lp && lp.heroTitle) || '';
+        let heroSupporting = urlParams.get('heroSupporting') || (cms && (cms.heroSupporting || cms.heroSupportingText)) || (lp && (lp.heroSupporting || lp.heroSupportingText)) || '';
+
+        if (!heroTitle) {
+            if (heroStyle === 'visao_simples_jovens') {
+                heroTitle = 'Óculos Completo Visão Simples por';
+            } else if (heroStyle === 'promo_dobro_casal') {
+                heroTitle = 'Lentes em Dobro + 2 Armações por';
+            } else {
+                heroTitle = 'Óculos Completo Multifocal por';
+            }
+        }
+
+        if (!heroSupporting) {
+            if (heroStyle === 'visao_simples_jovens') {
+                heroSupporting = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
+            } else if (heroStyle === 'promo_dobro_casal') {
+                heroSupporting = '2 Armações à escolha + 2 Pares de Lentes calibradas para você e seu acompanhante.';
+            }
+        }
+
+        const frameBrand = (cms && cms.frameBrand) ? cms.frameBrand : ((lp && lp.frameBrand) ? lp.frameBrand : (heroStyle === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri'));
+        const lensBrand = (cms && cms.lensBrand) ? cms.lensBrand : ((lp && lp.lensBrand) ? lp.lensBrand : (heroStyle === 'visao_simples_jovens' ? 'Monofocais HD' : 'Multifocais Digitais'));
+        const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
+        const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : (heroStyle === 'visao_simples_jovens' ? 'lentes_prontas' : 'lentes_multifocais'));
 
         forlifeConfig = {
             comboPrice: price,
@@ -1210,12 +1235,34 @@ function applyHeroCommercialConfig() {
 // FAQ E DEPOIMENTOS DINÂMICOS POR CAMPANHA
 // ==========================================
 function applyThematicFaqAndReviews(styleKey, config) {
-    const content = CAMPAIGN_CONTENT[styleKey] || CAMPAIGN_CONTENT.multifocal_senhora;
+    const effectiveStyle = styleKey || (config && config.heroStyle) || 'multifocal_senhora';
+    const content = CAMPAIGN_CONTENT[effectiveStyle] || CAMPAIGN_CONTENT.multifocal_senhora;
     if (!content) return;
+
+    const priceNum = (config && config.comboPrice) ? parseFloat(config.comboPrice) : 297.00;
+    const installmentsNum = (config && config.installments) ? parseInt(config.installments, 10) : 10;
+    const installmentValNum = priceNum / (installmentsNum > 0 ? installmentsNum : 1);
 
     const formattedPrice = (typeof formatMoney === 'function' && config && config.comboPrice) 
         ? formatMoney(config.comboPrice) 
-        : (config && config.comboPrice ? Number(config.comboPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '297,00');
+        : priceNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const formattedInstallmentVal = (typeof formatMoney === 'function')
+        ? formatMoney(installmentValNum)
+        : installmentValNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const frameBrand = (config && config.frameBrand) || 'Coleção Conceição';
+    const lensBrand = (config && config.lensBrand) || (effectiveStyle === 'visao_simples_jovens' ? 'Monofocais HD' : 'Multifocais Digitais');
+
+    function replacePlaceholders(str) {
+        if (!str) return '';
+        return str
+            .replace(/\{PRICE\}/g, formattedPrice)
+            .replace(/\{INSTALLMENTS\}/g, String(installmentsNum))
+            .replace(/\{INSTALLMENT_VAL\}/g, formattedInstallmentVal)
+            .replace(/\{FRAME_BRAND\}/g, frameBrand)
+            .replace(/\{LENS_BRAND\}/g, lensBrand);
+    }
 
     // 1. Atualizar FAQ
     const faqSection = document.getElementById('faq');
@@ -1234,8 +1281,8 @@ function applyThematicFaqAndReviews(styleKey, config) {
         if (faqList && Array.isArray(content.faqs) && content.faqs.length > 0) {
             let html = '';
             content.faqs.forEach(f => {
-                const questionText = f.q.replace(/\{PRICE\}/g, formattedPrice);
-                const answerText = f.a.replace(/\{PRICE\}/g, formattedPrice);
+                const questionText = replacePlaceholders(f.q);
+                const answerText = replacePlaceholders(f.a);
                 html += `
                     <div class="faq-item">
                         <div class="faq-question">
@@ -1262,6 +1309,7 @@ function applyThematicFaqAndReviews(styleKey, config) {
         if (reviewsGrid && Array.isArray(content.reviews) && content.reviews.length > 0) {
             let rHtml = '';
             content.reviews.forEach(r => {
+                const reviewText = replacePlaceholders(r.text);
                 rHtml += `
                     <div class="review-card">
                         <div>
@@ -1272,7 +1320,7 @@ function applyThematicFaqAndReviews(styleKey, config) {
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
                             </div>
-                            <p class="review-text">${r.text}</p>
+                            <p class="review-text">${reviewText}</p>
                         </div>
                         <div class="review-author">
                             <div class="author-avatar">${r.initials}</div>
@@ -1506,6 +1554,9 @@ function updatePricingUI() {
     dynPriceSpans.forEach(el => {
         el.textContent = formattedComboPrice;
     });
+
+    // Atualiza FAQ e depoimentos com o preço e parcelamento exatos da LP
+    applyThematicFaqAndReviews(forlifeConfig.heroStyle, forlifeConfig);
 
     validateForm();
 }
