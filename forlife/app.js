@@ -952,17 +952,30 @@ async function syncCloudCatalogAndConfig(slug) {
         }
 
         if (shouldFetchCatalog) {
-            const { data, error } = await supabaseClient
-                .from('forlife_leads')
-                .select('prescription_file')
-                .eq('code', '__keep__')
+            let cloudCat = null;
+            const { data: settingData } = await supabaseClient
+                .from('config_settings')
+                .select('value')
+                .eq('key', 'hub_catalog_snapshot')
                 .maybeSingle();
 
-            if (!error && data && data.prescription_file) {
-                const cloudCat = JSON.parse(data.prescription_file);
-                if (cloudCat && typeof cloudCat === 'object') {
-                    localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(cloudCat));
+            if (settingData && settingData.value) {
+                try { cloudCat = JSON.parse(settingData.value); } catch(e) {}
+            }
+            if (!cloudCat) {
+                const { data } = await supabaseClient
+                    .from('forlife_leads')
+                    .select('prescription_file')
+                    .eq('code', '__keep__')
+                    .maybeSingle();
+
+                if (data && data.prescription_file) {
+                    try { cloudCat = JSON.parse(data.prescription_file); } catch(e) {}
                 }
+            }
+
+            if (cloudCat && typeof cloudCat === 'object') {
+                localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(cloudCat));
             }
         }
 
@@ -1867,8 +1880,10 @@ async function handleVoucherSubmit(e) {
     // 1. Gravar no Supabase (Tabela forlife_leads)
     if (supabaseClient) {
         try {
+            const lpTag = `[LP:${forlifeConfig.lpId || 'forlife'}]`;
             const cityWithStore = store ? `${city} (Loja: ${store})` : city;
-            const cityWithUtm = hasUtm ? `${cityWithStore} [${utmInfo}]` : cityWithStore;
+            const cityWithLp = `${cityWithStore} ${lpTag}`;
+            const cityWithUtm = hasUtm ? `${cityWithLp} [${utmInfo}]` : cityWithLp;
 
             // Tentar primeiro com a coluna store nativa
             let res = await supabaseClient.from('forlife_leads').insert([{

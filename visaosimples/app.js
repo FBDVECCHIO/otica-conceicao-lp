@@ -175,18 +175,31 @@ async function loadConfigFromStorage() {
                     shouldFetchCloud = true;
                 }
                 if (shouldFetchCloud) {
-                    const { data: cloudCatData } = await supabaseClient
-                        .from('forlife_leads')
-                        .select('prescription_file')
-                        .eq('code', '__keep__')
+                    let cloudCat = null;
+                    const { data: settingData } = await supabaseClient
+                        .from('config_settings')
+                        .select('value')
+                        .eq('key', 'hub_catalog_snapshot')
                         .maybeSingle();
 
-                    if (cloudCatData && cloudCatData.prescription_file) {
-                        const parsedCloud = JSON.parse(cloudCatData.prescription_file);
-                        if (parsedCloud && typeof parsedCloud === 'object') {
-                            catalog = { ...catalog, ...parsedCloud };
-                            localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(catalog));
+                    if (settingData && settingData.value) {
+                        try { cloudCat = JSON.parse(settingData.value); } catch(e) {}
+                    }
+                    if (!cloudCat) {
+                        const { data: cloudCatData } = await supabaseClient
+                            .from('forlife_leads')
+                            .select('prescription_file')
+                            .eq('code', '__keep__')
+                            .maybeSingle();
+
+                        if (cloudCatData && cloudCatData.prescription_file) {
+                            try { cloudCat = JSON.parse(cloudCatData.prescription_file); } catch(e) {}
                         }
+                    }
+
+                    if (cloudCat && typeof cloudCat === 'object') {
+                        catalog = { ...catalog, ...cloudCat };
+                        localStorage.setItem('otica_conceicao_lps_catalog', JSON.stringify(catalog));
                     }
                 }
             } catch (cloudErr) {
@@ -607,8 +620,26 @@ async function handleVoucherSubmission() {
     if (selectedAddons.bluecut) { total += vsConfig.addonBluecut; addonsNames.push('Bluecut (Filtro Azul)'); }
     if (selectedAddons.fotossensivel) { total += vsConfig.addonFotossensivel; addonsNames.push('Fotossensível'); }
 
+    const lpTag = `[LP:${vsConfig.lpId || '194'}]`;
+    const cityWithStore = store ? `${city} (Loja: ${store})` : city;
+    const cityWithLp = `${cityWithStore} ${lpTag}`;
+
+    const dbPayload = {
+        name: name,
+        phone: phone,
+        email: email,
+        city: cityWithLp,
+        store: store || null,
+        combo_price: vsConfig.comboPrice,
+        addons: JSON.stringify(addonsNames),
+        total_price: total,
+        has_prescription: Boolean(recipeStatus && recipeStatus.toLowerCase().includes('atualizada')),
+        prescription_file: '',
+        code: voucherCode
+    };
+
     const leadPayload = {
-        code: voucherCode,
+        ...dbPayload,
         client_name: name,
         client_phone: phone,
         client_email: email,
@@ -622,14 +653,13 @@ async function handleVoucherSubmission() {
         frame_brand: vsConfig.frameBrand,
         lens_brand: vsConfig.lensBrand,
         total_value: total,
-        addons: addonsNames.join(', ') || 'Nenhum',
         created_at: new Date().toISOString()
     };
 
     // Salva no Supabase se disponível
     if (supabaseClient) {
         try {
-            await supabaseClient.from('forlife_leads').insert([leadPayload]);
+            await supabaseClient.from('forlife_leads').insert([dbPayload]);
         } catch (err) {
             console.warn("[VisãoSimples] Erro ao gravar lead no Supabase:", err);
         }

@@ -182,6 +182,36 @@
                 targetLeads: 90,
                 status: 'Planejamento'
             }
+        },
+        '294': {
+            id: '294',
+            name: '294',
+            url: '/294',
+            slug: '/294',
+            template: 'forlife',
+            heroStyle: 'multifocal_senhora',
+            heroTitle: 'Óculos Multifocal Completo por',
+            heroSupporting: 'Armação de grau inclusa + Lentes multifocais digitais de alta precisão',
+            offerType: 'combo_completo',
+            lensModality: 'multifocal',
+            frameBrand: 'Di Capri',
+            lensBrand: 'Multifocal Di Capri HD',
+            status: 'Ativa',
+            color: '#002C5B',
+            price: 294.00,
+            installments: 10,
+            description: 'Campanha promocional para 294.',
+            campaign: {
+                name: 'Campanha 294',
+                budget: 2000.00,
+                targetLeads: 100,
+                status: 'Em Veiculação'
+            },
+            addonsActive: {
+                antirreflexo: true,
+                bluecut: true,
+                fotossensivel: true
+            }
         }
     };
 
@@ -485,27 +515,39 @@
             // Sincronização em nuvem: recupera LPs criadas ou atualizadas em outro dispositivo
             if (State.supabase) {
                 try {
-                    const { data, error } = await State.supabase
-                        .from(SUPABASE_CONFIG.leadsTable)
-                        .select('prescription_file')
-                        .eq('code', '__keep__')
+                    let cloudCatalog = null;
+                    const { data: settingData } = await State.supabase
+                        .from('config_settings')
+                        .select('value')
+                        .eq('key', 'hub_catalog_snapshot')
                         .maybeSingle();
 
-                    if (!error && data && data.prescription_file) {
-                        const cloudCatalog = JSON.parse(data.prescription_file);
-                        if (cloudCatalog && typeof cloudCatalog === 'object') {
-                            let updated = false;
-                            for (const [k, v] of Object.entries(cloudCatalog)) {
-                                if (!State.catalog[k] || JSON.stringify(State.catalog[k]) !== JSON.stringify(v)) {
-                                    State.catalog[k] = v;
-                                    updated = true;
-                                }
+                    if (settingData && settingData.value) {
+                        try { cloudCatalog = JSON.parse(settingData.value); } catch(e) {}
+                    }
+                    if (!cloudCatalog) {
+                        const { data } = await State.supabase
+                            .from(SUPABASE_CONFIG.leadsTable)
+                            .select('prescription_file')
+                            .eq('code', '__keep__')
+                            .maybeSingle();
+                        if (data && data.prescription_file) {
+                            try { cloudCatalog = JSON.parse(data.prescription_file); } catch(e) {}
+                        }
+                    }
+
+                    if (cloudCatalog && typeof cloudCatalog === 'object') {
+                        let updated = false;
+                        for (const [k, v] of Object.entries(cloudCatalog)) {
+                            if (!State.catalog[k] || JSON.stringify(State.catalog[k]) !== JSON.stringify(v)) {
+                                State.catalog[k] = v;
+                                updated = true;
                             }
-                            if (updated) {
-                                localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(State.catalog));
-                                this.renderCatalogGrid();
-                                this.populateSelector();
-                            }
+                        }
+                        if (updated) {
+                            localStorage.setItem(STORAGE_KEYS.catalog, JSON.stringify(State.catalog));
+                            this.renderCatalogGrid();
+                            this.populateSelector();
                         }
                     }
                 } catch (e) {
@@ -525,20 +567,10 @@
             if (State.supabase) {
                 try {
                     const catalogPayload = JSON.stringify(State.catalog);
-                    await State.supabase.from(SUPABASE_CONFIG.leadsTable).upsert({
-                        code: '__keep__',
-                        name: '__LP_CATALOG_SYNC__',
-                        phone: '00000000000',
-                        email: 'admin@opticaconceicao.com.br',
-                        city: 'Campinas',
-                        combo_price: 297,
-                        total_price: 297,
-                        addons: '[]',
-                        prescription_file: catalogPayload,
-                        has_prescription: false,
-                        store: 'Matriz',
-                        seller: 'Sistema'
-                    }, { onConflict: 'code' });
+                    await State.supabase.from('config_settings').upsert({
+                        key: 'hub_catalog_snapshot',
+                        value: catalogPayload
+                    });
 
                     const configRows = Object.values(State.catalog).map(lp => ({
                         id: 'lp_' + lp.id,
@@ -1032,7 +1064,7 @@
                             <i class="fas ${isActive ? 'fa-check-circle' : 'fa-desktop'}"></i>
                             ${isActive ? 'LP Ativa no Painel' : 'Gerenciar LP'}
                         </button>
-                        <a href="${Preview.resolvePreviewUrl(lp)}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
+                        <a href="${Preview.resolvePublicUrl(lp)}" target="_blank" class="btn-card-external" title="Abrir URL Externa">
                             <i class="fas fa-external-link-alt"></i>
                         </a>
                         <button type="button" class="btn-card-edit" data-edit-lp="${lp.id}" title="Editar Landing Page">
@@ -1136,6 +1168,14 @@
         init() {
             this.bindEvents();
             this.setViewport('desktop');
+        },
+
+        resolvePublicUrl(lp) {
+            if (!lp) return '/forlife';
+            const rawSlug = String(lp.slug || lp.id || '').trim().replace(/\s+/g, '');
+            const cleanSlug = (rawSlug.startsWith('/') ? rawSlug : `/${rawSlug}`).replace(/\/+$/, '');
+            if (/^https?:\/\//i.test(cleanSlug)) return cleanSlug;
+            return cleanSlug || '/forlife';
         },
 
         resolvePreviewUrl(lp, forceRefresh = false) {
@@ -1473,25 +1513,126 @@
         belongsToLp(lead, lpId) {
             if (!lead) return false;
             const target = (lpId || '').toString().replace(/^\/+/, '').toLowerCase();
-            const leadLp = (lead.lp_id || lead.lpId || 'forlife').toString().replace(/^\/+/, '').toLowerCase();
+            const leadLp = (lead.lp_id || lead.lpId || '').toString().replace(/^\/+/, '').toLowerCase();
+
+            if (target === '194' || target === 'visaosimples') {
+                return leadLp === '194' || leadLp === 'visaosimples' || leadLp === 'forlife-194';
+            }
+            if (leadLp === target) return true;
+            if (lead.lp_name && lead.lp_name.toLowerCase().includes(target)) return true;
+
+            // Checa por preço se o target tiver preço definido no catálogo
+            if (State.catalog) {
+                const catalogTarget = State.catalog[target] || State.catalog['/' + target];
+                if (catalogTarget) {
+                    const targetPrice = parseFloat(catalogTarget.price);
+                    const leadPrice = parseFloat(lead.comboPrice || lead.totalPrice);
+                    if (targetPrice && leadPrice && targetPrice === leadPrice) return true;
+                }
+            }
 
             if (target === 'forlife') {
                 return !leadLp || leadLp === 'forlife';
             }
-            return leadLp === target || (lead.lp_name && lead.lp_name.toLowerCase().includes(target));
+            return false;
         },
 
         getLeadLpName(lead) {
             if (!lead) return 'ForLife';
             if (lead.lp_name) return lead.lp_name;
-            const raw = (lead.lp_id || lead.lpId || 'forlife').toString();
-            const clean = raw.replace(/^\/+/, '');
-            if (!clean || clean === 'forlife') return 'ForLife';
-            if (State.catalog && State.catalog[clean]) return State.catalog[clean].name;
-            if (State.catalog && State.catalog['/' + clean]) return State.catalog['/' + clean].name;
+            const raw = (lead.lp_id || lead.lpId || '').toString();
+            const clean = raw.replace(/^\/+/, '').trim();
+            if (clean && State.catalog) {
+                if (State.catalog[clean]) return State.catalog[clean].name || clean;
+                if (State.catalog['/' + clean]) return State.catalog['/' + clean].name || clean;
+            }
             if (clean === '194' || clean === 'forlife-194') return 'Visão Simples 194';
             if (clean === 'fila') return 'FILA Sport';
-            return clean;
+            if (clean && clean !== 'forlife') return clean;
+
+            // Fallback inteligente pelo preço do combo
+            const leadPrice = parseFloat(lead.comboPrice || lead.totalPrice);
+            if (leadPrice && State.catalog) {
+                const matched = Object.values(State.catalog).find(lp => parseFloat(lp.price) === leadPrice && lp.id !== 'forlife');
+                if (matched) return matched.name || matched.id;
+            }
+            return 'ForLife';
+        },
+
+        async loadStatusMapFromCloud() {
+            if (!State.supabase) return {};
+            try {
+                const { data } = await State.supabase
+                    .from('config_settings')
+                    .select('value')
+                    .eq('key', 'leads_status_map')
+                    .maybeSingle();
+                if (data && data.value) {
+                    return JSON.parse(data.value);
+                }
+            } catch (e) {
+                console.warn('[LPStudio] Aviso ao carregar leads_status_map:', e);
+            }
+            return {};
+        },
+
+        async saveStatusMapToCloud(map) {
+            if (!State.supabase) return;
+            try {
+                await State.supabase
+                    .from('config_settings')
+                    .upsert({
+                        key: 'leads_status_map',
+                        value: JSON.stringify(map)
+                    });
+            } catch (e) {
+                console.warn('[LPStudio] Aviso ao salvar leads_status_map:', e);
+            }
+        },
+
+        async persistLeadStatusToCloud(lead) {
+            if (!lead || !lead.code) return;
+            try {
+                const map = await this.loadStatusMapFromCloud();
+                map[lead.code] = {
+                    saleStatus: lead.saleStatus,
+                    saleValue: lead.saleValue,
+                    store: lead.store,
+                    seller: lead.seller,
+                    osNumber: lead.osNumber,
+                    updated_at: new Date().toISOString()
+                };
+                await this.saveStatusMapToCloud(map);
+            } catch (err) {
+                console.warn('[LPStudio] Erro ao persistir status do lead na nuvem:', err);
+            }
+        },
+
+        async onLeadStatusChange(code, newStatus) {
+            const lead = State.allLeads.find(l => l.code === code);
+            if (!lead) return;
+
+            lead.saleStatus = newStatus;
+            const valInput = document.getElementById(`input-val-${code}`);
+
+            // Se mudou para Vendido e não tem valor de venda preenchido, sugere o valor total
+            if (newStatus === 'Vendido' && (!lead.saleValue || parseFloat(lead.saleValue) <= 0)) {
+                lead.saleValue = lead.totalPrice || 297.00;
+                if (valInput) valInput.value = lead.saleValue;
+            }
+
+            // Atualiza status local
+            try {
+                localStorage.setItem(STORAGE_KEYS.leadsFallback, JSON.stringify(State.allLeads));
+            } catch (e) {}
+
+            // Atualiza o mapa de status na nuvem
+            await this.persistLeadStatusToCloud(lead);
+
+            // Re-renderiza o Pipeline (Kanban) e KPIs em tempo real
+            Kanban.render();
+            this.updateKpis(State.filteredLeads);
+            Utils.showToast(`Status do lead "${lead.name}" alterado para "${newStatus}"!`, 'success');
         },
 
         async loadLeads() {
@@ -1509,6 +1650,7 @@
             let cloudLeads = [];
             let loadedFromCloud = false;
             const currentLp = Catalog.getActiveLp();
+            const cloudStatusMap = await this.loadStatusMapFromCloud();
 
             // 1. Tenta carregar do Supabase
             if (State.supabase) {
@@ -1521,7 +1663,7 @@
                     const { data, error } = await query;
 
                     if (!error && Array.isArray(data)) {
-                        cloudLeads = data.filter(l => l.code !== '__keep__').map(l => this.normalizeLead(l));
+                        cloudLeads = data.filter(l => l.code !== '__keep__').map(l => this.normalizeLead(l, cloudStatusMap));
                         loadedFromCloud = true;
                     } else if (error) {
                         console.warn('[LPStudio] Aviso consulta forlife_leads:', error.message);
@@ -1537,7 +1679,7 @@
                             
                             if (!filaRes.error && Array.isArray(filaRes.data)) {
                                 const filaNorm = filaRes.data.map(l => {
-                                    const n = this.normalizeLead(l);
+                                    const n = this.normalizeLead(l, cloudStatusMap);
                                     n.lp_id = 'fila';
                                     return n;
                                 });
@@ -1615,7 +1757,7 @@
 
                 const cloudCodes = new Set(merged.map(l => l.code));
                 localLeads.forEach(loc => {
-                    const norm = this.normalizeLead(loc);
+                    const norm = this.normalizeLead(loc, cloudStatusMap);
                     if (norm.code && !cloudCodes.has(norm.code) && !isCleanedOut(norm)) {
                         merged.unshift(norm);
                         cloudCodes.add(norm.code);
@@ -1644,7 +1786,7 @@
                 });
             } else {
                 merged = localLeads
-                    .map(l => this.normalizeLead(l))
+                    .map(l => this.normalizeLead(l, cloudStatusMap))
                     .filter(l => !isCleanedOut(l));
             }
 
@@ -1655,11 +1797,23 @@
             Catalog.updateCampaignInfoBar();
         },
 
-        normalizeLead(l) {
+        normalizeLead(l, cloudStatusMap = {}) {
             const dateOnly = l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : (l.date || '');
             
             let leadCity = l.city || '';
             let leadStore = l.store || '';
+            let leadLpId = l.lp_id || l.lpId || '';
+
+            // 1. Extrai tag [LP:...] se presente no campo de cidade
+            if (leadCity.includes('[LP:')) {
+                const lpMatch = leadCity.match(/\[LP:\s*([^\]]+)\]/i);
+                if (lpMatch) {
+                    leadLpId = lpMatch[1].trim();
+                    leadCity = leadCity.replace(/\s*\[LP:[^\]]+\]/i, '').trim();
+                }
+            }
+
+            // 2. Extrai tag de Loja se embutida
             if (!leadStore && leadCity.includes('(Loja:')) {
                 const match = leadCity.match(/\(Loja:\s*([^)]+)\)/);
                 if (match) {
@@ -1681,6 +1835,32 @@
 
             const currentLp = Catalog.getActiveLp();
             const fallbackPrice = currentLp ? currentLp.price : 297;
+            const parsedComboPrice = parseFloat(l.combo_price || l.comboPrice) || fallbackPrice;
+
+            // 3. Fallback inteligente de LP pelo preço do combo
+            if (!leadLpId || leadLpId === 'forlife') {
+                if (State.catalog) {
+                    const matchedLp = Object.values(State.catalog).find(lp => {
+                        const lpPrice = parseFloat(lp.price);
+                        return lpPrice === parsedComboPrice && lp.id !== 'forlife';
+                    });
+                    if (matchedLp) {
+                        leadLpId = matchedLp.id;
+                    }
+                }
+            }
+            if (!leadLpId) leadLpId = 'forlife';
+
+            // 4. Mapeamento de status e valores na nuvem
+            const mapped = (cloudStatusMap && l.code) ? (cloudStatusMap[l.code] || {}) : {};
+            const resolvedSaleValue = (mapped.saleValue !== undefined && mapped.saleValue !== null && mapped.saleValue !== '')
+                ? parseFloat(mapped.saleValue)
+                : ((l.sale_value !== undefined && l.sale_value !== null && l.sale_value !== '') ? parseFloat(l.sale_value) : (l.saleValue || ''));
+            
+            let resolvedStatus = mapped.saleStatus || l.sale_status || l.saleStatus;
+            if (!resolvedStatus) {
+                resolvedStatus = (resolvedSaleValue > 0) ? 'Vendido' : 'Pendente';
+            }
 
             return {
                 id: l.id,
@@ -1689,20 +1869,20 @@
                 phone: l.phone || '',
                 email: l.email || '',
                 city: leadCity,
-                comboPrice: parseFloat(l.combo_price || l.comboPrice) || fallbackPrice,
+                comboPrice: parsedComboPrice,
                 addons: addonsParsed,
                 totalPrice: parseFloat(l.total_price || l.totalPrice) || fallbackPrice,
                 hasPrescription: Boolean(l.has_prescription || l.hasPrescription),
                 recipeStatus: l.recipe_status || l.recipeStatus || (l.has_prescription ? 'Possuo receita atualizada' : 'Preciso atualizar receita'),
                 prescriptionFile: l.prescription_file || l.prescriptionFile || '',
                 code: l.code || '',
-                store: leadStore,
-                seller: l.seller || '',
-                saleValue: l.sale_value || l.saleValue || '',
-                osNumber: l.os_number || l.osNumber || '',
-                saleStatus: l.sale_status || l.saleStatus || (l.sale_value ? 'Vendido' : 'Pendente'),
+                store: mapped.store || leadStore,
+                seller: mapped.seller || l.seller || '',
+                saleValue: resolvedSaleValue,
+                osNumber: mapped.osNumber || l.os_number || l.osNumber || '',
+                saleStatus: resolvedStatus,
                 raw_created_at: l.created_at || l.raw_created_at || '',
-                lp_id: l.lp_id || l.lpId || 'forlife'
+                lp_id: leadLpId
             };
         },
 
@@ -1958,7 +2138,7 @@
                         <input type="text" class="table-input" id="input-os-${lead.code || index}" placeholder="Nº OS" value="${Utils.escapeHtml(lead.osNumber)}" style="width:52px; font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1;">
                     </td>
                     <td>
-                        <select class="table-select" id="input-status-${lead.code || index}" style="font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1; max-width:85px;">
+                        <select class="table-select" id="input-status-${lead.code || index}" onchange="window.LPStudio.onLeadStatusChange('${lead.code}', this.value)" style="font-size:11.5px; padding:3px 4px; border-radius:4px; border:1px solid #CBD5E1; max-width:85px;">
                             ${statusOptions}
                         </select>
                     </td>
@@ -2069,6 +2249,12 @@
             if (osEl) targetLead.osNumber = osEl.value.trim();
             if (statusEl) targetLead.saleStatus = statusEl.value;
 
+            // Se marcou Vendido mas não tinha valor, auto-preenche com valor do combo
+            if (targetLead.saleStatus === 'Vendido' && (!targetLead.saleValue || parseFloat(targetLead.saleValue) <= 0)) {
+                targetLead.saleValue = targetLead.totalPrice || 297.00;
+                if (valEl) valEl.value = targetLead.saleValue;
+            }
+
             // Salva Localmente
             try {
                 localStorage.setItem(STORAGE_KEYS.leadsFallback, JSON.stringify(State.allLeads));
@@ -2077,15 +2263,16 @@
             // Feedback visual
             if (icon) icon.className = 'fas fa-spinner fa-spin';
 
-            // Salva no Supabase
+            // Salva no Supabase (config_settings para status + forlife_leads para colunas suportadas)
+            await this.persistLeadStatusToCloud(targetLead);
+
             if (State.supabase && (targetLead.id || targetLead.code)) {
                 try {
                     const updatePayload = {
                         store: targetLead.store || null,
                         seller: targetLead.seller || null,
                         sale_value: targetLead.saleValue ? parseFloat(targetLead.saleValue) : null,
-                        os_number: targetLead.osNumber || null,
-                        sale_status: targetLead.saleStatus || null
+                        os_number: targetLead.osNumber || null
                     };
 
                     let updateQuery;
@@ -2106,6 +2293,7 @@
                 setTimeout(() => {
                     if (icon) icon.className = 'fas fa-save';
                 }, 1500);
+                Kanban.render();
                 this.updateKpis(State.filteredLeads);
                 Utils.showToast(`Lead ${targetLead.name} atualizado com sucesso!`, 'success');
             }, 300);
@@ -2609,13 +2797,15 @@
                 localStorage.setItem(STORAGE_KEYS.leadsFallback, JSON.stringify(State.allLeads));
             } catch (e) {}
 
-            // Atualiza no Supabase se houver conexão
-            if (State.supabase) {
+            // Persiste no Supabase via config_settings
+            await Leads.persistLeadStatusToCloud(lead);
+
+            // Atualiza no Supabase (colunas suportadas em forlife_leads)
+            if (State.supabase && (lead.id || lead.code)) {
                 try {
                     const updatePayload = {
-                        sale_status: newStatus,
-                        sale_value: lead.saleValue,
-                        os_number: lead.osNumber || ''
+                        sale_value: lead.saleValue ? parseFloat(lead.saleValue) : null,
+                        os_number: lead.osNumber || null
                     };
                     if (lead.id) {
                         await State.supabase.from(SUPABASE_CONFIG.leadsTable).update(updatePayload).eq('id', lead.id);
@@ -4369,6 +4559,10 @@
             Kanban.updateLeadStatus(code, status);
         },
 
+        onLeadStatusChange(code, status) {
+            Leads.onLeadStatusChange(code, status);
+        },
+
         clearAllLeads(skipConfirm = false) {
             Leads.clearAllLeads(skipConfirm);
         },
@@ -4394,9 +4588,17 @@
                     if (targetPanel) {
                         targetPanel.classList.add('active');
                     }
+
+                    // Se alternar para o Pipeline (Kanban), re-renderiza imediatamente com dados frescos
+                    if (targetTabId === 'tab-kanban') {
+                        Kanban.render();
+                    } else if (targetTabId === 'tab-leads') {
+                        Leads.applyFilters();
+                    }
                 });
             });
 
+            Leads.initSupabase();
             Catalog.init();
             Preview.init();
             Preview.initHybridAndDrawer();
