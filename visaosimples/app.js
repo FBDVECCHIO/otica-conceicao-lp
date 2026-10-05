@@ -20,7 +20,7 @@ let vsConfig = {
     lpId: '194',
     name: 'Óculos Completo Visão Simples 194',
     comboPrice: 194.00,
-    installments: 6,
+    installments: 10,
     offerType: 'combo_completo', // 'combo_completo' | 'so_lentes'
     lensModality: 'lentes_prontas', // 'lentes_prontas' | 'visao_simples_surfacada' | 'multifocal'
     frameBrand: 'Coleção Conceição',
@@ -228,7 +228,7 @@ async function loadConfigFromStorage() {
             vsConfig.lpId = lpEntry.id || slug;
             vsConfig.name = lpEntry.name || vsConfig.name;
             vsConfig.comboPrice = parseFloat(lpEntry.price) || 194.00;
-            vsConfig.installments = parseInt(lpEntry.installments, 10) || 6;
+            vsConfig.installments = parseInt(lpEntry.installments, 10) || 10;
             if (lpEntry.offerType) vsConfig.offerType = lpEntry.offerType;
             if (lpEntry.lensModality) vsConfig.lensModality = lpEntry.lensModality;
             if (lpEntry.frameBrand) vsConfig.frameBrand = lpEntry.frameBrand;

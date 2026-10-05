@@ -108,8 +108,8 @@
             status: 'Ativa',
             color: '#002C5B',
             price: 194.00,
-            installments: 6,
-            description: 'Combo promocional Visão Simples (Armação + Lentes) por R$ 194,00 em até 6x sem juros.',
+            installments: 10,
+            description: 'Combo promocional Visão Simples (Armação + Lentes) por R$ 194,00 em até 10x sem juros.',
             campaign: {
                 name: 'Campanha Promocional 194 Visão Simples',
                 budget: 2000.00,
@@ -135,12 +135,37 @@
             status: 'Ativa',
             color: '#002C5B',
             price: 194.00,
-            installments: 6,
-            description: 'Combo promocional Visão Simples (Armação + Lentes) por R$ 194,00 em até 6x sem juros.',
+            installments: 10,
+            description: 'Combo promocional Visão Simples (Armação + Lentes) por R$ 194,00 em até 10x sem juros.',
             campaign: {
                 name: 'Campanha Promocional 194 Visão Simples',
                 budget: 2000.00,
                 targetLeads: 150,
+                status: 'Em Veiculação'
+            },
+        },
+        'economico': {
+            id: 'economico',
+            name: 'Óculos Econômico Completo',
+            url: '/economico',
+            slug: '/economico',
+            template: 'economico',
+            heroStyle: 'combo_economico',
+            heroTitle: 'Óculos Completo Econômico por',
+            heroSupporting: 'Armação resistente à escolha + Lentes calibradas inclusas com garantia',
+            offerType: 'combo_completo',
+            lensModality: 'lentes_prontas',
+            frameBrand: 'Coleção Conceição',
+            lensBrand: 'Lentes Monofocais HD',
+            status: 'Ativa',
+            color: '#002C5B',
+            price: 149.00,
+            installments: 10,
+            description: 'Combo promocional Óculos Econômico (Armação + Lentes) por R$ 149,00 em até 10x sem juros.',
+            campaign: {
+                name: 'Campanha Promocional Óculos Econômico',
+                budget: 1500.00,
+                targetLeads: 100,
                 status: 'Em Veiculação'
             },
             addonsActive: {
@@ -715,7 +740,9 @@
 
             let heroStyleResolved = newLpData.heroStyle || '';
             if (!heroStyleResolved || heroStyleResolved === 'multifocal_senhora') {
-                if (newLpData.template === 'visaosimples' || cleanSlug.includes('194') || newLpData.lensModality === 'lentes_prontas' || newLpData.lensModality === 'visao_simples_surfacada') {
+                if (newLpData.template === 'economico' || cleanSlug.includes('economico') || cleanSlug.includes('econômico')) {
+                    heroStyleResolved = 'combo_economico';
+                } else if (newLpData.template === 'visaosimples' || cleanSlug.includes('194') || newLpData.lensModality === 'lentes_prontas' || newLpData.lensModality === 'visao_simples_surfacada') {
                     heroStyleResolved = 'visao_simples_jovens';
                 } else if (!heroStyleResolved) {
                     heroStyleResolved = 'multifocal_senhora';
@@ -729,17 +756,17 @@
                 slug: cleanSlug,
                 status: newLpData.status || 'Ativa',
                 color: newLpData.color || '#002C5B',
-                price: parseFloat(newLpData.price) || (heroStyleResolved === 'visao_simples_jovens' ? 194.00 : 297.00),
-                installments: parseInt(newLpData.installments, 10) || (heroStyleResolved === 'visao_simples_jovens' ? 6 : 10),
+                price: parseFloat(newLpData.price) || (heroStyleResolved === 'combo_economico' ? 149.00 : (heroStyleResolved === 'visao_simples_jovens' ? 194.00 : 297.00)),
+                installments: parseInt(newLpData.installments, 10) || 10,
                 description: newLpData.description || `Campanha promocional para ${newLpData.name.trim()}.`,
-                template: newLpData.template || (heroStyleResolved === 'visao_simples_jovens' ? 'visaosimples' : 'forlife'),
+                template: newLpData.template || (heroStyleResolved === 'combo_economico' ? 'economico' : (heroStyleResolved === 'visao_simples_jovens' ? 'visaosimples' : 'forlife')),
                 offerType: newLpData.offerType || 'combo_completo',
-                lensModality: newLpData.lensModality || (heroStyleResolved === 'visao_simples_jovens' ? 'lentes_prontas' : 'multifocal'),
+                lensModality: newLpData.lensModality || (heroStyleResolved === 'multifocal_senhora' ? 'multifocal' : 'lentes_prontas'),
                 heroStyle: heroStyleResolved,
-                heroTitle: newLpData.heroTitle || (heroStyleResolved === 'visao_simples_jovens' ? 'Óculos Completo Visão Simples por' : 'Óculos Completo Multifocal por'),
-                heroSupporting: newLpData.heroSupporting || (heroStyleResolved === 'visao_simples_jovens' ? 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' : 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.'),
-                frameBrand: newLpData.frameBrand || (heroStyleResolved === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri'),
-                lensBrand: newLpData.lensBrand || (heroStyleResolved === 'visao_simples_jovens' ? 'Lentes Monofocais HD' : 'Multifocais Digitais'),
+                heroTitle: newLpData.heroTitle || (heroStyleResolved === 'combo_economico' ? 'Óculos Completo Econômico por' : (heroStyleResolved === 'visao_simples_jovens' ? 'Óculos Completo Visão Simples por' : 'Óculos Completo Multifocal por')),
+                heroSupporting: newLpData.heroSupporting || (heroStyleResolved === 'combo_economico' ? 'Armação resistente + Lentes monofocais inclusas com garantia.' : (heroStyleResolved === 'visao_simples_jovens' ? 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' : 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.')),
+                frameBrand: newLpData.frameBrand || (heroStyleResolved === 'combo_economico' || heroStyleResolved === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri'),
+                lensBrand: newLpData.lensBrand || (heroStyleResolved === 'combo_economico' || heroStyleResolved === 'visao_simples_jovens' ? 'Lentes Monofocais HD' : 'Multifocais Digitais'),
                 addonsActive: newLpData.addonsActive || {
                     antirreflexo: true,
                     bluecut: true,
@@ -4128,10 +4155,10 @@
             if (targetInput) targetInput.value = camp.targetLeads || 100;
 
             const templateInput = modal.querySelector('#new-lp-template');
-            if (templateInput) templateInput.value = lp.template || ((lp.url && lp.url.includes('fila')) ? 'fila' : (lp.url && (lp.url.includes('194') || lp.url.includes('visaosimples')) ? 'visaosimples' : 'forlife'));
+            if (templateInput) templateInput.value = lp.template || ((lp.url && lp.url.includes('fila')) ? 'fila' : (lp.url && (lp.url.includes('economico') || lp.url.includes('econômico')) ? 'economico' : (lp.url && (lp.url.includes('194') || lp.url.includes('visaosimples')) ? 'visaosimples' : 'forlife')));
 
             const heroStyleInput = modal.querySelector('#new-lp-hero-style');
-            if (heroStyleInput) heroStyleInput.value = lp.heroStyle || (lp.template === 'visaosimples' ? 'visao_simples_jovens' : 'multifocal_senhora');
+            if (heroStyleInput) heroStyleInput.value = lp.heroStyle || (lp.template === 'economico' ? 'combo_economico' : (lp.template === 'visaosimples' ? 'visao_simples_jovens' : 'multifocal_senhora'));
 
             const heroTitleInput = modal.querySelector('#new-lp-hero-title');
             if (heroTitleInput) heroTitleInput.value = lp.heroTitle || '';
@@ -4161,7 +4188,7 @@
             if (priceInput) priceInput.value = lp.price || 194.00;
 
             const instInput = modal.querySelector('#new-lp-installments');
-            if (instInput) instInput.value = lp.installments || 6;
+            if (instInput) instInput.value = lp.installments || 10;
 
             const colorInput = modal.querySelector('#new-lp-color');
             if (colorInput) colorInput.value = lp.color || '#002C5B';
@@ -4302,13 +4329,22 @@
                     const heroTitleInput = modal.querySelector('#new-lp-hero-title');
                     const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
 
-                    if (tVal === 'visaosimples') {
+                    if (tVal === 'economico') {
+                        if (heroStyleInput) heroStyleInput.value = 'combo_economico';
+                        if (modalityInput) modalityInput.value = 'lentes_prontas';
+                        if (frameBrandInput && (!frameBrandInput.value || frameBrandInput.value === 'Di Capri')) frameBrandInput.value = 'Coleção Conceição';
+                        if (lensBrandInput && (!lensBrandInput.value || lensBrandInput.value === 'Multifocais Digitais' || lensBrandInput.value === 'Multifocal Di Capri HD')) lensBrandInput.value = 'Lentes Monofocais HD';
+                        if (priceInput && (!priceInput.value || priceInput.value === '297.00' || priceInput.value === '194.00')) priceInput.value = '149.00';
+                        if (instInput && !instInput.value) instInput.value = '10';
+                        if (heroTitleInput && !heroTitleInput.value) heroTitleInput.value = 'Óculos Completo Econômico por';
+                        if (heroSupportingInput && !heroSupportingInput.value) heroSupportingInput.value = 'Armação leve e resistente + Lentes monofocais calibradas com garantia total.';
+                    } else if (tVal === 'visaosimples') {
                         if (heroStyleInput) heroStyleInput.value = 'visao_simples_jovens';
                         if (modalityInput) modalityInput.value = 'lentes_prontas';
                         if (frameBrandInput && (!frameBrandInput.value || frameBrandInput.value === 'Di Capri')) frameBrandInput.value = 'Coleção Conceição';
                         if (lensBrandInput && (!lensBrandInput.value || lensBrandInput.value === 'Multifocais Digitais' || lensBrandInput.value === 'Multifocal Di Capri HD')) lensBrandInput.value = 'Lentes Monofocais HD';
                         if (priceInput && (!priceInput.value || priceInput.value === '297.00')) priceInput.value = '194.00';
-                        if (instInput && (!instInput.value || instInput.value === '10')) instInput.value = '6';
+                        if (instInput && !instInput.value) instInput.value = '10';
                         if (heroTitleInput && !heroTitleInput.value) heroTitleInput.value = 'Óculos Completo Visão Simples por';
                         if (heroSupportingInput && !heroSupportingInput.value) heroSupportingInput.value = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
                     } else if (tVal === 'forlife') {
@@ -4316,8 +4352,8 @@
                         if (modalityInput) modalityInput.value = 'multifocal';
                         if (frameBrandInput && (!frameBrandInput.value || frameBrandInput.value === 'Coleção Conceição')) frameBrandInput.value = 'Di Capri';
                         if (lensBrandInput && (!lensBrandInput.value || lensBrandInput.value === 'Lentes Monofocais HD')) lensBrandInput.value = 'Multifocal Di Capri HD';
-                        if (priceInput && (!priceInput.value || priceInput.value === '194.00')) priceInput.value = '297.00';
-                        if (instInput && (!instInput.value || instInput.value === '6')) instInput.value = '10';
+                        if (priceInput && (!priceInput.value || priceInput.value === '194.00' || priceInput.value === '149.00')) priceInput.value = '297.00';
+                        if (instInput && !instInput.value) instInput.value = '10';
                         if (heroTitleInput && !heroTitleInput.value) heroTitleInput.value = 'Óculos Completo Multifocal por';
                         if (heroSupportingInput && !heroSupportingInput.value) heroSupportingInput.value = 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.';
                     }
@@ -4329,14 +4365,17 @@
                     const hVal = heroStyleInput.value;
                     const heroTitleInput = modal.querySelector('#new-lp-hero-title');
                     const heroSupportingInput = modal.querySelector('#new-lp-hero-supporting');
-                    if (hVal === 'visao_simples_jovens') {
-                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal'))) heroTitleInput.value = 'Óculos Completo Visão Simples por';
-                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('multifocais'))) heroSupportingInput.value = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
+                    if (hVal === 'combo_economico' || hVal === 'economico') {
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal') || heroTitleInput.value.includes('Visão Simples') || heroTitleInput.value.includes('Dobro'))) heroTitleInput.value = 'Óculos Completo Econômico por';
+                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('Armação Di Capri') || heroSupportingInput.value.includes('acompanhante'))) heroSupportingInput.value = 'Armação leve e resistente + Lentes inclusas com a garantia das Ópticas Conceição.';
+                    } else if (hVal === 'visao_simples_jovens') {
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal') || heroTitleInput.value.includes('Econômico'))) heroTitleInput.value = 'Óculos Completo Visão Simples por';
+                        if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('multifocais') || heroSupportingInput.value.includes('garantia das Ópticas'))) heroSupportingInput.value = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
                     } else if (hVal === 'promo_dobro_casal') {
-                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal') || heroTitleInput.value.includes('Visão Simples'))) heroTitleInput.value = 'Lentes em Dobro + 2 Armações por';
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Multifocal') || heroTitleInput.value.includes('Visão Simples') || heroTitleInput.value.includes('Econômico'))) heroTitleInput.value = 'Lentes em Dobro + 2 Armações por';
                         if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('Armação leve'))) heroSupportingInput.value = '2 Armações à escolha + 2 Pares de Lentes calibradas para você e seu acompanhante.';
                     } else if (hVal === 'multifocal_senhora') {
-                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Visão Simples') || heroTitleInput.value.includes('Dobro'))) heroTitleInput.value = 'Óculos Completo Multifocal por';
+                        if (heroTitleInput && (!heroTitleInput.value || heroTitleInput.value.includes('Visão Simples') || heroTitleInput.value.includes('Dobro') || heroTitleInput.value.includes('Econômico'))) heroTitleInput.value = 'Óculos Completo Multifocal por';
                         if (heroSupportingInput && (!heroSupportingInput.value || heroSupportingInput.value.includes('resistente'))) heroSupportingInput.value = 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.';
                     }
                 });

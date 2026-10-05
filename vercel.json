@@ -8,8 +8,9 @@
     { "source": "/forlife/admin", "destination": "/forlife/admin" },
     { "source": "/forlife/:path*", "destination": "/forlife/:path*" },
     { "source": "/visaosimples", "destination": "/forlife" },
-    { "source": "/visaosimples/:path*", "destination": "/forlife/:path*" },
     { "source": "/194", "destination": "/forlife" },
+    { "source": "/economico", "destination": "/forlife" },
+    { "source": "/economico/:path*", "destination": "/forlife/:path*" },
     { "source": "/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/:slug", "destination": "/forlife" }
   ]

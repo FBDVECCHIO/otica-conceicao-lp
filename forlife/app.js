@@ -76,6 +76,32 @@ const HERO_STYLES = {
         pill1: '2 armações inclusas',
         pill2: '2 pares de lentes calibradas',
         pill3: 'Sem adicionais obrigatórios'
+    },
+    combo_economico: {
+        id: 'combo_economico',
+        name: 'Óculos Econômico (Combo Econômico)',
+        image: '/assets/images/hero/economico.png',
+        titlePrefix: 'Óculos Econômico Completo por',
+        quote: 'Economia com a tradição e qualidade das Ópticas Conceição',
+        badge1: { icon: 'fas fa-tags', text: 'Melhor preço garantido em Campinas' },
+        badge2: { icon: 'fas fa-glasses', text: 'Armação resistente + Lentes inclusas' },
+        badge3: { icon: 'fas fa-shield-alt', text: 'Garantia total e assistência na loja' },
+        pill1: 'Armação inclusa',
+        pill2: 'Lentes calibradas para o seu grau',
+        pill3: 'Sem adicionais obrigatórios'
+    },
+    economico: {
+        id: 'economico',
+        name: 'Óculos Econômico (Combo Econômico)',
+        image: '/assets/images/hero/economico.png',
+        titlePrefix: 'Óculos Econômico Completo por',
+        quote: 'Economia com a tradição e qualidade das Ópticas Conceição',
+        badge1: { icon: 'fas fa-tags', text: 'Melhor preço garantido em Campinas' },
+        badge2: { icon: 'fas fa-glasses', text: 'Armação resistente + Lentes inclusas' },
+        badge3: { icon: 'fas fa-shield-alt', text: 'Garantia total e assistência na loja' },
+        pill1: 'Armação inclusa',
+        pill2: 'Lentes calibradas para o seu grau',
+        pill3: 'Sem adicionais obrigatórios'
     }
 };
 
@@ -232,8 +258,60 @@ const CAMPAIGN_CONTENT = {
                 initials: 'PR'
             }
         ]
-    }
+    },
+    combo_economico: {
+        faqTitle: 'Tira-Dúvidas Sobre o Combo Óculos Econômico',
+        faqSubtitle: 'Respostas diretas sobre nosso combo econômico com armação e lentes inclusas:',
+        faqs: [
+            {
+                q: '1. O que está incluso no Combo Econômico por R$ {PRICE}?',
+                a: 'O combo acompanha uma armação completa {FRAME_BRAND} à sua escolha entre centenas de modelos selecionados + 1 par de Lentes {LENS_BRAND} calibradas para o seu grau com garantia de adaptação.'
+            },
+            {
+                q: '2. As lentes já vêm com qualidade e precisão óptica?',
+                a: 'Sim! Nossas lentes passam pelo mesmo rigoroso controle computadorizado das Ópticas Conceição (78 anos de tradição), com montagem milimétrica no laboratório próprio.'
+            },
+            {
+                q: '3. E se eu ainda não tiver a receita médica?',
+                a: 'Basta gerar seu cupom agora para garantir o valor promocional de R$ {PRICE}. Nossa equipe indicará clínicas parceiras de confiança em Campinas para realizar seu exame de vista.'
+            },
+            {
+                q: '4. Posso parcelar no cartão de crédito?',
+                a: 'Sim! Você pode parcelar o combo econômico de R$ {PRICE} em até {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros no cartão de crédito, sem qualquer acréscimo.'
+            },
+            {
+                q: '5. Como escolher o modelo da minha armação?',
+                a: 'Temos mais de 100 modelos confortáveis e resistentes da {FRAME_BRAND} no mostruário para você experimentar na loja do Centro de Campinas ou consultar pelo WhatsApp.'
+            },
+            {
+                q: '6. Qual o prazo para meus óculos ficarem prontos?',
+                a: 'Graças ao nosso laboratório óptico especializado em Campinas, a montagem é feita em tempo recorde com rigoroso padrão de qualidade.'
+            }
+        ],
+        reviews: [
+            {
+                text: '"Precisava economizar sem abrir mão de qualidade. O combo de R$ {PRICE} com armação {FRAME_BRAND} e lentes {LENS_BRAND} superou minhas expectativas! Muito satisfeito."',
+                author: 'Renato S.',
+                location: 'Vila Industrial, Campinas',
+                initials: 'RS'
+            },
+            {
+                text: '"Melhor preço que encontrei em Campinas! Paguei em {INSTALLMENTS}x de R$ {INSTALLMENT_VAL} sem juros e o óculos ficou pronto super rápido. Atendimento de primeira."',
+                author: 'Beatriz L.',
+                location: 'Jardim Chapadão, Campinas',
+                initials: 'BL'
+            },
+            {
+                text: '"Ótica confiável e preço justo de verdade. O combo econômico de R$ {PRICE} é perfeito para quem busca custo-benefício com assistência garantida."',
+                author: 'Marcos P.',
+                location: 'Cambuí, Campinas',
+                initials: 'MP'
+            }
+        ]
+    },
+    economico: null // referenciado dinamicamente como alias
 };
+CAMPAIGN_CONTENT.economico = CAMPAIGN_CONTENT.combo_economico;
 
 // Receita médica em Base64 (opcional)
 let prescriptionBase64 = "";
@@ -872,8 +950,9 @@ function detectActiveLandingPage() {
 
     const DEFAULT_CATALOG = {
         forlife: { id: 'forlife', name: 'ForLife Multifocal Di Capri', slug: '/forlife', price: 297.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Di Capri', lensBrand: 'Multifocal Di Capri HD' },
-        'forlife-194': { id: 'forlife-194', name: 'ForLife Especial 194', slug: '/forlife-194', price: 194.00, installments: 6, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
-        '194': { id: '194', name: 'ForLife Especial 194', slug: '/194', price: 194.00, installments: 6, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
+        'forlife-194': { id: 'forlife-194', name: 'ForLife Especial 194', slug: '/forlife-194', price: 194.00, installments: 10, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
+        '194': { id: '194', name: 'ForLife Especial 194', slug: '/194', price: 194.00, installments: 10, heroStyle: 'visao_simples_jovens', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Monofocais HD', heroTitle: 'Óculos Completo Visão Simples por', heroSupporting: 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.' },
+        economico: { id: 'economico', name: 'Óculos Econômico Completo', slug: '/economico', price: 149.00, installments: 10, heroStyle: 'combo_economico', lensModality: 'lentes_prontas', frameBrand: 'Coleção Conceição', lensBrand: 'Lentes Monofocais HD', heroTitle: 'Óculos Completo Econômico por', heroSupporting: 'Armação resistente à escolha + Lentes calibradas inclusas com garantia.' },
         '294': { id: '294', name: 'ForLife Especial 294', slug: '/294', price: 294.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Di Capri', lensBrand: 'Multifocal Di Capri HD', heroTitle: 'Óculos Completo Multifocal por', heroSupporting: 'Armação Di Capri à sua escolha + Lentes multifocais digitais de alta definição inclusas.' },
         varilux: { id: 'varilux', name: 'Varilux Comfort Max', slug: '/varilux', price: 349.00, installments: 10, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Varilux Premium', lensBrand: 'Varilux Comfort Max HD' },
         zeiss: { id: 'zeiss', name: 'Zeiss SmartLife Digital', slug: '/zeiss', price: 420.00, installments: 12, heroStyle: 'multifocal_senhora', lensModality: 'multifocal', frameBrand: 'Zeiss Titanium', lensBrand: 'Zeiss SmartLife Digital' }
@@ -902,7 +981,7 @@ function detectActiveLandingPage() {
                     name: `ForLife Especial ${numMatch[1]}`,
                     slug: '/' + cleanSlug,
                     price: inferredPrice,
-                    installments: inferredPrice < 200 ? 6 : 10
+                    installments: 10
                 };
             }
         }
@@ -1030,11 +1109,7 @@ async function loadForlifeConfig() {
         else if (cloudCfg && cloudCfg.combo_installments) installments = parseInt(cloudCfg.combo_installments, 10);
         else if (cms && cms.installments) installments = parseInt(cms.installments, 10);
         else if (lp && lp.installments) installments = parseInt(lp.installments, 10);
-        else if (price <= 200) installments = 6;
-
-        if (price <= 200 && installments === 10) {
-            installments = 6;
-        }
+        else installments = 10;
 
         const antirreflexo = (cloudCfg && cloudCfg.addon_antirreflexo !== undefined) ? parseFloat(cloudCfg.addon_antirreflexo) : ((cms && cms.antirreflexo !== undefined) ? parseFloat(cms.antirreflexo) : 0.00);
         const bluecut = (cloudCfg && cloudCfg.addon_bluecut !== undefined) ? parseFloat(cloudCfg.addon_bluecut) : ((cms && cms.bluecut !== undefined) ? parseFloat(cms.bluecut) : 70.00);
@@ -1048,6 +1123,8 @@ async function loadForlifeConfig() {
             const checkStr = `${activeLpInfo.slug} ${(lp && lp.name) || ''} ${(cms && cms.lensModality) || ''} ${(lp && lp.lensModality) || ''} ${(lp && lp.template) || ''}`.toLowerCase();
             if (checkStr.includes('dobro') || checkStr.includes('casal') || checkStr.includes('494')) {
                 heroStyle = 'promo_dobro_casal';
+            } else if (checkStr.includes('economico') || checkStr.includes('econômico')) {
+                heroStyle = 'combo_economico';
             } else if (checkStr.includes('194') || checkStr.includes('visaosimples') || checkStr.includes('miopia') || checkStr.includes('jovens') || checkStr.includes('prontas') || checkStr.includes('surfacada')) {
                 heroStyle = 'visao_simples_jovens';
             } else if (!heroStyle) {
@@ -1059,7 +1136,9 @@ async function loadForlifeConfig() {
         let heroSupporting = urlParams.get('heroSupporting') || (cms && (cms.heroSupporting || cms.heroSupportingText)) || (lp && (lp.heroSupporting || lp.heroSupportingText)) || '';
 
         if (!heroTitle) {
-            if (heroStyle === 'visao_simples_jovens') {
+            if (heroStyle === 'combo_economico' || heroStyle === 'economico') {
+                heroTitle = 'Óculos Completo Econômico por';
+            } else if (heroStyle === 'visao_simples_jovens') {
                 heroTitle = 'Óculos Completo Visão Simples por';
             } else if (heroStyle === 'promo_dobro_casal') {
                 heroTitle = 'Lentes em Dobro + 2 Armações por';
@@ -1069,17 +1148,19 @@ async function loadForlifeConfig() {
         }
 
         if (!heroSupporting) {
-            if (heroStyle === 'visao_simples_jovens') {
+            if (heroStyle === 'combo_economico' || heroStyle === 'economico') {
+                heroSupporting = 'Armação leve e resistente + Lentes inclusas com garantia e assistência em Campinas.';
+            } else if (heroStyle === 'visao_simples_jovens') {
                 heroSupporting = 'Armação leve e resistente + Lentes com antirreflexo e proteção UV inclusos.';
             } else if (heroStyle === 'promo_dobro_casal') {
                 heroSupporting = '2 Armações à escolha + 2 Pares de Lentes calibradas para você e seu acompanhante.';
             }
         }
 
-        const frameBrand = (cms && cms.frameBrand) ? cms.frameBrand : ((lp && lp.frameBrand) ? lp.frameBrand : (heroStyle === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri'));
-        const lensBrand = (cms && cms.lensBrand) ? cms.lensBrand : ((lp && lp.lensBrand) ? lp.lensBrand : (heroStyle === 'visao_simples_jovens' ? 'Monofocais HD' : 'Multifocais Digitais'));
+        const frameBrand = (cms && cms.frameBrand) ? cms.frameBrand : ((lp && lp.frameBrand) ? lp.frameBrand : (heroStyle === 'combo_economico' || heroStyle === 'economico' ? 'Coleção Conceição' : (heroStyle === 'visao_simples_jovens' ? 'Coleção Conceição' : 'Di Capri')));
+        const lensBrand = (cms && cms.lensBrand) ? cms.lensBrand : ((lp && lp.lensBrand) ? lp.lensBrand : (heroStyle === 'combo_economico' || heroStyle === 'economico' ? 'Lentes Monofocais HD' : (heroStyle === 'visao_simples_jovens' ? 'Monofocais HD' : 'Multifocais Digitais')));
         const offerType = (cms && cms.offerType) ? cms.offerType : ((lp && lp.offerType) ? lp.offerType : 'combo_completo');
-        const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : (heroStyle === 'visao_simples_jovens' ? 'lentes_prontas' : 'lentes_multifocais'));
+        const lensModality = (cms && cms.lensModality) ? cms.lensModality : ((lp && lp.lensModality) ? lp.lensModality : (heroStyle === 'multifocal_senhora' ? 'lentes_multifocais' : 'lentes_prontas'));
 
         forlifeConfig = {
             comboPrice: price,
@@ -1252,7 +1333,7 @@ function applyThematicFaqAndReviews(styleKey, config) {
         : installmentValNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     const frameBrand = (config && config.frameBrand) || 'Coleção Conceição';
-    const lensBrand = (config && config.lensBrand) || (effectiveStyle === 'visao_simples_jovens' ? 'Monofocais HD' : 'Multifocais Digitais');
+    const lensBrand = (config && config.lensBrand) || ((effectiveStyle === 'visao_simples_jovens' || effectiveStyle === 'combo_economico' || effectiveStyle === 'economico') ? 'Lentes Monofocais HD' : 'Multifocais Digitais');
 
     function replacePlaceholders(str) {
         if (!str) return '';
